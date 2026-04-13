@@ -1,0 +1,111 @@
+{
+  "theme_and_archetype": {
+    "theme": "LIGHT",
+    "archetype": "4 (Swiss & High-Contrast - tailored for Authority and Clarity)",
+    "description": "A clean, functional, and authoritative internal SaaS dashboard for NENO SPACE. It focuses on scannability, operational efficiency, and a structured layout that prioritizes data readability without feeling cluttered."
+  },
+  "typography": {
+    "fonts": {
+      "headings": "Outfit",
+      "body": "Manrope",
+      "mono": "JetBrains Mono"
+    },
+    "hierarchy": {
+      "h1": "text-4xl tracking-tight font-bold",
+      "h2": "text-2xl tracking-tight font-semibold",
+      "h3": "text-xl font-medium",
+      "h4": "text-lg font-medium",
+      "body": "text-sm md:text-base leading-relaxed text-[#333333]",
+      "labels_overlines": "text-xs tracking-[0.1em] uppercase font-semibold text-[#666666]"
+    },
+    "rules": [
+      "Headings should use tight letter spacing.",
+      "Never use Inter for headings.",
+      "Use bold/black weight for emphasis in stat cards."
+    ]
+  },
+  "colors": {
+    "palette": {
+      "primary": "#0066CC",
+      "secondary": "#00AA55",
+      "accent": "#FFAA00",
+      "background": "#F5F5F5",
+      "text_primary": "#333333",
+      "text_secondary": "#666666",
+      "card_bg": "#FFFFFF",
+      "border": "#E5E7EB"
+    },
+    "rules": [
+      "Use #F5F5F5 for the main application background to make white cards pop.",
+      "Primary CTA buttons must use #0066CC with white text.",
+      "Success indicators, online statuses, and validations use #00AA55.",
+      "Warnings, important highlights, and action-required items use #FFAA00.",
+      "Text must meet APCA contrast ratios against backgrounds."
+    ]
+  },
+  "spacing_and_layout": {
+    "grid_system": "The Control Room Grid (Dashboard Mode)",
+    "container_padding": "p-6 md:p-8",
+    "card_spacing": "gap-6",
+    "surface_styles": {
+      "cards": "bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow",
+      "sidebar": "bg-white border-r border-gray-200",
+      "header": "bg-white/90 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50",
+      "login_split": "min-h-screen w-full grid grid-cols-1 lg:grid-cols-2"
+    }
+  },
+  "motion_and_interactions": {
+    "hover_states": "Buttons and links should darken slightly or increase shadow on hover.",
+    "transitions": "Use transition-all duration-200 ease-in-out for standard interactions.",
+    "loading": "Use skeleton loaders instead of generic spinners where possible."
+  },
+  "icons_and_assets": {
+    "library": "lucide-react",
+    "rules": [
+      "Use consistent stroke width (usually 2px) and sizes.",
+      "Use icons to accompany labels in sidebar and key actions, do not rely on icons alone."
+    ]
+  },
+  "media_urls": {
+    "login_split_bg": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/598052b7-b0cd-42d3-af8b-31f2d1d11b91/images/bafb722ea7abb018b47737d694fa3b3843177c11587d772aebea2b78e9ea6b52.png",
+      "description": "Abstract 3D geometric shapes background for the left side of the login screen.",
+      "category": "hero_background"
+    },
+    "avatar_placeholders": [
+      {
+        "url": "https://images.unsplash.com/photo-1655249493799-9cee4fe983bb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHw0fHxwcm9mZXNzaW9uYWwlMjBoZWFkc2hvdCUyMHBvcnRyYWl0fGVufDB8fHx8MTc3NjAzOTc2OXww&ixlib=rb-4.1.0&q=85",
+        "description": "a person with a grey sweater",
+        "category": "user_avatar"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1576558656222-ba66febe3dec?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHwzfHxwcm9mZXNzaW9uYWwlMjBoZWFkc2hvdCUyMHBvcnRyYWl0fGVufDB8fHx8MTc3NjAzOTc2OXww&ixlib=rb-4.1.0&q=85",
+        "description": "man wearing grey jacket",
+        "category": "user_avatar"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1762522926157-bcc04bf0b10a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBoZWFkc2hvdCUyMHBvcnRyYWl0fGVufDB8fHx8MTc3NjAzOTc2OXww&ixlib=rb-4.1.0&q=85",
+        "description": "Man in white shirt smiling against a grey background",
+        "category": "user_avatar"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1769636929388-99eff95d3bf1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHwyfHxwcm9mZXNzaW9uYWwlMjBoZWFkc2hvdCUyMHBvcnRyYWl0fGVufDB8fHx8MTc3NjAzOTc2OXww&ixlib=rb-4.1.0&q=85",
+        "description": "Young woman with short black hair wearing a black sweatshirt.",
+        "category": "user_avatar"
+      }
+    ]
+  },
+  "instructions_to_main_agent": [
+    "NOTE: The frontend uses standard .js/.jsx files (not .tsx). Ensure all generated components and Shadcn components use JavaScript.",
+    "Update tailwind.config.js and index.css to map the custom color palette to CSS variables. Specifically set: primary to #0066CC, secondary to #00AA55, accent to #FFAA00, background to #F5F5F5, foreground (text primary) to #333333, and muted foreground (text secondary) to #666666.",
+    "Use Lucide-React for all icons.",
+    "Implement Shadcn UI components for Tables, Forms, Inputs, Buttons, Dialogs, Dropdown Menus, and Cards.",
+    "For the Login page: Implement a 2-column split-screen layout on large screens. Use the provided 'login_split_bg' image on the left side with the 'NENO SPACE' brand overlay, and place the login form on the right. Add a forgot password link (UI only).",
+    "Dashboard App Shell: Create a layout component with a fixed Sidebar and a sticky Header. The main content area MUST have bg-[#F5F5F5] so white cards stand out. Use the font family rules specified (Outfit for headings, Manrope for body).",
+    "Dashboard Page: Display stat cards using grid (Control Room grid). Cards should be clean, flat, and use the specified border styles.",
+    "Member Page: Build a complex table with searching and filtering logic. Map mock data effectively and use the avatar images from media_urls for mock user profiles.",
+    "Member Detail Page: Create a profile view featuring file upload UI (Shadcn customized input) and editable fields. Use the secondary color (#00AA55) for save/success states.",
+    "Mock Data: Ensure robust mock JSON data generation for Members, Stations, and Zones to make the UI look fully populated.",
+    "IMPORTANT: Use `data-testid` attributes on ALL interactive elements (buttons, inputs, links, tabs, table rows) for testing."
+  ]
+}
