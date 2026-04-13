@@ -50,15 +50,15 @@ export default function LoginPage() {
             <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
               <span className="text-white font-bold text-lg font-heading">N</span>
             </div>
-            <span className="text-xl font-bold text-white font-heading tracking-tight">NENO SPACE</span>
+            <span className="text-xl font-bold text-white font-heading tracking-tight">NENO SPACE EUJC</span>
           </div>
         </div>
         <div className="relative z-10 space-y-4">
           <h1 className="text-4xl sm:text-5xl font-bold text-white font-heading tracking-tight leading-tight">
-            Community<br />Management
+            Bâtir et Structurer <br />La communauté
           </h1>
           <p className="text-white/80 text-lg max-w-md leading-relaxed">
-            A modern platform to manage your community members, stations, zones, and teachings — all in one place.
+            Une plateforme dédiée pour structurer, suivre et accompagner chaque membre au sein de L'église universelle de Jesus Christ.
           </p>
         </div>
         <div className="relative z-10">
@@ -78,8 +78,8 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold tracking-tight font-heading text-[#333333]">Welcome back</h2>
-            <p className="text-sm text-[#666666]">Enter your credentials to access your dashboard</p>
+            <h2 className="text-2xl font-bold tracking-tight font-heading text-[#333333]">Bienvenu dans votre Espace </h2>
+            <p className="text-sm text-[#666666]">Entrez vos identifians pour accéder à l'espace</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5" data-testid="login-form">
@@ -104,12 +104,12 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-[#333333] font-medium">Password</Label>
+              <Label htmlFor="password" className="text-[#333333] font-medium">Mot de passe</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter your password"
+                  placeholder="Entrez le mot de passe"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -133,7 +133,7 @@ export default function LoginPage() {
                 className="text-sm text-[#0066CC] hover:text-[#0055AA] font-medium transition-colors"
                 data-testid="forgot-password-link"
               >
-                Forgot password?
+                Mot de passe oublié ?
               </button>
             </div>
 
@@ -144,7 +144,7 @@ export default function LoginPage() {
               data-testid="login-submit-btn"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Connexion...' : 'Connexion'}
             </Button>
           </form>
 
