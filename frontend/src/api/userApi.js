@@ -29,6 +29,14 @@ export const updateUser = async (id, data) => {
     return res.json();
   };
 
+  export const deleteUser = async (id) => {
+    const res = await fetch(`http://127.0.0.1:8000/api/users/${id}`, {
+      method: "DELETE",
+    });
+  
+    return res.json();
+  };
+
 function Dashboard() {
     const [users, setUsers] = useState([]);
   

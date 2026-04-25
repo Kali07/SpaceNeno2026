@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/dialog';
 import { Search, Plus, UserPlus, Eye } from 'lucide-react';
 import { useEffect } from "react";
-import { createUser, getUsers } from "@/api/userApi"; // vérifie le path
+import { createUser, getUsers, deleteUser } from "@/api/userApi"; // vérifie le path
 
 export default function MembersPage() {
   const navigate = useNavigate();
@@ -87,6 +87,14 @@ export default function MembersPage() {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm("Supprimer ce membre ?")) return;
+  
+    await deleteUser(id);
+  
+    fetchUsers(); // recharge la liste
   };
 
   return (
@@ -278,6 +286,13 @@ export default function MembersPage() {
                       data-testid={`view-member-${member.id}`}
                     >
                       <Eye className="h-4 w-4 mr-1" /> Voir
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDelete(member.id)}
+                    >
+                      Supprimer
                     </Button>
                   </TableCell>
                 </TableRow>
