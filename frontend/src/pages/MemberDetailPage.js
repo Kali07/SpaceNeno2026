@@ -11,7 +11,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { ArrowLeft, Save, Upload, Mail, Phone, MapPin, Calendar, Shield } from 'lucide-react';
-import { getUsers, updateUser } from "../api/userApi";
+import { getUsers, updateUser, deleteUser } from "../api/userApi";
 import { useEffect } from "react";
 
 export default function MemberDetailPage() {
@@ -77,6 +77,14 @@ export default function MemberDetailPage() {
     setEditing(false);
   };
 
+  const handleDelete = async (id) => {
+    if (!confirm("Supprimer ce membre ?")) return;
+  
+    await deleteUser(member.id);
+  
+    navigate('/members'); // recharge la liste
+  };
+
   const update = (key, value) => setForm({ ...form, [key]: value });
 
   return (
@@ -94,9 +102,22 @@ export default function MemberDetailPage() {
             <Save className="h-4 w-4 mr-2" /> Save Changes
           </Button>
         ) : (
-          <Button onClick={() => setEditing(true)} className="bg-[#0066CC] hover:bg-[#0055AA] text-white" data-testid="edit-member-btn">
+          <div className="flex gap-2">
+          <Button
+            onClick={() => setEditing(true)}
+            className="bg-[#0066CC] hover:bg-[#0055AA] text-white"
+          >
             Modifier le Profil
           </Button>
+        
+          <Button
+            variant="destructive"
+            onClick={handleDelete}
+          >
+            Supprimer Profil
+          </Button>
+        </div>
+
         )}
       </div>
 
@@ -200,37 +221,15 @@ export default function MemberDetailPage() {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Role</Label>
-                  {editing ? (
-                    <Select value={form.role} onValueChange={(v) => update('role', v)}>
-                      <SelectTrigger data-testid="detail-role-select">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Member">Membre</SelectItem>
-                        <SelectItem value="Assistant">Assistant</SelectItem>
-                        <SelectItem value="Leader">Responsable</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
+                  
                     <Input value={form.role} disabled className="bg-[#F5F5F5]" data-testid="detail-role" />
-                  )}
+                  
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Generation</Label>
-                  {editing ? (
-                    <Select value={form.generation} onValueChange={(v) => update('generation', v)}>
-                      <SelectTrigger data-testid="detail-generation-select">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="G1">G1</SelectItem>
-                        <SelectItem value="G2">G2</SelectItem>
-                        <SelectItem value="G3">G3</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
+                 
                     <Input value={form.generation} disabled className="bg-[#F5F5F5]" data-testid="detail-generation" />
-                  )}
+                
                 </div>
               </div>
             </CardContent>

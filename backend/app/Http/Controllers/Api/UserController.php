@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Approval;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -69,12 +70,14 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
+       
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
-            'role_id' => $request->role_id,
             'station_id' => $request->station_id,
         ]);
+
+       
 
         return response()->json($user);
     }
@@ -116,5 +119,37 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Approved']);
     }
+
+    public function updateProfile(Request $request)
+{
+    $user = Auth::user();
+
+    $data = $request->only(['name', 'email']);
+
+    $user->update($data);
+
+    return response()->json($user);
+}
+
+
+public function updatePassword(Request $request)
+{
+    $user = Auth::user();
+
+    // Vérifier ancien mot de passe
+    if (!Hash::check($request->current_password, $user->password)) {
+        return response()->json([
+            'error' => 'Mot de passe actuel incorrect'
+        ], 400);
+    }
+
+    $user->update([
+        'password' => bcrypt($request->new_password)
+    ]);
+
+    return response()->json([
+        'message' => 'Mot de passe mis à jour'
+    ]);
+}
 
 }

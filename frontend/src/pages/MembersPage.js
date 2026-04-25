@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/dialog';
 import { Search, Plus, UserPlus, Eye } from 'lucide-react';
 import { useEffect } from "react";
-import { createUser, getUsers, deleteUser } from "@/api/userApi"; // vérifie le path
+import { createUser, getUsers } from "@/api/userApi"; // vérifie le path
 
 export default function MembersPage() {
   const navigate = useNavigate();
@@ -74,7 +74,7 @@ export default function MembersPage() {
         name: newMember.firstName + " " + newMember.lastName,
         email: newMember.email,
         password: "123456", // temporaire
-        role_id: 1
+        role_id: form.role || 1, // Assigner un rôle par défaut ou basé sur la sélection
       });
   
       console.log("RESPONSE BACKEND :", res);
@@ -87,14 +87,6 @@ export default function MembersPage() {
     } catch (err) {
       console.error(err);
     }
-  };
-
-  const handleDelete = async (id) => {
-    if (!confirm("Supprimer ce membre ?")) return;
-  
-    await deleteUser(id);
-  
-    fetchUsers(); // recharge la liste
   };
 
   return (
@@ -136,6 +128,24 @@ export default function MembersPage() {
                 <Label className="text-[#333333]">Téléphone</Label>
                 <Input value={newMember.phone} onChange={(e) => setNewMember({ ...newMember, phone: e.target.value })} data-testid="new-member-phone" />
               </div>
+
+              <div className="space-y-1.5">
+                  <Label>Rôle</Label>
+                   <Select
+                         value={newMember.role}
+                           onValueChange={(v) => setNewMember({ ...newMember, role: v })}>
+                       <SelectTrigger>
+                        <SelectValue placeholder="Choisir un rôle" />
+                       </SelectTrigger>
+                     <SelectContent>
+                       <SelectItem value="1">Membre</SelectItem>
+                         <SelectItem value="2">Gestionnaire</SelectItem>
+                         <SelectItem value="3">Admin_provincial</SelectItem>
+                         <SelectItem value="4">Admin_national</SelectItem>
+                         <SelectItem value="5">Admin_fonctionnel</SelectItem>
+                      </SelectContent>
+                         </Select>
+                </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-[#333333]">Station</Label>
@@ -154,12 +164,16 @@ export default function MembersPage() {
                   <Label className="text-[#333333]">Generation</Label>
                   <Select value={newMember.generation} onValueChange={(v) => setNewMember({ ...newMember, generation: v })}>
                     <SelectTrigger data-testid="new-member-generation">
-                      <SelectValue />
+
+                      <SelectValue placeholder="Select generation" />
                     </SelectTrigger>
                     <SelectContent>
+                      
                       <SelectItem value="G1">G1</SelectItem>
                       <SelectItem value="G2">G2</SelectItem>
                       <SelectItem value="G3">G3</SelectItem>
+                      <SelectItem value="G4">G4</SelectItem>
+                      <SelectItem value="G4-P1">G4-P1</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -216,6 +230,8 @@ export default function MembersPage() {
               <SelectItem value="G1">G1</SelectItem>
               <SelectItem value="G2">G2</SelectItem>
               <SelectItem value="G3">G3</SelectItem>
+              <SelectItem value="G4">G4</SelectItem>
+              <SelectItem value="G4-P1">G4-P1</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -286,13 +302,6 @@ export default function MembersPage() {
                       data-testid={`view-member-${member.id}`}
                     >
                       <Eye className="h-4 w-4 mr-1" /> Voir
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDelete(member.id)}
-                    >
-                      Supprimer
                     </Button>
                   </TableCell>
                 </TableRow>

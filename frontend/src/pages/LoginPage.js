@@ -16,7 +16,7 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  /*const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -31,7 +31,26 @@ export default function LoginPage() {
       setError(result.error);
     }
     setLoading(false);
+  };*/
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    setError('');
+    setLoading(true);
+  
+    const result = await login(email, password);
+  
+    if (result.success) {
+      navigate('/dashboard');
+    } else {
+      setError(result.error);
+    }
+  
+    setLoading(false);
   };
+
 
   return (
     <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-2" data-testid="login-page">

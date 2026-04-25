@@ -22,17 +22,40 @@ export function AuthProvider({ children }) {
     setLoading(false);
   }, []);
 
-  const login = useCallback((email, password) => {
-    if (email === 'admin@nenospace.com' && password === 'admin123') {
-      localStorage.setItem('neno_user', JSON.stringify(MOCK_USER));
-      setUser(MOCK_USER);
+  const login = useCallback(async (email, password) => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        return { success: false, error: data.error || "Erreur login" };
+      }
+  
+      //  stocker token
+      localStorage.setItem("token", data.token);
+  
+      // stocker user
+      localStorage.setItem("neno_user", JSON.stringify(data.user));
+  
+      setUser(data.user);
+  
       return { success: true };
+  
+    } catch (err) {
+      return { success: false, error: err.message };
     }
-    return { success: false, error: 'Invalid email or password' };
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem('neno_user');
+    localStorage.removeItem("token");
+    localStorage.removeItem("neno_user");
     setUser(null);
   }, []);
 
