@@ -18,18 +18,43 @@ import {
   DialogDescription, DialogFooter, DialogTrigger,
 } from '@/components/ui/dialog';
 import { Search, Plus, UserPlus, Eye } from 'lucide-react';
+import { useEffect } from "react";
+import { createUser, getUsers } from "@/api/userApi"; // vérifie le path
 
 export default function MembersPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [filterStation, setFilterStation] = useState('all');
+  const [users, setUsers] = useState([]);
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterGeneration, setFilterGeneration] = useState('all');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newMember, setNewMember] = useState({ firstName: '', lastName: '', email: '', phone: '', station: '', generation: 'G1' });
+ 
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+  
+  const fetchUsers = async () => {
+    const data = await getUsers();
+    setUsers(data);
+  };
+
+  const formattedUsers = users.map(user => ({
+    id: user.id,
+    firstName: user.name,
+    lastName: "",
+    email: user.email,
+    station: user.station?.label || "N/A",
+    stationId: user.station_id,
+    generation: "N/A", // Placeholder, replace with actual data if available
+    role: user.role?.label || "membre",
+    status: "active",
+    avatar: null
+  }));
 
   const filteredMembers = useMemo(() => {
-    return mockMembers.filter((m) => {
+    return formattedUsers.filter((m) => {
       const matchSearch = search === '' ||
         `${m.firstName} ${m.lastName}`.toLowerCase().includes(search.toLowerCase()) ||
         m.email.toLowerCase().includes(search.toLowerCase());
@@ -38,12 +63,30 @@ export default function MembersPage() {
       const matchGen = filterGeneration === 'all' || m.generation === filterGeneration;
       return matchSearch && matchStation && matchStatus && matchGen;
     });
-  }, [search, filterStation, filterStatus, filterGeneration]);
+  }, [formattedUsers, search, filterStation, filterStatus, filterGeneration]);
 
-  const handleAddMember = (e) => {
+
+  const handleAddMember = async (e) => {
     e.preventDefault();
-    setDialogOpen(false);
-    setNewMember({ firstName: '', lastName: '', email: '', phone: '', station: '', generation: 'G1' });
+  
+    try {
+      const res = await createUser({
+        name: newMember.firstName + " " + newMember.lastName,
+        email: newMember.email,
+        password: "123456", // temporaire
+        role_id: 1
+      });
+  
+      console.log("RESPONSE BACKEND :", res);
+  
+      setDialogOpen(false);
+  
+      // recharge la liste
+      fetchUsers();
+  
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

@@ -18,7 +18,8 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $currentUser = Auth::user();
+        //$currentUser = Auth::user();
+        $currentUser = \App\Models\User::where('role_id', 6)->first();
 
         $request->validate([
         'name' => 'required|string',

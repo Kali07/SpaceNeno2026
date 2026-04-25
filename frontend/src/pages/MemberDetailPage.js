@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { mockMembers } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,14 +11,46 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { ArrowLeft, Save, Upload, Mail, Phone, MapPin, Calendar, Shield } from 'lucide-react';
+import { getUsers, updateUser } from "../api/userApi";
+import { useEffect } from "react";
 
 export default function MemberDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const member = mockMembers.find((m) => m.id === id);
+  const [member, setMember] = useState(null);
 
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState(member || {});
+  const [form, setForm] = useState({});
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const data = await getUsers();
+  
+      const found = data.find(u => u.id == id);
+  
+      if (found) {
+        const parts = found.name.split(" ");
+  
+        const formatted = {
+          id: found.id,
+          firstName: parts[0] || "",
+          lastName: parts.slice(1).join(" ") || "",
+          email: found.email,
+          phone: found.phone || "",
+          role: found.role?.label || "membre",
+          generation: "G1",
+          station: "N/A",
+          zone: "N/A",
+          status: "active"
+        };
+  
+        setMember(formatted);
+        setForm(formatted);
+      }
+    };
+  
+    fetchUser();
+  }, [id]);
 
   if (!member) {
     return (
@@ -34,7 +65,15 @@ export default function MemberDetailPage() {
     );
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    const fullName = `${form.firstName} ${form.lastName}`;
+  
+    await updateUser(form.id, {
+      name: fullName,
+      email: form.email,
+      phone: form.phone
+    });
+  
     setEditing(false);
   };
 
