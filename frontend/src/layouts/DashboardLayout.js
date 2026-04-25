@@ -15,10 +15,10 @@ import {
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/members', label: 'Members', icon: Users },
+  { to: '/members', label: 'Membres', icon: Users },
   { to: '/stations', label: 'Stations', icon: MapPin },
   { to: '/zones', label: 'Zones', icon: Map },
-  { to: '/teachings', label: 'Teachings', icon: BookOpen },
+  { to: '/teachings', label: 'Enseignements', icon: BookOpen },
   { to: '/administration', label: 'Administration', icon: Settings },
   { to: '/profile', label: 'Profile', icon: User },
 ];
@@ -58,8 +58,8 @@ function SidebarContent({ onClose }) {
       </nav>
       <div className="px-4 py-4">
         <div className="rounded-lg bg-[#0066CC]/5 p-3">
-          <p className="text-xs font-semibold text-[#0066CC] tracking-wide uppercase">Community</p>
-          <p className="text-xs text-[#666666] mt-1">Managing 16 members across 9 stations</p>
+          <p className="text-xs font-semibold text-[#0066CC] tracking-wide uppercase">Communauté</p>
+          <p className="text-xs text-[#666666] mt-1"> Gestion de 16 membres dans 9 stations</p>
         </div>
       </div>
     </div>
@@ -136,7 +136,7 @@ export default function DashboardLayout() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuLabel>Mon Compte</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => navigate('/profile')} data-testid="menu-profile">
                     <User className="mr-2 h-4 w-4" /> Profile
@@ -146,7 +146,7 @@ export default function DashboardLayout() {
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout} className="text-red-600" data-testid="menu-logout">
-                    <LogOut className="mr-2 h-4 w-4" /> Sign out
+                    <LogOut className="mr-2 h-4 w-4" /> Se Déconnecter
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

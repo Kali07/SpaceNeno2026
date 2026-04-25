@@ -169,7 +169,7 @@ export default function MemberDetailPage() {
                       <SelectContent>
                         <SelectItem value="Member">Membre</SelectItem>
                         <SelectItem value="Assistant">Assistant</SelectItem>
-                        <SelectItem value="Leader">Leader</SelectItem>
+                        <SelectItem value="Leader">Responsable</SelectItem>
                       </SelectContent>
                     </Select>
                   ) : (

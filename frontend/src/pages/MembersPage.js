@@ -175,11 +175,11 @@ export default function MembersPage() {
         <Table data-testid="members-table">
           <TableHeader>
             <TableRow className="bg-[#F5F5F5]">
-              <TableHead className="font-semibold text-[#333333]">Member</TableHead>
+              <TableHead className="font-semibold text-[#333333]">Membre</TableHead>
               <TableHead className="font-semibold text-[#333333]">Station</TableHead>
-              <TableHead className="font-semibold text-[#333333] hidden md:table-cell">Generation</TableHead>
-              <TableHead className="font-semibold text-[#333333] hidden lg:table-cell">Role</TableHead>
-              <TableHead className="font-semibold text-[#333333]">Status</TableHead>
+              <TableHead className="font-semibold text-[#333333] hidden md:table-cell">Génération</TableHead>
+              <TableHead className="font-semibold text-[#333333] hidden lg:table-cell">Rôle</TableHead>
+              <TableHead className="font-semibold text-[#333333]">Statut</TableHead>
               <TableHead className="font-semibold text-[#333333] text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -187,7 +187,7 @@ export default function MembersPage() {
             {filteredMembers.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-8 text-[#666666]">
-                  No members found matching your criteria.
+                 Aucun membre trouvé correspondant à vos critères.
                 </TableCell>
               </TableRow>
             ) : (
