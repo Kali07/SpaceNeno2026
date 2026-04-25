@@ -4,15 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Station extends Model
+class Statut extends Model
 {
-    public function zone()
-    {
-        return $this->belongsTo(Zone::class);
-    }
-
     public function users()
     {
         return $this->hasMany(User::class);
     }
+
+    protected $fillable = ['label'];
 }

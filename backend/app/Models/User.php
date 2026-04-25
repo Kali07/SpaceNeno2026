@@ -51,4 +51,19 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
+    
+    public function station()
+    {
+        return $this->belongsTo(Station::class);
+    }
+
+    public function statut()
+    {
+        return $this->belongsTo(Statut::class);
+    }
+
+    public function generation()
+    {
+        return $this->belongsTo(Generation::class);
+    }
 }
