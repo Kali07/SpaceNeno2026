@@ -53,3 +53,29 @@ export const deleteUser = async (id) => {
 
   return res.json();
 };
+
+export const updateProfile = async (data) => {
+    const res = await fetch("http://127.0.0.1:8000/api/profile", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(data),
+    });
+  
+    return res.json();
+  };
+
+  export const updatePassword = async (data) => {
+    const res = await fetch("http://127.0.0.1:8000/api/profile/password", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(data),
+    });
+  
+    return res.json();
+  };

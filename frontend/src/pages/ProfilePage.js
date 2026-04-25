@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Save, Upload, User, Lock, Bell } from 'lucide-react';
+import { updateProfile, updatePassword } from "@/api/userApi";
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -19,8 +20,40 @@ export default function ProfilePage() {
   });
 
   const initials = user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2) || 'AD';
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const update = (key, value) => setProfile({ ...profile, [key]: value });
+
+  const handleSaveProfile = async () => {
+    const res = await updateProfile({
+      name: profile.name,
+      email: profile.email,
+    });
+  
+    console.log(res);
+  
+    // 🔥 IMPORTANT → mettre à jour le context
+    localStorage.setItem("neno_user", JSON.stringify(res));
+    window.location.reload(); // simple pour refresh user
+  };
+
+  const handleChangePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      alert("Les mots de passe ne correspondent pas");
+      return;
+    }
+  
+    const res = await updatePassword({
+      current_password: currentPassword,
+      new_password: newPassword,
+    });
+  
+    console.log(res);
+  
+    alert("Mot de passe mis à jour");
+  };
 
   return (
     <div className="space-y-6" data-testid="profile-page">
@@ -98,8 +131,10 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div className="flex justify-end">
-                    <Button className="bg-[#00AA55] hover:bg-[#009944] text-white" data-testid="save-profile-btn">
-                      <Save className="h-4 w-4 mr-2" /> Enregistrer les Modifications
+                  <Button
+                   onClick={handleSaveProfile}
+                   className="bg-[#00AA55] hover:bg-[#009944] text-white">
+                   <Save className="h-4 w-4 mr-2" /> Enregistrer les Modifications
                     </Button>
                   </div>
                 </CardContent>
@@ -114,21 +149,21 @@ export default function ProfilePage() {
                 <CardContent className="space-y-4">
                   <div className="space-y-1.5">
                     <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Mot de Passe Actuel</Label>
-                    <Input type="password" placeholder="Enter current password" data-testid="current-password" />
+                    <Input type="password" placeholder="Enter current password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Nouveau Mot de Passe</Label>
-                      <Input type="password" placeholder="Enter new password" data-testid="new-password" />
+                      <Input type="password" placeholder="Enter new password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Confirmer le Mot de Passe</Label>
-                      <Input type="password" placeholder="Confirm new password" data-testid="confirm-password" />
+                      <Input type="password" placeholder="Confirm new password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} data-testid="confirm-password" />
                     </div>
                   </div>
                   <div className="flex justify-end">
-                    <Button className="bg-[#0066CC] hover:bg-[#0055AA] text-white" data-testid="update-password-btn">
-                      Changer le Mot de Passe
+                  <Button onClick={handleChangePassword} className="bg-[#0066CC] hover:bg-[#0055AA] text-white" >
+                       Changer le Mot de Passe
                     </Button>
                   </div>
                 </CardContent>
