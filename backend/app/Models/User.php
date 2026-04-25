@@ -22,6 +22,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id',
+        'station_id',
+        
     ];
 
     /**
@@ -65,5 +68,15 @@ class User extends Authenticatable
     public function generation()
     {
         return $this->belongsTo(Generation::class);
+    }
+
+    public function approvalsRequested()
+    {
+        return $this->hasMany(Approval::class, 'requested_by');
+    }
+
+    public function approvalsApproved()
+    {
+        return $this->hasMany(Approval::class, 'approved_by');
     }
 }
