@@ -33,7 +33,7 @@ export default function ZonesPage() {
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <Users className="h-4 w-4 text-[#0066CC]" />
-                      <span className="text-[#333333] font-medium">{zone.memberCount} Members</span>
+                      <span className="text-[#333333] font-medium">{zone.memberCount} Membres</span>
                     </div>
                   </div>
 

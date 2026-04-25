@@ -50,30 +50,30 @@ export default function MembersPage() {
     <div className="space-y-6" data-testid="members-page">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-heading text-[#333333]">Members</h1>
-          <p className="text-sm text-[#666666] mt-1">{mockMembers.length} total members in your community</p>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-heading text-[#333333]">Membres</h1>
+          <p className="text-sm text-[#666666] mt-1">{mockMembers.length} total membres dans votre communauté</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button className="bg-[#0066CC] hover:bg-[#0055AA] text-white" data-testid="add-member-btn">
-              <Plus className="h-4 w-4 mr-2" /> Add Member
+              <Plus className="h-4 w-4 mr-2" /> Ajouter un Membre
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[480px]" data-testid="add-member-dialog">
             <DialogHeader>
               <DialogTitle className="font-heading flex items-center gap-2">
-                <UserPlus className="h-5 w-5 text-[#0066CC]" /> Add New Member
+                <UserPlus className="h-5 w-5 text-[#0066CC]" /> Ajouter un Nouveau Membre
               </DialogTitle>
-              <DialogDescription>Fill in the member details below.</DialogDescription>
+              <DialogDescription>Remplissez les détails du membre ci-dessous.</DialogDescription>
             </DialogHeader>
             <form onSubmit={handleAddMember} className="space-y-4 mt-2">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label className="text-[#333333]">First Name</Label>
+                  <Label className="text-[#333333]">Prénom</Label>
                   <Input value={newMember.firstName} onChange={(e) => setNewMember({ ...newMember, firstName: e.target.value })} required data-testid="new-member-firstname" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[#333333]">Last Name</Label>
+                  <Label className="text-[#333333]">Nom</Label>
                   <Input value={newMember.lastName} onChange={(e) => setNewMember({ ...newMember, lastName: e.target.value })} required data-testid="new-member-lastname" />
                 </div>
               </div>
@@ -82,7 +82,7 @@ export default function MembersPage() {
                 <Input type="email" value={newMember.email} onChange={(e) => setNewMember({ ...newMember, email: e.target.value })} required data-testid="new-member-email" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[#333333]">Phone</Label>
+                <Label className="text-[#333333]">Téléphone</Label>
                 <Input value={newMember.phone} onChange={(e) => setNewMember({ ...newMember, phone: e.target.value })} data-testid="new-member-phone" />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -114,8 +114,8 @@ export default function MembersPage() {
                 </div>
               </div>
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)} data-testid="cancel-add-member-btn">Cancel</Button>
-                <Button type="submit" className="bg-[#00AA55] hover:bg-[#009944] text-white" data-testid="submit-add-member-btn">Add Member</Button>
+                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)} data-testid="cancel-add-member-btn">Annuler</Button>
+                <Button type="submit" className="bg-[#00AA55] hover:bg-[#009944] text-white" data-testid="submit-add-member-btn">Ajouter un Membre</Button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -140,7 +140,7 @@ export default function MembersPage() {
               <SelectValue placeholder="All Stations" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Stations</SelectItem>
+              <SelectItem value="all">Toutes les Stations</SelectItem>
               {mockStations.map(s => (
                 <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
               ))}
@@ -151,9 +151,9 @@ export default function MembersPage() {
               <SelectValue placeholder="All Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="all">Tous les Statuts</SelectItem>
+              <SelectItem value="active">Actif</SelectItem>
+              <SelectItem value="inactive">Inactif</SelectItem>
             </SelectContent>
           </Select>
           <Select value={filterGeneration} onValueChange={setFilterGeneration}>
@@ -161,7 +161,7 @@ export default function MembersPage() {
               <SelectValue placeholder="All Generations" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Generations</SelectItem>
+              <SelectItem value="all">Toutes les Générations</SelectItem>
               <SelectItem value="G1">G1</SelectItem>
               <SelectItem value="G2">G2</SelectItem>
               <SelectItem value="G3">G3</SelectItem>
@@ -234,7 +234,7 @@ export default function MembersPage() {
                       className="text-[#0066CC] hover:text-[#0055AA] hover:bg-[#0066CC]/5"
                       data-testid={`view-member-${member.id}`}
                     >
-                      <Eye className="h-4 w-4 mr-1" /> View
+                      <Eye className="h-4 w-4 mr-1" /> Voir
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -243,7 +243,7 @@ export default function MembersPage() {
           </TableBody>
         </Table>
         <div className="px-4 py-3 border-t border-gray-200 bg-[#F5F5F5]">
-          <p className="text-xs text-[#666666]">Showing {filteredMembers.length} of {mockMembers.length} members</p>
+          <p className="text-xs text-[#666666]">Showing {filteredMembers.length} of {mockMembers.length} membres</p>
         </div>
       </div>
     </div>

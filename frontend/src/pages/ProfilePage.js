@@ -26,7 +26,7 @@ export default function ProfilePage() {
     <div className="space-y-6" data-testid="profile-page">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-heading text-[#333333]">Profile</h1>
-        <p className="text-sm text-[#666666] mt-1">Manage your account settings</p>
+        <p className="text-sm text-[#666666] mt-1">Gerer votre compte et ses paramètres</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -60,7 +60,7 @@ export default function ProfilePage() {
                 <User className="h-4 w-4 mr-1.5" /> General
               </TabsTrigger>
               <TabsTrigger value="security" className="data-[state=active]:bg-[#0066CC]/10 data-[state=active]:text-[#0066CC]" data-testid="tab-security">
-                <Lock className="h-4 w-4 mr-1.5" /> Security
+                <Lock className="h-4 w-4 mr-1.5" /> Sécurité
               </TabsTrigger>
               <TabsTrigger value="notifications" className="data-[state=active]:bg-[#0066CC]/10 data-[state=active]:text-[#0066CC]" data-testid="tab-notifications">
                 <Bell className="h-4 w-4 mr-1.5" /> Notifications
@@ -70,12 +70,12 @@ export default function ProfilePage() {
             <TabsContent value="general">
               <Card className="border border-gray-200 shadow-sm">
                 <CardHeader>
-                  <CardTitle className="text-base font-semibold font-heading text-[#333333]">General Information</CardTitle>
+                  <CardTitle className="text-base font-semibold font-heading text-[#333333]">Informations Générales</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Full Name</Label>
+                      <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Nom Complet</Label>
                       <Input value={profile.name} onChange={(e) => update('name', e.target.value)} data-testid="profile-name" />
                     </div>
                     <div className="space-y-1.5">
@@ -83,7 +83,7 @@ export default function ProfilePage() {
                       <Input value={profile.email} onChange={(e) => update('email', e.target.value)} data-testid="profile-email" />
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Phone</Label>
+                      <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Téléphone</Label>
                       <Input value={profile.phone} onChange={(e) => update('phone', e.target.value)} data-testid="profile-phone" />
                     </div>
                   </div>
@@ -99,7 +99,7 @@ export default function ProfilePage() {
                   </div>
                   <div className="flex justify-end">
                     <Button className="bg-[#00AA55] hover:bg-[#009944] text-white" data-testid="save-profile-btn">
-                      <Save className="h-4 w-4 mr-2" /> Save Changes
+                      <Save className="h-4 w-4 mr-2" /> Enregistrer les Modifications
                     </Button>
                   </div>
                 </CardContent>
@@ -109,26 +109,26 @@ export default function ProfilePage() {
             <TabsContent value="security">
               <Card className="border border-gray-200 shadow-sm">
                 <CardHeader>
-                  <CardTitle className="text-base font-semibold font-heading text-[#333333]">Change Password</CardTitle>
+                  <CardTitle className="text-base font-semibold font-heading text-[#333333]">Changer le Mot de Passe</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-1.5">
-                    <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Current Password</Label>
+                    <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Mot de Passe Actuel</Label>
                     <Input type="password" placeholder="Enter current password" data-testid="current-password" />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">New Password</Label>
+                      <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Nouveau Mot de Passe</Label>
                       <Input type="password" placeholder="Enter new password" data-testid="new-password" />
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Confirm Password</Label>
+                      <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Confirmer le Mot de Passe</Label>
                       <Input type="password" placeholder="Confirm new password" data-testid="confirm-password" />
                     </div>
                   </div>
                   <div className="flex justify-end">
                     <Button className="bg-[#0066CC] hover:bg-[#0055AA] text-white" data-testid="update-password-btn">
-                      Update Password
+                      Changer le Mot de Passe
                     </Button>
                   </div>
                 </CardContent>
@@ -138,10 +138,10 @@ export default function ProfilePage() {
             <TabsContent value="notifications">
               <Card className="border border-gray-200 shadow-sm">
                 <CardHeader>
-                  <CardTitle className="text-base font-semibold font-heading text-[#333333]">Notification Preferences</CardTitle>
+                  <CardTitle className="text-base font-semibold font-heading text-[#333333]">Préférences de Notification</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-[#666666]">Notification settings will be available once the backend is connected.</p>
+                  <p className="text-sm text-[#666666]">Les paramètres de notification seront disponibles une fois le backend connecté.</p>
                 </CardContent>
               </Card>
             </TabsContent>

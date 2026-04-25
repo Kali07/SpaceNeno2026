@@ -28,7 +28,7 @@ export default function DashboardPage() {
     <div className="space-y-6" data-testid="dashboard-page">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-heading text-[#333333]">Dashboard</h1>
-        <p className="text-sm text-[#666666] mt-1">Welcome back. Here's your community overview.</p>
+        <p className="text-sm text-[#666666] mt-1">Bienvenue. Voici un aperçu de votre communauté.</p>
       </div>
 
       {/* Stat Cards */}
@@ -82,7 +82,7 @@ export default function DashboardPage() {
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-semibold font-heading text-[#333333] flex items-center gap-2">
               <Users className="h-4 w-4 text-[#0066CC]" />
-              Recent Members
+              Membres Récents
             </CardTitle>
           </CardHeader>
           <CardContent data-testid="recent-members">
@@ -120,7 +120,7 @@ export default function DashboardPage() {
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-semibold font-heading text-[#333333] flex items-center gap-2">
               <BookOpen className="h-4 w-4 text-[#0066CC]" />
-              Recent Teachings
+              Enseignements Récents
             </CardTitle>
           </CardHeader>
           <CardContent data-testid="recent-teachings">

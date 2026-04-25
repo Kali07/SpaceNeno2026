@@ -25,9 +25,9 @@ export default function MemberDetailPage() {
     return (
       <div className="flex items-center justify-center h-64" data-testid="member-not-found">
         <div className="text-center">
-          <p className="text-lg font-medium text-[#333333]">Member not found</p>
+          <p className="text-lg font-medium text-[#333333]">Membre non trouvé</p>
           <Button variant="outline" className="mt-4" onClick={() => navigate('/members')} data-testid="back-to-members-btn">
-            <ArrowLeft className="h-4 w-4 mr-2" /> Back to Members
+            <ArrowLeft className="h-4 w-4 mr-2" /> Retour aux Membres
           </Button>
         </div>
       </div>
@@ -47,8 +47,8 @@ export default function MemberDetailPage() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold tracking-tight font-heading text-[#333333]">Member Profile</h1>
-          <p className="text-sm text-[#666666]">View and manage member information</p>
+          <h1 className="text-2xl font-bold tracking-tight font-heading text-[#333333]">Profil du Membre</h1>
+          <p className="text-sm text-[#666666]">Voir et gérer les informations du membre</p>
         </div>
         {editing ? (
           <Button onClick={handleSave} className="bg-[#00AA55] hover:bg-[#009944] text-white" data-testid="save-member-btn">
@@ -56,7 +56,7 @@ export default function MemberDetailPage() {
           </Button>
         ) : (
           <Button onClick={() => setEditing(true)} className="bg-[#0066CC] hover:bg-[#0055AA] text-white" data-testid="edit-member-btn">
-            Edit Profile
+            Modifier le Profil
           </Button>
         )}
       </div>
@@ -118,17 +118,17 @@ export default function MemberDetailPage() {
           <Card className="border border-gray-200 shadow-sm">
             <CardHeader>
               <CardTitle className="text-base font-semibold font-heading text-[#333333] flex items-center gap-2">
-                <Shield className="h-4 w-4 text-[#0066CC]" /> Personal Information
+                <Shield className="h-4 w-4 text-[#0066CC]" /> Information Personnelle
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">First Name</Label>
+                  <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Prénom</Label>
                   <Input value={form.firstName} onChange={(e) => update('firstName', e.target.value)} disabled={!editing} className={editing ? '' : 'bg-[#F5F5F5]'} data-testid="detail-firstname" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Last Name</Label>
+                  <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Nom</Label>
                   <Input value={form.lastName} onChange={(e) => update('lastName', e.target.value)} disabled={!editing} className={editing ? '' : 'bg-[#F5F5F5]'} data-testid="detail-lastname" />
                 </div>
                 <div className="space-y-1.5">
@@ -136,7 +136,7 @@ export default function MemberDetailPage() {
                   <Input value={form.email} onChange={(e) => update('email', e.target.value)} disabled={!editing} className={editing ? '' : 'bg-[#F5F5F5]'} data-testid="detail-email" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Phone</Label>
+                  <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Téléphone</Label>
                   <Input value={form.phone} onChange={(e) => update('phone', e.target.value)} disabled={!editing} className={editing ? '' : 'bg-[#F5F5F5]'} data-testid="detail-phone" />
                 </div>
               </div>
@@ -146,7 +146,7 @@ export default function MemberDetailPage() {
           <Card className="border border-gray-200 shadow-sm">
             <CardHeader>
               <CardTitle className="text-base font-semibold font-heading text-[#333333] flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-[#0066CC]" /> Community Assignment
+                <MapPin className="h-4 w-4 text-[#0066CC]" />  Communauté Affiliée
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -167,7 +167,7 @@ export default function MemberDetailPage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Member">Member</SelectItem>
+                        <SelectItem value="Member">Membre</SelectItem>
                         <SelectItem value="Assistant">Assistant</SelectItem>
                         <SelectItem value="Leader">Leader</SelectItem>
                       </SelectContent>

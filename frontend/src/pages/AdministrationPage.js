@@ -24,10 +24,10 @@ export default function AdministrationPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-heading text-[#333333]">Administration</h1>
-          <p className="text-sm text-[#666666] mt-1">Manage user roles and permissions</p>
+          <p className="text-sm text-[#666666] mt-1">Gérer les rôles et les permissions des utilisateurs</p>
         </div>
         <Button className="bg-[#0066CC] hover:bg-[#0055AA] text-white" data-testid="add-admin-btn">
-          <Shield className="h-4 w-4 mr-2" /> Add Administrator
+          <Shield className="h-4 w-4 mr-2" /> Ajouter un Administrateur
         </Button>
       </div>
 
@@ -39,7 +39,7 @@ export default function AdministrationPage() {
               <Users className="h-5 w-5 text-[#0066CC]" />
             </div>
             <div>
-              <p className="text-xs tracking-[0.1em] uppercase font-semibold text-[#666666]">Total Users</p>
+              <p className="text-xs tracking-[0.1em] uppercase font-semibold text-[#666666]">Total Utilisateurs</p>
               <p className="text-2xl font-bold font-heading text-[#333333]">{mockAdminUsers.length}</p>
             </div>
           </CardContent>
@@ -77,10 +77,10 @@ export default function AdministrationPage() {
         <Table data-testid="admin-users-table">
           <TableHeader>
             <TableRow className="bg-[#F5F5F5]">
-              <TableHead className="font-semibold text-[#333333]">User</TableHead>
+              <TableHead className="font-semibold text-[#333333]">Utilisateur</TableHead>
               <TableHead className="font-semibold text-[#333333]">Role</TableHead>
               <TableHead className="font-semibold text-[#333333] hidden md:table-cell">Status</TableHead>
-              <TableHead className="font-semibold text-[#333333] hidden lg:table-cell">Last Login</TableHead>
+              <TableHead className="font-semibold text-[#333333] hidden lg:table-cell">Dernière Connexion</TableHead>
               <TableHead className="font-semibold text-[#333333] text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -124,13 +124,13 @@ export default function AdministrationPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem data-testid={`edit-role-${user.id}`}>
-                          <UserCog className="mr-2 h-4 w-4" /> Edit Role
+                          <UserCog className="mr-2 h-4 w-4" /> Modifier le Role
                         </DropdownMenuItem>
                         <DropdownMenuItem data-testid={`reset-password-${user.id}`}>
-                          <KeyRound className="mr-2 h-4 w-4" /> Reset Password
+                          <KeyRound className="mr-2 h-4 w-4" /> Réinitialiser le Mot de Passe
                         </DropdownMenuItem>
                         <DropdownMenuItem className="text-red-600" data-testid={`remove-user-${user.id}`}>
-                          <Trash2 className="mr-2 h-4 w-4" /> Remove User
+                          <Trash2 className="mr-2 h-4 w-4" /> Supprimer l'Utilisateur
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

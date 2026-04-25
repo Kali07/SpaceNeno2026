@@ -22,8 +22,8 @@ export default function TeachingsPage() {
   return (
     <div className="space-y-6" data-testid="teachings-page">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-heading text-[#333333]">Teachings</h1>
-        <p className="text-sm text-[#666666] mt-1">{mockTeachings.length} teachings recorded</p>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-heading text-[#333333]">Enseignements</h1>
+        <p className="text-sm text-[#666666] mt-1">{mockTeachings.length} enseignements enregistrés</p>
       </div>
 
       {/* Summary Cards */}
@@ -45,7 +45,7 @@ export default function TeachingsPage() {
               <User className="h-5 w-5 text-[#00AA55]" />
             </div>
             <div>
-              <p className="text-xs tracking-[0.1em] uppercase font-semibold text-[#666666]">Speakers</p>
+              <p className="text-xs tracking-[0.1em] uppercase font-semibold text-[#666666]">Conférenciers</p>
               <p className="text-2xl font-bold font-heading text-[#333333]">
                 {new Set(mockTeachings.map(t => t.speaker)).size}
               </p>
@@ -58,7 +58,7 @@ export default function TeachingsPage() {
               <Clock className="h-5 w-5 text-[#FFAA00]" />
             </div>
             <div>
-              <p className="text-xs tracking-[0.1em] uppercase font-semibold text-[#666666]">Topics</p>
+              <p className="text-xs tracking-[0.1em] uppercase font-semibold text-[#666666]">Thèmes</p>
               <p className="text-2xl font-bold font-heading text-[#333333]">
                 {new Set(mockTeachings.map(t => t.topic)).size}
               </p>
@@ -72,11 +72,11 @@ export default function TeachingsPage() {
         <Table data-testid="teachings-table">
           <TableHeader>
             <TableRow className="bg-[#F5F5F5]">
-              <TableHead className="font-semibold text-[#333333]">Teaching</TableHead>
-              <TableHead className="font-semibold text-[#333333] hidden md:table-cell">Speaker</TableHead>
+              <TableHead className="font-semibold text-[#333333]">Enseignement</TableHead>
+              <TableHead className="font-semibold text-[#333333] hidden md:table-cell">Conférencier</TableHead>
               <TableHead className="font-semibold text-[#333333] hidden lg:table-cell">Date</TableHead>
-              <TableHead className="font-semibold text-[#333333]">Topic</TableHead>
-              <TableHead className="font-semibold text-[#333333] hidden md:table-cell">Duration</TableHead>
+              <TableHead className="font-semibold text-[#333333]">Thème</TableHead>
+              <TableHead className="font-semibold text-[#333333] hidden md:table-cell">Durée</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
