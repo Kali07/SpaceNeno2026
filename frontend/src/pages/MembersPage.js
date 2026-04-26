@@ -20,27 +20,30 @@ import {
 import { Search, Plus, UserPlus, Eye } from 'lucide-react';
 import { useEffect } from "react";
 import { createUser, getUsers } from "@/api/userApi"; // vérifie le path
+import { useAuth } from '@/context/AuthContext';
 
-export default function MembersPage() {
+export default function MembersPage() {// composant pour afficher la liste des membres de la communauté, avec des filtres et une fonctionnalité d'ajout de membre
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [filterStation, setFilterStation] = useState('all');
   const [users, setUsers] = useState([]);
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterGeneration, setFilterGeneration] = useState('all');
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [newMember, setNewMember] = useState({ firstName: '', lastName: '', email: '', phone: '', station: '', generation: 'G1' });
- 
-  useEffect(() => {
+  const [dialogOpen, setDialogOpen] = useState(false);// état pour contrôler l'ouverture du dialogue d'ajout de membre
+  const [newMember, setNewMember] = useState({ firstName: '', lastName: '', email: '', phone: '', station: '', generation: 'G1' });// état pour stocker les informations du nouveau membre à ajouter
+  const { user } = useAuth();// récupère l'utilisateur actuellement connecté à partir du contexte d'authentification
+  const canView = !user?.role || !user.role || user.role.level <= user.role.level;// vérifie si l'utilisateur a le droit de voir les détails d'un membre basé sur la hiérarchie des rôles
+
+  useEffect(() => {// effet pour charger les utilisateurs depuis le backend lorsque le composant est monté
     fetchUsers();
   }, []);
-  
-  const fetchUsers = async () => {
+
+  const fetchUsers = async () => {// fonction pour récupérer les utilisateurs depuis le backend
     const data = await getUsers();
     setUsers(data);
   };
 
-  const formattedUsers = users.map(user => ({
+  const formattedUsers = users.map(user => ({// formate les données des utilisateurs pour les adapter à l'affichage dans la table
     id: user.id,
     firstName: user.name,
     lastName: "",
@@ -48,48 +51,50 @@ export default function MembersPage() {
     station: user.station?.label || "N/A",
     stationId: user.station_id,
     generation: "N/A", // Placeholder, replace with actual data if available
-    role: user.role?.label || "membre",
+    role: user.role,          
+   roleLabel: user.role?.label,
     status: "active",
     avatar: null
   }));
 
-  const filteredMembers = useMemo(() => {
-    return formattedUsers.filter((m) => {
+  const filteredMembers = useMemo(() => {// mémorise les membres filtrés pour éviter les recalculs inutiles à chaque rendu
+    return formattedUsers.filter((m) => {// filtre les membres en fonction des critères de recherche, de station, de statut, de génération et de rôle
       const matchSearch = search === '' ||
         `${m.firstName} ${m.lastName}`.toLowerCase().includes(search.toLowerCase()) ||
         m.email.toLowerCase().includes(search.toLowerCase());
       const matchStation = filterStation === 'all' || m.stationId === filterStation;
       const matchStatus = filterStatus === 'all' || m.status === filterStatus;
+      const matchRole = !user?.role || !m.role ? true: m.role.level <= user.role.level;
       const matchGen = filterGeneration === 'all' || m.generation === filterGeneration;
-      return matchSearch && matchStation && matchStatus && matchGen;
+     // console.log("MEMBER:", m);
+      return matchSearch && matchStation && matchStatus && matchGen && matchRole;// retourne true si le membre correspond à tous les critères de filtrage, sinon retourne false
     });
-  }, [formattedUsers, search, filterStation, filterStatus, filterGeneration]);
+  }, [formattedUsers, search, filterStation, filterStatus, filterGeneration]);// dépendances pour recalculer les membres filtrés lorsque l'une de ces valeurs change
 
 
-  const handleAddMember = async (e) => {
+  const handleAddMember = async (e) => {// fonction pour gérer l'ajout d'un nouveau membre lorsque le formulaire est soumis
     e.preventDefault();
-  
-    try {
+
+    try {// envoie une requête au backend pour créer un nouvel utilisateur avec les informations du nouveau membre
       const res = await createUser({
         name: newMember.firstName + " " + newMember.lastName,
         email: newMember.email,
-        password: "123456", // temporaire
-        role_id: form.role || 1, // Assigner un rôle par défaut ou basé sur la sélection
+        password: "123456", // temporaire à changer pour une vraie gestion de mot de passe
+        role_id: newMember.role || 1,
       });
-  
-      console.log("RESPONSE BACKEND :", res);
-  
-      setDialogOpen(false);
-  
-      // recharge la liste
-      fetchUsers();
-  
+
+      console.log("RESPONSE BACKEND :", res);// à supprimer, affiche la réponse du backend dans la console pour vérifier que l'utilisateur a été créé avec succès
+
+      setDialogOpen(false);// réinitialise le formulaire d'ajout de membre
+
+      fetchUsers();// recharge la liste des utilisateurs pour afficher le nouveau membre ajouté
+
     } catch (err) {
-      console.error(err);
+      console.error(err);// affiche une erreur dans la console si la requête échoue
     }
   };
 
-  return (
+  return (// rendu du composant avec la structure de la page, les filtres et la table d'affichage des membres
     <div className="space-y-6" data-testid="members-page">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -128,24 +133,22 @@ export default function MembersPage() {
                 <Label className="text-[#333333]">Téléphone</Label>
                 <Input value={newMember.phone} onChange={(e) => setNewMember({ ...newMember, phone: e.target.value })} data-testid="new-member-phone" />
               </div>
-
               <div className="space-y-1.5">
-                  <Label>Rôle</Label>
-                   <Select
-                         value={newMember.role}
-                           onValueChange={(v) => setNewMember({ ...newMember, role: v })}>
-                       <SelectTrigger>
-                        <SelectValue placeholder="Choisir un rôle" />
-                       </SelectTrigger>
-                     <SelectContent>
-                       <SelectItem value="1">Membre</SelectItem>
-                         <SelectItem value="2">Gestionnaire</SelectItem>
-                         <SelectItem value="3">Admin_provincial</SelectItem>
-                         <SelectItem value="4">Admin_national</SelectItem>
-                         <SelectItem value="5">Admin_fonctionnel</SelectItem>
-                      </SelectContent>
-                         </Select>
-                </div>
+                      <Label>Rôle</Label>
+                          <Select value={newMember.role} onValueChange={(v) => setNewMember({ ...newMember, role: v })}>
+                      <SelectTrigger>
+                     <SelectValue placeholder="Choisir un rôle" />
+                    </SelectTrigger>
+                    <SelectContent>
+                    <SelectItem value="1">Membre</SelectItem>
+                  <SelectItem value="2">Gestionnaire</SelectItem>
+                  <SelectItem value="3">Admin_provincial</SelectItem>
+                  <SelectItem value="4">Admin_national</SelectItem>
+                  <SelectItem value="5">Admin_fonctionnel</SelectItem>
+              
+                 </SelectContent>
+                </Select>
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-[#333333]">Station</Label>
@@ -164,11 +167,9 @@ export default function MembersPage() {
                   <Label className="text-[#333333]">Generation</Label>
                   <Select value={newMember.generation} onValueChange={(v) => setNewMember({ ...newMember, generation: v })}>
                     <SelectTrigger data-testid="new-member-generation">
-
-                      <SelectValue placeholder="Select generation" />
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      
                       <SelectItem value="G1">G1</SelectItem>
                       <SelectItem value="G2">G2</SelectItem>
                       <SelectItem value="G3">G3</SelectItem>
@@ -280,7 +281,7 @@ export default function MembersPage() {
                       {member.generation}
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell text-sm text-[#666666]">{member.role}</TableCell>
+                  <TableCell className="hidden lg:table-cell text-sm text-[#666666]">{member.roleLabel?.label || "N/A"}</TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"
@@ -294,15 +295,10 @@ export default function MembersPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => navigate(`/members/${member.id}`)}
-                      className="text-[#0066CC] hover:text-[#0055AA] hover:bg-[#0066CC]/5"
-                      data-testid={`view-member-${member.id}`}
-                    >
-                      <Eye className="h-4 w-4 mr-1" /> Voir
-                    </Button>
+                  <Button variant="ghost" size="sm" onClick={() => canView && navigate(`/members/${member.id}`)} disabled={!canView} className={`text-[#0066CC] hover:text-[#0055AA] hover:bg-[#0066CC]/5 ${ !canView ? "opacity-50 cursor-not-allowed" : "" }`}
+                     data-testid={`view-member-${member.id}`}>
+                    <Eye className="h-4 w-4 mr-1" /> Voir
+                  </Button>
                   </TableCell>
                 </TableRow>
               ))

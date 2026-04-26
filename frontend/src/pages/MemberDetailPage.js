@@ -14,7 +14,7 @@ import { ArrowLeft, Save, Upload, Mail, Phone, MapPin, Calendar, Shield } from '
 import { getUsers, updateUser, deleteUser } from "../api/userApi";
 import { useEffect } from "react";
 
-export default function MemberDetailPage() {
+export default function MemberDetailPage() {// composant pour afficher les détails d'un membre spécifique et permettre la modification de ses informations
   const { id } = useParams();
   const navigate = useNavigate();
   const [member, setMember] = useState(null);
@@ -22,16 +22,16 @@ export default function MemberDetailPage() {
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({});
 
-  useEffect(() => {
-    const fetchUser = async () => {
+  useEffect(() => {// fonction pour récupérer les informations du membre à partir de son ID et les stocker dans l'état local
+    const fetchUser = async () => {// envoie une requête au backend pour obtenir la liste des utilisateurs
       const data = await getUsers();
   
       const found = data.find(u => u.id == id);
   
-      if (found) {
+      if (found) {// si un utilisateur correspondant à l'ID est trouvé, formate ses informations pour les afficher dans la page de détails du membre
         const parts = found.name.split(" ");
   
-        const formatted = {
+        const formatted = {// formate les informations de l'utilisateur trouvé pour les afficher dans la page de détails du membre
           id: found.id,
           firstName: parts[0] || "",
           lastName: parts.slice(1).join(" ") || "",
@@ -44,15 +44,15 @@ export default function MemberDetailPage() {
           status: "active"
         };
   
-        setMember(formatted);
-        setForm(formatted);
+        setMember(formatted);// stocke les informations formatées du membre dans l'état local pour les afficher dans la page de détails du membre
+        setForm(formatted);// initialise le formulaire de modification avec les informations du membre trouvé
       }
     };
   
-    fetchUser();
+    fetchUser();// appelle la fonction pour récupérer les informations du membre lorsque le composant est monté ou lorsque l'ID change
   }, [id]);
 
-  if (!member) {
+  if (!member) {// si aucun membre n'est trouvé avec l'ID donné, affiche un message d'erreur et un bouton pour revenir à la liste des membres
     return (
       <div className="flex items-center justify-center h-64" data-testid="member-not-found">
         <div className="text-center">
@@ -65,7 +65,7 @@ export default function MemberDetailPage() {
     );
   }
 
-  const handleSave = async () => {
+  const handleSave = async () => {// fonction pour gérer la sauvegarde des modifications apportées aux informations du membre
     const fullName = `${form.firstName} ${form.lastName}`;
   
     await updateUser(form.id, {
@@ -74,20 +74,20 @@ export default function MemberDetailPage() {
       phone: form.phone
     });
   
-    setEditing(false);
+    setEditing(false);// désactive le mode édition après la sauvegarde des modifications
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id) => {// fonction pour gérer la suppression du membre
     if (!confirm("Supprimer ce membre ?")) return;
   
-    await deleteUser(member.id);
+    await deleteUser(member.id);// envoie une requête au backend pour supprimer le membre avec l'ID spécifié
   
-    navigate('/members'); // recharge la liste
+    navigate('/members'); // après la suppression, redirige l'utilisateur vers la liste des membres
   };
 
-  const update = (key, value) => setForm({ ...form, [key]: value });
+  const update = (key, value) => setForm({ ...form, [key]: value });// fonction pour mettre à jour les valeurs du formulaire de modification des informations du membre
 
-  return (
+  return (// rendu du composant avec la structure de la page, les détails du membre et les options de modification et de suppression
     <div className="space-y-6" data-testid="member-detail-page">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => navigate('/members')} data-testid="back-btn">
@@ -114,7 +114,7 @@ export default function MemberDetailPage() {
             variant="destructive"
             onClick={handleDelete}
           >
-            Supprimer Profil
+            Supprimer le Profil
           </Button>
         </div>
 
@@ -222,7 +222,7 @@ export default function MemberDetailPage() {
                 <div className="space-y-1.5">
                   <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Role</Label>
                   
-                    <Input value={form.role} disabled className="bg-[#F5F5F5]" data-testid="detail-role" />
+                    <Input value={form.role?.label || ""} disabled className="bg-[#F5F5F5]" data-testid="detail-role" />
                   
                 </div>
                 <div className="space-y-1.5">

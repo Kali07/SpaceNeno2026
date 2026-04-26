@@ -52,33 +52,38 @@ class User extends Authenticatable
         ];
     }
 
-    public function role()
+    public function role()// relation entre User et Role, un utilisateur appartient à un rôle
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class);// retourne le rôle associé à l'utilisateur
     }
     
-    public function station()
+    public function station()// relation entre User et Station, un utilisateur appartient à une station
     {
-        return $this->belongsTo(Station::class);
+        return $this->belongsTo(Station::class);// retourne la station associée à l'utilisateur
     }
 
-    public function statut()
+    public function statut()// relation entre User et Statut, un utilisateur appartient à un statut
     {
-        return $this->belongsTo(Statut::class);
+        return $this->belongsTo(Statut::class);// retourne le statut associé à l'utilisateur
     }
 
-    public function generation()
+    public function generation()//  relation entre User et Generation, un utilisateur appartient à une génération
     {
-        return $this->belongsTo(Generation::class);
+        return $this->belongsTo(Generation::class);// retourne la génération associée à l'utilisateur
     }
 
-    public function approvalsRequested()
+    public function approvalsRequested()// relation entre User et Approval, un utilisateur peut faire plusieurs demandes d'approbation
     {
-        return $this->hasMany(Approval::class, 'requested_by');
+        return $this->hasMany(Approval::class, 'requested_by');// retourne les demandes d'approbation faites par l'utilisateur
     }
 
-    public function approvalsApproved()
+    public function approvalsApproved()// relation entre User et Approval, un utilisateur peut approuver plusieurs demandes d'approbation
     {
-        return $this->hasMany(Approval::class, 'approved_by');
+        return $this->hasMany(Approval::class, 'approved_by');// retourne les demandes d'approbation approuvées par l'utilisateur
+    }
+
+    public function canManageUser($targetUser) // fonction pour vérifier si l'utilisateur actuel a le droit de gérer un autre utilisateur basé sur la hiérarchie des rôles 
+    {
+        return $this->role && $targetUser->role  ? $this->role->level > $targetUser->role->level : false;// retourne true si l'utilisateur actuel a un rôle supérieur à celui de l'utilisateur ciblé, sinon retourne false
     }
 }

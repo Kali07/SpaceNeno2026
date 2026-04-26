@@ -86,7 +86,7 @@ export default function AdministrationPage() {
           </TableHeader>
           <TableBody>
             {mockAdminUsers.map((user) => {
-              const colors = roleColors[user.role] || roleColors.Moderator;
+              const colors = roleColors[user.role?.label] || roleColors.Moderator;
               return (
                 <TableRow key={user.id} className="hover:bg-gray-50" data-testid={`admin-row-${user.id}`}>
                   <TableCell>
@@ -97,7 +97,7 @@ export default function AdministrationPage() {
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className={`text-xs font-medium ${colors.bg} ${colors.text} ${colors.border}`}>
-                      {user.role}
+                      {user.role?.label}
                     </Badge>
                   </TableCell>
                   <TableCell className="hidden md:table-cell">

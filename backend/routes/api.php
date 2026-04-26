@@ -5,20 +5,25 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ApprovalController;
 use App\Http\Controllers\Api\AuthController;
 
+// 🔐 AUTH
+Route::post('/login', [AuthController::class, 'login']);// route pour la connexion des utilisateurs en envoyant une requête POST au backend avec les informations d'identification de l'utilisateur, et en appelant la méthode login du AuthController pour authentifier l'utilisateur et générer un token d'authentification
 
-Route::get('/approvals', [ApprovalController::class, 'index']);
-Route::get('/approvals/pending', [ApprovalController::class, 'pending']);
-Route::post('/approvals/{id}/approve', [ApprovalController::class, 'approve']);
-Route::post('/approvals/{id}/reject', [ApprovalController::class, 'reject']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
-Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('users', UserController::class);
+Route::middleware('auth:sanctum')->group(function () {// groupe de routes protégées par le middleware d'authentification Sanctum, qui nécessite que l'utilisateur soit authentifié pour accéder à ces routes
+
+    Route::post('/logout', [AuthController::class, 'logout']);// route pour la déconnexion des utilisateurs en envoyant une requête POST au backend, et en appelant la méthode logout du AuthController pour supprimer tous les tokens d'authentification associés à l'utilisateur actuellement connecté et le déconnecter
+
+    // USERS
+    Route::apiResource('users', UserController::class);// routes pour les opérations CRUD sur les utilisateurs en utilisant un contrôleur de ressources API, qui génère automatiquement les routes pour les méthodes index, store, show, update et destroy du UserController pour gérer les utilisateurs
+
+    // PROFILE
+    Route::middleware('auth:sanctum')->group(function () {// groupe de routes protégées par le middleware d'authentification Sanctum, qui nécessite que l'utilisateur soit authentifié pour accéder à ces routes
+        Route::put('/profile', [UserController::class, 'updateProfile']);// route pour mettre à jour les informations du profil de l'utilisateur connecté en envoyant une requête PUT au backend, et en appelant la méthode updateProfile du UserController pour mettre à jour les informations du profil de l'utilisateur connecté
+        Route::put('/profile/password', [UserController::class, 'updatePassword']);// route pour mettre à jour le mot de passe de l'utilisateur connecté en envoyant une requête PUT au backend, et en appelant la méthode updatePassword du UserController pour mettre à jour le mot de passe de l'utilisateur connecté
+    });
+
+    // APPROVALS
+    Route::get('/approvals', [ApprovalController::class, 'index']);// route pour voir toutes les demandes d'approbation en envoyant une requête GET au backend, et en appelant la méthode index du ApprovalController pour récupérer toutes les demandes d'approbation avec les relations de demandeur et d'approbateur
+    Route::get('/approvals/pending', [ApprovalController::class, 'pending']);// route pour voir uniquement les demandes d'approbation en attente en envoyant une requête GET au backend, et en appelant la méthode pending du ApprovalController pour récupérer uniquement les demandes d'approbation avec le statut "pending" et la relation de demandeur
+    Route::post('/approvals/{id}/approve', [ApprovalController::class, 'approve']);//route pour approuver une demande d'approbation en envoyant une requête POST au backend avec l'ID de la demande d'approbation dans l'URL, et en appelant la méthode approve du ApprovalController pour approuver la demande d'approbation en vérifiant la hiérarchie des rôles, en exécutant l'action associée à la demande d'approbation, et en mettant à jour le statut de la demande d'approbation
+    Route::post('/approvals/{id}/reject', [ApprovalController::class, 'reject']);// route pour refuser une demande d'approbation en envoyant une requête POST au backend avec l'ID de la demande d'approbation dans l'URL, et en appelant la méthode reject du ApprovalController pour refuser la demande d'approbation en vérifiant la hiérarchie des rôles et en mettant à jour le statut de la demande d'approbation
 });
-Route::middleware('auth:sanctum')->group(function () {
-
-    Route::put('/profile', [UserController::class, 'updateProfile']);
-    Route::put('/profile/password', [UserController::class, 'updatePassword']);
-
-});
-Route::apiResource('users', UserController::class);

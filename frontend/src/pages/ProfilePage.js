@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Save, Upload, User, Lock, Bell } from 'lucide-react';
 import { updateProfile, updatePassword } from "@/api/userApi";
 
-export default function ProfilePage() {
+export default function ProfilePage() {// composant de la page de profil utilisateur, permettant de visualiser et de modifier les informations du compte, ainsi que de changer le mot de passe et les préférences de notification
   const { user } = useAuth();
   const [profile, setProfile] = useState({
     name: user?.name || '',
@@ -26,7 +26,7 @@ export default function ProfilePage() {
 
   const update = (key, value) => setProfile({ ...profile, [key]: value });
 
-  const handleSaveProfile = async () => {
+  const handleSaveProfile = async () => {// fonction pour gérer la sauvegarde des modifications apportées aux informations du profil de l'utilisateur
     const res = await updateProfile({
       name: profile.name,
       email: profile.email,
@@ -34,18 +34,18 @@ export default function ProfilePage() {
   
     console.log(res);
   
-    // 🔥 IMPORTANT → mettre à jour le context
+    //  IMPORTANT → mettre à jour le context
     localStorage.setItem("neno_user", JSON.stringify(res));
     window.location.reload(); // simple pour refresh user
   };
 
-  const handleChangePassword = async () => {
+  const handleChangePassword = async () => {// fonction pour gérer le changement de mot de passe de l'utilisateur
     if (newPassword !== confirmPassword) {
       alert("Les mots de passe ne correspondent pas");
       return;
     }
   
-    const res = await updatePassword({
+    const res = await updatePassword({// envoie une requête au backend pour mettre à jour le mot de passe de l'utilisateur avec les valeurs du mot de passe actuel, du nouveau mot de passe et de la confirmation du nouveau mot de passe
       current_password: currentPassword,
       new_password: newPassword,
     });
@@ -55,7 +55,7 @@ export default function ProfilePage() {
     alert("Mot de passe mis à jour");
   };
 
-  return (
+  return (// rendu du composant avec la structure de la page, les détails du profil de l'utilisateur et les options de modification du profil, de changement de mot de passe et de gestion des notifications
     <div className="space-y-6" data-testid="profile-page">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-heading text-[#333333]">Profile</h1>
@@ -79,7 +79,7 @@ export default function ProfilePage() {
                 </label>
               </div>
               <h2 className="mt-4 text-lg font-bold font-heading text-[#333333]">{user?.name}</h2>
-              <p className="text-sm text-[#666666]">{user?.role}</p>
+              <p className="text-sm text-[#666666]">{user?.role?.label}</p>
               <p className="text-xs text-[#0066CC] mt-1">{user?.email}</p>
             </div>
           </CardContent>

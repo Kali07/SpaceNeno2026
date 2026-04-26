@@ -130,7 +130,7 @@ export default function DashboardLayout() {
                     </Avatar>
                     <div className="hidden md:block text-left">
                       <p className="text-sm font-medium text-[#333333]">{user?.name}</p>
-                      <p className="text-xs text-[#666666]">{user?.role}</p>
+                      <p className="text-xs text-[#666666]">{user?.role?.label}</p>
                     </div>
                     <ChevronRight className="h-4 w-4 text-[#666666] hidden md:block" />
                   </Button>

@@ -33,7 +33,7 @@ export default function LoginPage() {
     setLoading(false);
   };*/
 
-
+/*
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -44,6 +44,63 @@ export default function LoginPage() {
   
     if (result.success) {
       navigate('/dashboard');
+    } else {
+      setError(result.error);
+    }
+  
+    setLoading(false);
+  };*/
+/*
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    setError('');
+    setLoading(true);
+  
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        throw new Error(data.error || "Erreur login");
+      }
+  
+      //  stocker token
+      localStorage.setItem("token", data.token);
+  
+      //  stocker user (AVEC ROLE)
+     // localStorage.setItem("neno_user", JSON.stringify(data.user));
+      localStorage.setItem("user", JSON.stringify(data.user));
+  
+      navigate('/dashboard');
+  
+    } catch (err) {
+      setError(err.message);
+    }
+  
+    setLoading(false);
+  };*/
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    setError('');
+    setLoading(true);
+  
+    const result = await login(email, password);
+  
+    if (result.success) {
+      navigate('/dashboard'); // ✅ maintenant ça marche
     } else {
       setError(result.error);
     }
