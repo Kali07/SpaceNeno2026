@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { LOGIN_BG } from '@/data/mockData';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
-export default function LoginPage() {
+export default function LoginPage() {// composant de page de connexion qui gère l'état des champs de saisie, les messages d'erreur, l'indicateur de chargement, et utilise le contexte d'authentification pour effectuer la connexion et la navigation vers le tableau de bord en cas de succès
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -16,100 +16,25 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  /*const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    // Simulate network delay
-    await new Promise(r => setTimeout(r, 600));
-
-    const result = login(email, password);
-    if (result.success) {
-      navigate('/dashboard');
-    } else {
-      setError(result.error);
-    }
-    setLoading(false);
-  };*/
-
-/*
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {// fonction de gestion de la soumission du formulaire de connexion qui empêche le comportement par défaut du formulaire, réinitialise les messages d'erreur, affiche un indicateur de chargement, appelle la fonction de connexion du contexte d'authentification avec les informations d'identification fournies, gère la navigation vers le tableau de bord en cas de succès ou affiche un message d'erreur en cas d'échec, et réinitialise l'état de chargement à la fin du processus
     e.preventDefault();
   
-    setError('');
-    setLoading(true);
+    setError('');// réinitialise les messages d'erreur avant de tenter la connexion
+    setLoading(true);// affiche un indicateur de chargement pendant le processus de connexion
   
     const result = await login(email, password);
   
     if (result.success) {
-      navigate('/dashboard');
+      navigate('/dashboard'); // navigue vers le tableau de bord en cas de succès de la connexion
     } else {
-      setError(result.error);
+      setError(result.error);// affiche un message d'erreur en cas d'échec de la connexion, avec le message d'erreur fourni par le backend ou un message générique
     }
   
-    setLoading(false);
-  };*/
-/*
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    setError('');
-    setLoading(true);
-  
-    try {
-      const res = await fetch("http://127.0.0.1:8000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
-  
-      const data = await res.json();
-  
-      if (!res.ok) {
-        throw new Error(data.error || "Erreur login");
-      }
-  
-      //  stocker token
-      localStorage.setItem("token", data.token);
-  
-      //  stocker user (AVEC ROLE)
-     // localStorage.setItem("neno_user", JSON.stringify(data.user));
-      localStorage.setItem("user", JSON.stringify(data.user));
-  
-      navigate('/dashboard');
-  
-    } catch (err) {
-      setError(err.message);
-    }
-  
-    setLoading(false);
-  };*/
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    setError('');
-    setLoading(true);
-  
-    const result = await login(email, password);
-  
-    if (result.success) {
-      navigate('/dashboard'); // ✅ maintenant ça marche
-    } else {
-      setError(result.error);
-    }
-  
-    setLoading(false);
+    setLoading(false);// réinitialise l'état de chargement à la fin du processus de connexion, que ce soit en cas de succès ou d'échec, pour permettre à l'utilisateur de réessayer la connexion si nécessaire
   };
 
 
-  return (
+  return (// rendu de la page de connexion avec une mise en page responsive, un formulaire de connexion avec des champs de saisie pour l'email et le mot de passe, un bouton de soumission avec un indicateur de chargement, et des messages d'erreur affichés en cas d'échec de la connexion, ainsi qu'une section de branding sur la gauche pour les écrans plus grands
     <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-2" data-testid="login-page">
       {/* Left - Branding */}
       <div
