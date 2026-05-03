@@ -12,15 +12,25 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('approvals', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('requested_by')->constrained('users');
-            $table->foreignId('approved_by')->nullable()->constrained('users');
-    
-            $table->string('action'); // create_user, create_station, etc
-            $table->json('data'); // données de la requête
-    
-            $table->string('status')->default('pending'); // pending, approved, rejected
-            $table->timestamps();
+             $table->id();
+
+             $table->foreignId('requested_by')
+                 ->constrained('users')
+                   ->cascadeOnDelete();
+
+             $table->foreignId('approved_by')
+                 ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+              $table->string('action');
+               $table->json('data');
+
+             $table->string('status')
+                ->default('pending')
+                ->index();
+
+             $table->timestamps();
         });
     }
 

@@ -19,8 +19,9 @@ import {
 } from '@/components/ui/dialog';
 import { Search, Plus, UserPlus, Eye } from 'lucide-react';
 import { useEffect } from "react";
-import { createUser, getUsers } from "@/api/userApi"; // vérifie le path
+import { createUser, getUsers} from "@/api/userApi"; // vérifie le path
 import { useAuth } from '@/context/AuthContext';
+import { get } from 'react-hook-form';
 
 export default function MembersPage() {// composant pour afficher la liste des membres de la communauté, avec des filtres et une fonctionnalité d'ajout de membre
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function MembersPage() {// composant pour afficher la liste des m
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterGeneration, setFilterGeneration] = useState('all');
   const [dialogOpen, setDialogOpen] = useState(false);// état pour contrôler l'ouverture du dialogue d'ajout de membre
-  const [newMember, setNewMember] = useState({ firstName: '', lastName: '', email: '', phone: '', station: '', generation: 'G1' });// état pour stocker les informations du nouveau membre à ajouter
+  const [newMember, setNewMember] = useState({ firstName: '', lastName: '', email: '', phone: '', station: '', generation: '' });// état pour stocker les informations du nouveau membre à ajouter
   const { user } = useAuth();// récupère l'utilisateur actuellement connecté à partir du contexte d'authentification
   const canView = !user?.role || !user.role || user.role.level <= user.role.level;// vérifie si l'utilisateur a le droit de voir les détails d'un membre basé sur la hiérarchie des rôles
 
@@ -69,7 +70,7 @@ export default function MembersPage() {// composant pour afficher la liste des m
      // console.log("MEMBER:", m);
       return matchSearch && matchStation && matchStatus && matchGen && matchRole;// retourne true si le membre correspond à tous les critères de filtrage, sinon retourne false
     });
-  }, [formattedUsers, search, filterStation, filterStatus, filterGeneration]);// dépendances pour recalculer les membres filtrés lorsque l'une de ces valeurs change
+  }, [formattedUsers, search, filterStation, filterStatus, filterGeneration, user]);// dépendances pour recalculer les membres filtrés lorsque l'une de ces valeurs change
 
 
   const handleAddMember = async (e) => {// fonction pour gérer l'ajout d'un nouveau membre lorsque le formulaire est soumis
@@ -295,10 +296,12 @@ export default function MembersPage() {// composant pour afficher la liste des m
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
+                  {(!user?.role || !member.role || member.role.level < user.role.level) && (
                   <Button variant="ghost" size="sm" onClick={() => canView && navigate(`/members/${member.id}`)} disabled={!canView} className={`text-[#0066CC] hover:text-[#0055AA] hover:bg-[#0066CC]/5 ${ !canView ? "opacity-50 cursor-not-allowed" : "" }`}
                      data-testid={`view-member-${member.id}`}>
                     <Eye className="h-4 w-4 mr-1" /> Voir
                   </Button>
+                )}
                   </TableCell>
                 </TableRow>
               ))

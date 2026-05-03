@@ -79,3 +79,25 @@ export const updateProfile = async (data) => {// fonction pour mettre à jour le
   
     return res.json();
   };
+
+/*
+
+  fetch('http://127.0.0.1:8000/api/test', {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+      Accept: 'application/json'
+    }
+  })
+  .then(res => res.json())
+  .then(console.log)*/
+
+  //console.log("aaaTOKEN =", getToken());
+/*
+  fetch(`${API_URL}/users`, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+      Accept: 'application/json'
+    }
+  })
+  .then(res => res.json())
+  .then(data => console.log("DATA =", data));*/

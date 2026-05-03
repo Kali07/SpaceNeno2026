@@ -22,8 +22,27 @@ Route::middleware('auth:sanctum')->group(function () {// groupe de routes proté
     });
 
     // APPROVALS
+   // Route::middleware('auth:sanctum')->get('/approvals', [UserController::class, 'approvals']);// route pour voir les demandes d'approbation de l'utilisateur connecté en envoyant une requête GET au backend, et en appelant la méthode approvals du UserController pour récupérer les demandes d'approbation faites par l'utilisateur connecté avec les relations de demandeur et d'approbateur
     Route::get('/approvals', [ApprovalController::class, 'index']);// route pour voir toutes les demandes d'approbation en envoyant une requête GET au backend, et en appelant la méthode index du ApprovalController pour récupérer toutes les demandes d'approbation avec les relations de demandeur et d'approbateur
     Route::get('/approvals/pending', [ApprovalController::class, 'pending']);// route pour voir uniquement les demandes d'approbation en attente en envoyant une requête GET au backend, et en appelant la méthode pending du ApprovalController pour récupérer uniquement les demandes d'approbation avec le statut "pending" et la relation de demandeur
     Route::post('/approvals/{id}/approve', [ApprovalController::class, 'approve']);//route pour approuver une demande d'approbation en envoyant une requête POST au backend avec l'ID de la demande d'approbation dans l'URL, et en appelant la méthode approve du ApprovalController pour approuver la demande d'approbation en vérifiant la hiérarchie des rôles, en exécutant l'action associée à la demande d'approbation, et en mettant à jour le statut de la demande d'approbation
     Route::post('/approvals/{id}/reject', [ApprovalController::class, 'reject']);// route pour refuser une demande d'approbation en envoyant une requête POST au backend avec l'ID de la demande d'approbation dans l'URL, et en appelant la méthode reject du ApprovalController pour refuser la demande d'approbation en vérifiant la hiérarchie des rôles et en mettant à jour le statut de la demande d'approbation
 });
+
+//Route::get('/approvals', [ApprovalController::class, 'index']);
+//Route::middleware('auth:sanctum')->get('/test', [UserController::class, 'test']);
+//Route::get('/test', [UserController::class, 'test']);
+
+/*Route::get('/test', function () {
+    return [
+        'token' => request()->bearerToken(),
+        'user' => request()->user(),
+    ];
+});
+
+//dd(request()->headers->all());
+
+dd([
+    'token' => request()->bearerToken(),
+    'headers' => request()->headers->all()
+]);*/

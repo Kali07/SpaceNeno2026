@@ -6,6 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Approval extends Model
 {
+
+    protected $fillable = [
+        'requested_by',
+        'action',
+        'data',
+        'status',
+        'approved_by'
+    ];
     public function requester()
     {
         return $this->belongsTo(User::class, 'requested_by');

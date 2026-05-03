@@ -12,6 +12,7 @@ import ZonesPage from "@/pages/ZonesPage";
 import TeachingsPage from "@/pages/TeachingsPage";
 import AdministrationPage from "@/pages/AdministrationPage";
 import ProfilePage from "@/pages/ProfilePage";
+import ApprovalPage from "@/pages/ApprovalPage";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -48,6 +49,7 @@ function App() {
               <Route path="teachings" element={<TeachingsPage />} />
               <Route path="administration" element={<AdministrationPage />} />
               <Route path="profile" element={<ProfilePage />} />
+              <Route path="approval" element={<ApprovalPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
