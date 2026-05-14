@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ApprovalController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ContinentController;
+use App\Http\Controllers\Api\PaysController;
+use App\Http\Controllers\Api\VilleController;
+use App\Http\Controllers\Api\StationController;
 
 // 🔐 AUTH
 Route::post('/login', [AuthController::class, 'login']);// route pour la connexion des utilisateurs en envoyant une requête POST au backend avec les informations d'identification de l'utilisateur, et en appelant la méthode login du AuthController pour authentifier l'utilisateur et générer un token d'authentification
@@ -27,22 +31,39 @@ Route::middleware('auth:sanctum')->group(function () {// groupe de routes proté
     Route::get('/approvals/pending', [ApprovalController::class, 'pending']);// route pour voir uniquement les demandes d'approbation en attente en envoyant une requête GET au backend, et en appelant la méthode pending du ApprovalController pour récupérer uniquement les demandes d'approbation avec le statut "pending" et la relation de demandeur
     Route::post('/approvals/{id}/approve', [ApprovalController::class, 'approve']);//route pour approuver une demande d'approbation en envoyant une requête POST au backend avec l'ID de la demande d'approbation dans l'URL, et en appelant la méthode approve du ApprovalController pour approuver la demande d'approbation en vérifiant la hiérarchie des rôles, en exécutant l'action associée à la demande d'approbation, et en mettant à jour le statut de la demande d'approbation
     Route::post('/approvals/{id}/reject', [ApprovalController::class, 'reject']);// route pour refuser une demande d'approbation en envoyant une requête POST au backend avec l'ID de la demande d'approbation dans l'URL, et en appelant la méthode reject du ApprovalController pour refuser la demande d'approbation en vérifiant la hiérarchie des rôles et en mettant à jour le statut de la demande d'approbation
-});
 
-//Route::get('/approvals', [ApprovalController::class, 'index']);
-//Route::middleware('auth:sanctum')->get('/test', [UserController::class, 'test']);
-//Route::get('/test', [UserController::class, 'test']);
+    // CONTINENTS
 
-/*Route::get('/test', function () {
-    return [
-        'token' => request()->bearerToken(),
-        'user' => request()->user(),
-    ];
-});
+Route::get('/continents', [ContinentController::class, 'index']);
+Route::post('/continents', [ContinentController::class, 'store']);
+Route::put('/continents/{id}', [ContinentController::class, 'update']);
+Route::delete('/continents/{id}', [ContinentController::class, 'destroy']);
 
-//dd(request()->headers->all());
 
-dd([
-    'token' => request()->bearerToken(),
-    'headers' => request()->headers->all()
-]);*/
+// PAYS
+
+Route::get('/pays', [PaysController::class, 'index']);
+Route::post('/pays', [PaysController::class, 'store']);
+Route::put('/pays/{id}', [PaysController::class, 'update']);
+Route::delete('/pays/{id}', [PaysController::class, 'destroy']);
+
+// VILLES
+
+
+Route::get('/villes', [VilleController::class, 'index']);
+Route::post('/villes', [VilleController::class, 'store']);
+Route::put('/villes/{id}', [VilleController::class, 'update']);
+Route::delete('/villes/{id}', [VilleController::class, 'destroy']);
+
+// STATIONS
+
+Route::get('/stations', [StationController::class, 'index']);
+Route::post('/stations', [StationController::class, 'store']);
+Route::put('/stations/{id}', [StationController::class, 'update']);
+Route::delete('/stations/{id}', [StationController::class, 'destroy']);
+
+
+
+
+    });
+

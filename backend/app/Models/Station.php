@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Station extends Model
 {
-    public function zone()
+
+protected $fillable = ['name', 'ville_id'];
+
+    public function ville()
     {
-        return $this->belongsTo(Zone::class);
+        return $this->belongsTo(Ville::class);
     }
 
     public function users()

@@ -8,11 +8,13 @@ import DashboardPage from "@/pages/DashboardPage";
 import MembersPage from "@/pages/MembersPage";
 import MemberDetailPage from "@/pages/MemberDetailPage";
 import StationsPage from "@/pages/StationsPage";
-import ZonesPage from "@/pages/ZonesPage";
+import VillesPage from "@/pages/VillesPage";
 import TeachingsPage from "@/pages/TeachingsPage";
 import AdministrationPage from "@/pages/AdministrationPage";
 import ProfilePage from "@/pages/ProfilePage";
 import ApprovalPage from "@/pages/ApprovalPage";
+import ContinentsPage from "@/pages/ContinentPage";
+import PaysPage from "@/pages/PaysPage";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -45,11 +47,13 @@ function App() {
               <Route path="members" element={<MembersPage />} />
               <Route path="members/:id" element={<MemberDetailPage />} />
               <Route path="stations" element={<StationsPage />} />
-              <Route path="zones" element={<ZonesPage />} />
+              <Route path="villes" element={<VillesPage />} />
               <Route path="teachings" element={<TeachingsPage />} />
               <Route path="administration" element={<AdministrationPage />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="approval" element={<ApprovalPage />} />
+              <Route path="continents" element={<ContinentsPage />} />
+              <Route path="pays" element={<PaysPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

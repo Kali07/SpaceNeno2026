@@ -40,7 +40,7 @@ export default function MemberDetailPage() {// composant pour afficher les déta
           role: found.role?.label || "membre",
           generation: "G1",
           station: "N/A",
-          zone: "N/A",
+          ville: "N/A",
           status: "active"
         };
   
@@ -216,8 +216,8 @@ export default function MemberDetailPage() {// composant pour afficher les déta
                   <Input value={form.station} disabled className="bg-[#F5F5F5]" data-testid="detail-station" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Zone</Label>
-                  <Input value={form.zone} disabled className="bg-[#F5F5F5]" data-testid="detail-zone" />
+                  <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Ville</Label>
+                  <Input value={form.ville} disabled className="bg-[#F5F5F5]" data-testid="detail-ville" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-[#666666] text-xs uppercase tracking-wide font-semibold">Role</Label>

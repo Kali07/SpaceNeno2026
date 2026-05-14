@@ -23,7 +23,7 @@
     "Edit Profile button toggles edit mode on member detail page",
     "Back button on member detail navigates back to members list",
     "Stations page shows 9 station cards in grid layout",
-    "Zones page shows 4 zone cards",
+    "Villes page shows 4 ville cards",
     "Teachings page shows 8 teachings in table format",
     "Administration page shows 4 admin users table with dropdown actions",
     "Profile page shows tabs (General, Security, Notifications)",

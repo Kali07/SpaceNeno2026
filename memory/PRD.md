@@ -1,7 +1,7 @@
 # NENO SPACE - Community Management Dashboard
 
 ## Original Problem Statement
-Build a modern React interface for a community management internal platform with login, dashboard, sidebar navigation, and multiple pages (Members, Stations, Zones, Teachings, Administration, Profile).
+Build a modern React interface for a community management internal platform with login, dashboard, sidebar navigation, and multiple pages (Members, Stations, Villes, Teachings, Administration, Profile).
 
 ## Architecture
 - **Frontend-only** (React + Tailwind CSS + Shadcn UI)
@@ -17,7 +17,7 @@ Build a modern React interface for a community management internal platform with
 - Login page with split-screen layout
 - Dashboard with stat cards
 - Members CRUD with search/filter/table
-- Stations, Zones, Teachings listing
+- Stations, Villes, Teachings listing
 - Administration user management
 - Profile settings
 
@@ -27,7 +27,7 @@ Build a modern React interface for a community management internal platform with
 - Members: full table with search, station/status/generation filters, Add Member dialog
 - Member Detail: profile view + editable fields + file upload UI
 - Stations: 9 station cards with status badges
-- Zones: 4 zone cards with station/member counts
+- Villes: 4 villes cards with station/member counts
 - Teachings: table with 8 teachings + topic badges + summary cards
 - Administration: admin user table with role badges + dropdown actions
 - Profile: tabs (General/Security/Notifications) + avatar upload UI
@@ -42,7 +42,7 @@ Build a modern React interface for a community management internal platform with
 ### P0 (Next Phase)
 - Connect to Laravel REST API backend
 - Real authentication (JWT)
-- Real CRUD operations for members, stations, zones
+- Real CRUD operations for members, stations, villes
 
 ### P1
 - File upload functionality (images for member profiles)

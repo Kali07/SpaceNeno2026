@@ -17,7 +17,7 @@ const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/members', label: 'Membres', icon: Users },
   { to: '/stations', label: 'Stations', icon: MapPin },
-  { to: '/zones', label: 'Zones', icon: Map },
+  { to: '/villes', label: 'Villes', icon: Map },
   { to: '/teachings', label: 'Enseignements', icon: BookOpen },
   { to: '/administration', label: 'Administration', icon: Settings },
   { to: '/profile', label: 'Profile', icon: User },
