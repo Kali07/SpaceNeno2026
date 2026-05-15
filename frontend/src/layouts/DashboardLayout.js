@@ -19,6 +19,7 @@ const navItems = [
   { to: '/stations', label: 'Stations', icon: MapPin },
   { to: '/villes', label: 'Villes', icon: Map },
   { to: '/teachings', label: 'Enseignements', icon: BookOpen },
+  { to: '/approval', label: 'Autorisation', icon: X },
   { to: '/administration', label: 'Administration', icon: Settings },
   { to: '/profile', label: 'Profile', icon: User },
 ];

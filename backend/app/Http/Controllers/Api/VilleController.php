@@ -12,7 +12,7 @@ class VilleController extends Controller
     public function index()
     {
         return response()->json(
-            Ville::with('pays')->get()
+            Ville::with('pays')->access()->get()
         );
     }
 

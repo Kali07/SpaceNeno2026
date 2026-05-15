@@ -12,7 +12,7 @@ class PaysController extends Controller
     public function index()
     {
         return response()->json(
-            Pays::with('continent')->get()
+            Pays::with('continent')->access()->get()
         );
     }
 

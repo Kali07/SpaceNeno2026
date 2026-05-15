@@ -5,14 +5,20 @@ namespace App\Http\Controllers\Api;
 use App\Models\Station;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class StationController extends Controller
 {
     // 🔹 LISTE
     public function index()
     {
-        return response()->json(
+        /*return response()->json(
             Station::with('ville')->get()
+        );*/
+
+        $user = Auth::user();
+
+        return response()->json(Station::with('ville')->access()->get()
         );
     }
 

@@ -22,9 +22,10 @@ class UserController extends Controller
     {
 
           //return User::with('role')->get();
-        return User::with('role', 'station', 'generation')->get();// retourne tous les utilisateurs avec leur rôle associé
+        return User::with('role', 'station', 'generation')->access()->get();// retourne tous les utilisateurs avec leur rôle associé
     }
 
+    //CREATE
         public function store(Request $request)// function store pour créer un nouvel utilisateur 
     {
       $currentUser = Auth::user();// récupère l'utilisateur actuellement connecté
@@ -329,5 +330,3 @@ public function show($id)// function show pour récupérer les détails d'un uti
 }
 
 }
-
-

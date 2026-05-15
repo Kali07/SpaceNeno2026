@@ -9,7 +9,7 @@ const statCards = [
   { title: 'Active Members', value: dashboardStats.activeMembers, icon: UserCheck, color: '#00AA55', bgColor: '#00AA55/10' },
   { title: 'Inactive Members', value: dashboardStats.inactiveMembers, icon: UserX, color: '#FFAA00', bgColor: '#FFAA00/10' },
   { title: 'Stations', value: dashboardStats.totalStations, icon: MapPin, color: '#0066CC', bgColor: '#0066CC/10' },
-  { title: 'Villes', value: dashboardStats.totalVilles, icon: Map, color: '#00AA55', bgColor: '#00AA55/10' },
+  { title: 'Zones', value: dashboardStats.totalZones, icon: Map, color: '#00AA55', bgColor: '#00AA55/10' },
   { title: 'Teachings', value: dashboardStats.totalTeachings, icon: BookOpen, color: '#FFAA00', bgColor: '#FFAA00/10' },
 ];
 

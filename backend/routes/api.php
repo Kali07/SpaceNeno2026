@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\VilleController;
 use App\Http\Controllers\Api\StationController;
 
+
+
 // 🔐 AUTH
 Route::post('/login', [AuthController::class, 'login']);// route pour la connexion des utilisateurs en envoyant une requête POST au backend avec les informations d'identification de l'utilisateur, et en appelant la méthode login du AuthController pour authentifier l'utilisateur et générer un token d'authentification
 
@@ -79,7 +81,6 @@ Route::put('/generations/{id}', [GenerationController::class, 'update']);
 Route::delete('/generations/{id}', [GenerationController::class, 'destroy']);
 
 
-
-
     });
 
+?>
