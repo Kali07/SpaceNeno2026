@@ -15,6 +15,8 @@ import ProfilePage from "@/pages/ProfilePage";
 import ApprovalPage from "@/pages/ApprovalPage";
 import ContinentsPage from "@/pages/ContinentPage";
 import PaysPage from "@/pages/PaysPage";
+import RolePage from"@/pages/RolePage";
+import GenerationPage from "@/pages/GenerationPage";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -54,6 +56,8 @@ function App() {
               <Route path="approval" element={<ApprovalPage />} />
               <Route path="continents" element={<ContinentsPage />} />
               <Route path="pays" element={<PaysPage />} />
+              <Route path="role" element={<RolePage />} />
+              <Route path="generation" element={<GenerationPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

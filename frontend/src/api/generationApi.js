@@ -9,8 +9,8 @@ const getHeaders = () => {
   };
 };
 
-export async function getContinents() {
-  const res = await fetch(`${API_URL}/continents`, {
+export async function getGenerations() {
+  const res = await fetch(`${API_URL}/generations`, {
     headers: getHeaders(),
   });
 
@@ -21,11 +21,11 @@ export async function getContinents() {
   return data;
 }
 
-export async function createContinent(name) {
-  const res = await fetch(`${API_URL}/continents`, {
+export async function createGeneration(label) {
+  const res = await fetch(`${API_URL}/generations`, {
     method: "POST",
     headers: getHeaders(),
-    body: JSON.stringify({ name }),
+    body: JSON.stringify({ label }),
   });
 
   const data = await res.json();
@@ -35,8 +35,8 @@ export async function createContinent(name) {
   return data;
 }
 
-export async function deleteContinent(id) {
-  const res = await fetch(`${API_URL}/continents/${id}`, {
+export async function deleteGeneration(id) {
+  const res = await fetch(`${API_URL}/generations/${id}`, {
     method: "DELETE",
     headers: getHeaders(),
   });
@@ -48,14 +48,14 @@ export async function deleteContinent(id) {
   return data;
 }
 
-export async function updateContinent(id, name) {
-    const res = await fetch(`${API_URL}/continents/${id}`, {
+export async function updateGeneration(id, label) {
+    const res = await fetch(`${API_URL}/api/generations/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ label }),
     });
   
     return res.json();

@@ -114,7 +114,7 @@ export default function PaysPage() {
         <table className="w-full">
           <thead>
             <tr className="text-left border-b">
-              <th className="py-2">Nom</th>
+              <th className="py-2">Pays</th>
               <th>Continent</th>
               <th>Action</th>
             </tr>

@@ -21,7 +21,10 @@ import { Search, Plus, UserPlus, Eye } from 'lucide-react';
 import { useEffect } from "react";
 import { createUser, getUsers} from "@/api/userApi"; // vérifie le path
 import { useAuth } from '@/context/AuthContext';
-import { get } from 'react-hook-form';
+import { getStations } from '@/api/stationApi';
+import { getRoles } from '@/api/roleApi';
+import { getGenerations } from '@/api/generationApi';
+
 
 export default function MembersPage() {// composant pour afficher la liste des membres de la communauté, avec des filtres et une fonctionnalité d'ajout de membre
   const navigate = useNavigate();
@@ -34,6 +37,10 @@ export default function MembersPage() {// composant pour afficher la liste des m
   const [newMember, setNewMember] = useState({ firstName: '', lastName: '', email: '', phone: '', station: '', generation: '' });// état pour stocker les informations du nouveau membre à ajouter
   const { user } = useAuth();// récupère l'utilisateur actuellement connecté à partir du contexte d'authentification
   const canView = !user?.role || !user.role || user.role.level <= user.role.level;// vérifie si l'utilisateur a le droit de voir les détails d'un membre basé sur la hiérarchie des rôles
+  const [stations, setStations] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const [generations, setGenerations] = useState([]);
+
 
   useEffect(() => {// effet pour charger les utilisateurs depuis le backend lorsque le composant est monté
     fetchUsers();
@@ -41,17 +48,26 @@ export default function MembersPage() {// composant pour afficher la liste des m
 
   const fetchUsers = async () => {// fonction pour récupérer les utilisateurs depuis le backend
     const data = await getUsers();
+    const s = await getStations();
+    const r = await getRoles();
+    const g = await getGenerations();
+  
     setUsers(data);
+    setStations(s);
+    setRoles(r);
+    setGenerations(g);
   };
+
+
 
   const formattedUsers = users.map(user => ({// formate les données des utilisateurs pour les adapter à l'affichage dans la table
     id: user.id,
     firstName: user.name,
     lastName: "",
     email: user.email,
-    station: user.station?.label || "N/A",
+    station: user.station?.name,
     stationId: user.station_id,
-    generation: "N/A", // Placeholder, replace with actual data if available
+    generation: user.generation?.label, // Placeholder, replace with actual data if available
     role: user.role,          
    roleLabel: user.role?.label,
     status: "active",
@@ -141,13 +157,12 @@ export default function MembersPage() {// composant pour afficher la liste des m
                      <SelectValue placeholder="Choisir un rôle" />
                     </SelectTrigger>
                     <SelectContent>
-                    <SelectItem value="1">Membre</SelectItem>
-                  <SelectItem value="2">Gestionnaire</SelectItem>
-                  <SelectItem value="3">Admin_provincial</SelectItem>
-                  <SelectItem value="4">Admin_national</SelectItem>
-                  <SelectItem value="5">Admin_fonctionnel</SelectItem>
-              
-                 </SelectContent>
+                          {roles.map((r) => (
+                     <SelectItem key={r.id} value={String(r.id)}>
+                           {r.label}
+                             </SelectItem>
+                                      ))}
+                          </SelectContent>
                 </Select>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -158,7 +173,7 @@ export default function MembersPage() {// composant pour afficher la liste des m
                       <SelectValue placeholder="Select station" />
                     </SelectTrigger>
                     <SelectContent>
-                      {mockStations.map(s => (
+                      {stations.map(s => (
                         <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
                       ))}
                     </SelectContent>
@@ -171,12 +186,12 @@ export default function MembersPage() {// composant pour afficher la liste des m
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="G1">G1</SelectItem>
-                      <SelectItem value="G2">G2</SelectItem>
-                      <SelectItem value="G3">G3</SelectItem>
-                      <SelectItem value="G4">G4</SelectItem>
-                      <SelectItem value="G4-P1">G4-P1</SelectItem>
-                    </SelectContent>
+                       {generations.map((g) => (
+                        <SelectItem key={g.id} value={String(g.id)}>
+                                  {g.label}
+                          </SelectItem>
+                              ))}
+                        </SelectContent>
                   </Select>
                 </div>
               </div>
@@ -229,12 +244,13 @@ export default function MembersPage() {// composant pour afficher la liste des m
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Toutes les Générations</SelectItem>
-              <SelectItem value="G1">G1</SelectItem>
-              <SelectItem value="G2">G2</SelectItem>
-              <SelectItem value="G3">G3</SelectItem>
-              <SelectItem value="G4">G4</SelectItem>
-              <SelectItem value="G4-P1">G4-P1</SelectItem>
-            </SelectContent>
+              
+                  {generations.map((g) => (
+               <SelectItem key={g.id} value={String(g.id)}>
+                  {g.label}
+                 </SelectItem>
+                      ))}
+                </SelectContent>
           </Select>
         </div>
       </div>
@@ -282,7 +298,7 @@ export default function MembersPage() {// composant pour afficher la liste des m
                       {member.generation}
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell text-sm text-[#666666]">{member.roleLabel?.label || "N/A"}</TableCell>
+                  <TableCell className="hidden lg:table-cell text-sm text-[#666666]">{member.roleLabel}</TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"

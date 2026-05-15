@@ -5,7 +5,9 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ApprovalController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContinentController;
+use App\Http\Controllers\Api\GenerationController;
 use App\Http\Controllers\Api\PaysController;
+use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\VilleController;
 use App\Http\Controllers\Api\StationController;
 
@@ -61,6 +63,20 @@ Route::get('/stations', [StationController::class, 'index']);
 Route::post('/stations', [StationController::class, 'store']);
 Route::put('/stations/{id}', [StationController::class, 'update']);
 Route::delete('/stations/{id}', [StationController::class, 'destroy']);
+
+//ROLES
+
+Route::get('/roles', [RoleController::class, 'index']);
+Route::post('/roles', [RoleController::class, 'store']);
+Route::put('/roles/{id}', [RoleController::class, 'update']);
+Route::delete('/roles/{id}', [RoleController::class, 'destroy']);
+
+//GENERATIONS
+
+Route::get('/generations', [GenerationController::class, 'index']);
+Route::post('/generations', [GenerationController::class, 'store']);
+Route::put('/generations/{id}', [GenerationController::class, 'update']);
+Route::delete('/generations/{id}', [GenerationController::class, 'destroy']);
 
 
 

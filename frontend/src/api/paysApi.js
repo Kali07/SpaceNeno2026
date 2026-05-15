@@ -30,7 +30,7 @@ export async function deletePays(id) {
 }
 
 export async function updatePays(id, data) {
-    const res = await fetch(`http://127.0.0.1:8000/api/pays/${id}`, {
+    const res = await fetch(`${API_URL}/pays/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

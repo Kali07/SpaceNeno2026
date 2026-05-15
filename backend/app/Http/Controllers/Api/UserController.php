@@ -20,7 +20,9 @@ class UserController extends Controller
     // 🔹 READ
     public function index()// function index pour récupérer tous les utilisateurs avec leur rôle associé
     {
-        return User::with('role')->get();// retourne tous les utilisateurs avec leur rôle associé
+
+          //return User::with('role')->get();
+        return User::with('role', 'station', 'generation')->get();// retourne tous les utilisateurs avec leur rôle associé
     }
 
         public function store(Request $request)// function store pour créer un nouvel utilisateur 
