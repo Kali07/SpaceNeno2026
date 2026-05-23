@@ -9,6 +9,7 @@ use App\Models\Approval;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Role;
+use Illuminate\Validation\Rule;
 
 const LEVEL_BYPASS = 6;
 const LEVEL_APPROVAL = 2;
@@ -16,109 +17,206 @@ const LEVEL_APPROVAL = 2;
 class UserController extends Controller
 {
 
-   
     // 🔹 READ
     public function index()// function index pour récupérer tous les utilisateurs avec leur rôle associé
     {
 
-          //return User::with('role')->get();
-        return User::with('role', 'station', 'generation')->access()->get();// retourne tous les utilisateurs avec leur rôle associé
+        //return User::with('role')->get();
+
+        return User::with(
+            'role',
+            'station',
+            'generation',
+            'statut'
+        )->access()->get();// retourne tous les utilisateurs avec leur rôle associé
     }
 
     //CREATE
-        public function store(Request $request)// function store pour créer un nouvel utilisateur 
+    public function store(Request $request)// function store pour créer un nouvel utilisateur
     {
-      $currentUser = Auth::user();// récupère l'utilisateur actuellement connecté
 
-         $request->validate([// validation des données d'entrée pour la création d'un utilisateur
-            'name' => 'required|string',
-            'email' => 'required|email',
+        $currentUser = Auth::user();// récupère l'utilisateur actuellement connecté
+
+        $request->validate([// validation des données d'entrée pour la création d'un utilisateur
+
+            'name' => 'required|string|max:255',
+
+            'email' => 'required|email|unique:users,email',
+
             'password' => 'required|min:6',
-            'role_id' => 'required|exists:roles,id'
+
+            'sexe' => 'nullable|in:Masculin,Feminin',
+
+            'phone' => 'nullable|string',
+
+            'role_id' => 'required|exists:roles,id',
+
+            'station_id' => 'required|exists:stations,id',
+
+            'statut_id' => 'nullable|exists:statuts,id',
+
+            'generation_id' => 'required|exists:generations,id'
         ]);
 
         //  Vérifier le rôle demandé
         $targetRole = Role::findOrFail($request->role_id);// récupère le rôle demandé pour le nouvel utilisateur
 
-            if ($targetRole->level >= $currentUser->role->level) {// vérifie si le rôle demandé est égal ou supérieur au rôle de l'utilisateur actuel
-              return response()->json([
-            'error' => 'Création interdite pour ce niveau'
-             ], 403);
+        if ($targetRole->level >= $currentUser->role->level) {// vérifie si le rôle demandé est égal ou supérieur au rôle de l'utilisateur actuel
+
+            return response()->json([
+                'error' => 'Création interdite pour ce niveau'
+            ], 403);
         }
 
-                  
-         if ($currentUser->role->level >=  LEVEL_APPROVAL) {// vérifie si l'utilisateur actuel a un rôle égal ou supérieur au niveau requis pour créer un utilisateur
+        if ($currentUser->role->level >= LEVEL_APPROVAL) {// vérifie si l'utilisateur actuel a un rôle égal ou supérieur au niveau requis pour créer un utilisateur
 
-             // 🔸 Approval
-             if ($currentUser->role->level >=  LEVEL_APPROVAL && $currentUser->role->level <  LEVEL_BYPASS) {// vérifie si l'utilisateur actuel a un rôle égal au niveau requis pour créer un utilisateur
-                 //  crée une demande au lieu de créer direct
-              Approval::create([// crée une nouvelle demande d'approbation pour la création d'un utilisateur
+            // 🔸 Approval
+            if (
+                $currentUser->role->level >= LEVEL_APPROVAL &&
+                $currentUser->role->level < LEVEL_BYPASS
+            ) {// vérifie si l'utilisateur actuel a un rôle égal au niveau requis pour créer un utilisateur
+
+                //  crée une demande au lieu de créer direct
+                Approval::create([// crée une nouvelle demande d'approbation pour la création d'un utilisateur
+
                     'requested_by' => $currentUser->id,
-                     'action' => 'create_user',
-                    'data' => json_encode($request->all()),
-                    'status' => 'pending'
-                 ]);
 
-                 return response()->json([// retourne un message indiquant que la demande d'approbation a été soumise
+                    'action' => 'create_user',
+
+                    'data' => json_encode($request->all()),
+
+                    'status' => 'pending'
+                ]);
+
+                return response()->json([// retourne un message indiquant que la demande d'approbation a été soumise
+
                     'message' => 'Request submitted for approval'
-                 ]);
+                ]);
             }
 
-            if($currentUser->role->level === LEVEL_BYPASS) {// vérifie si l'utilisateur actuel a un rôle égal au niveau de contournement, ce qui signifie que l'utilisateur actuel a le droit de créer un utilisateur directement sans approbation
-             // 🔸 Création directe
-             $user = User::create([// crée directement le nouvel utilisateur sans approbation
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => bcrypt($request->password),
-                'role_id' => $request->role_id,
-                'station_id' => $request->station_id,
-            ]);
+            if ($currentUser->role->level === LEVEL_BYPASS) {// vérifie si l'utilisateur actuel a un rôle égal au niveau de contournement
 
-            return response()->json($user);// retourne les données du nouvel utilisateur créé
+                // 🔸 Création directe
+                $user = User::create([// crée directement le nouvel utilisateur sans approbation
+
+                    'name' => $request->name,
+
+                    'email' => $request->email,
+
+                    'sexe' => $request->sexe,
+
+                    'phone' => $request->phone,
+
+                    'password' => bcrypt($request->password),
+
+                    'role_id' => $request->role_id,
+
+                    'station_id' => $request->station_id,
+
+                    'statut_id' => $request->statut_id,
+
+                    'generation_id' => $request->generation_id,
+                ]);
+
+                return response()->json($user);// retourne les données du nouvel utilisateur créé
+            }
         }
-    }
 
-        return response()->json(['error' => 'Unauthorized'], 403);// retourne une réponse d'erreur si l'utilisateur actuel n'a pas le niveau requis pour créer un utilisateur
+        return response()->json([
+
+            'error' => 'Unauthorized'
+
+        ], 403);// retourne une réponse d'erreur si l'utilisateur actuel n'a pas le niveau requis pour créer un utilisateur
     }
 
     // 🔹 UPDATE
     public function update(Request $request, $id)// function update pour mettre à jour les informations d'un utilisateur existant
     {
+
         $currentUser = Auth::user();// récupère l'utilisateur actuellement connecté
+
         $user = User::with('role')->findOrFail($id);// récupère l'utilisateur à mettre à jour avec son rôle associé
-        
-        if (!$currentUser->canManageUser($user)) {// vérifie si l'utilisateur actuel a le droit de gérer l'utilisateur ciblé (basé sur la hiérarchie des rôles)
+
+        if (!$currentUser->canManageUser($user)) {// vérifie si l'utilisateur actuel a le droit de gérer l'utilisateur ciblé
+
             return response()->json([
                 'error' => 'Modification interdite'
             ], 403);
         }
 
+        $request->validate([
+
+            'name' => 'required|string|max:255',
+
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users')->ignore($id),
+            ],
+
+            'sexe' => 'nullable|in:Masculin,Feminin',
+
+            'phone' => 'nullable|string',
+
+            'role_id' => 'required|exists:roles,id',
+
+            'station_id' => 'required|exists:stations,id',
+
+            'statut_id' => 'nullable|exists:statuts,id',
+
+            'generation_id' => 'required|exists:generations,id'
+        ]);
+
         // 🔸 Approval
-        if ($currentUser->role->level >=  LEVEL_APPROVAL && $currentUser->role->level < LEVEL_BYPASS) {// vérifie si l'utilisateur actuel a un rôle égal au niveau requis pour créer un utilisateur
-            //  crée une demande au lieu de créer direct
+        if (
+            $currentUser->role->level >= LEVEL_APPROVAL &&
+            $currentUser->role->level < LEVEL_BYPASS
+        ) {// vérifie si l'utilisateur actuel a un rôle égal au niveau requis pour modifier un utilisateur
+
+            //  crée une demande au lieu de modifier direct
 
             $data = $request->all();
+
             $data['id'] = $id;
-         Approval::create([// crée une nouvelle demande d'approbation pour la création d'un utilisateur
-               'requested_by' => $currentUser->id,
+
+            Approval::create([// crée une nouvelle demande d'approbation pour la modification d'un utilisateur
+
+                'requested_by' => $currentUser->id,
+
                 'action' => 'update_user',
+
                 'data' => json_encode(array_merge(
                     $request->all(),
-                    ['id' => $id] 
+                    ['id' => $id]
                 )),
-               'status' => 'pending'
+
+                'status' => 'pending'
             ]);
 
             return response()->json([// retourne un message indiquant que la demande d'approbation a été soumise
-               'message' => 'Request submitted for approval'
+
+                'message' => 'Request submitted for approval'
             ]);
-       }
+        }
 
         $user->update([// met à jour les informations de l'utilisateur ciblé avec les données fournies dans la requête
+
             'name' => $request->name,
+
             'email' => $request->email,
+
+            'sexe' => $request->sexe,
+
+            'phone' => $request->phone,
+
+            'role_id' => $request->role_id,
+
             'station_id' => $request->station_id,
-          ]);
+
+            'statut_id' => $request->statut_id,
+
+            'generation_id' => $request->generation_id,
+        ]);
 
         return response()->json($user);
     }
@@ -126,207 +224,325 @@ class UserController extends Controller
     // 🔹 DELETE
     public function destroy(Request $request, $id)// function destroy pour supprimer un utilisateur existant
     {
-        $currentUser = Auth::user(); 
-        $user = User::with('role')->findOrFail($id); 
 
-            //  sécurité
-            if (!$currentUser->canManageUser($user)) {// vérifie si l'utilisateur actuel a le droit de gérer l'utilisateur ciblé (basé sur la hiérarchie des rôles)
-                return response()->json([
-                    'error' => 'Suppression interdite'
-                ], 403);
-            }
+        $currentUser = Auth::user();
 
-            if ($currentUser->role->level >=  LEVEL_APPROVAL && $currentUser->role->level <  LEVEL_BYPASS) {// vérifie si l'utilisateur actuel a un rôle égal au niveau requis pour supprimer un utilisateur
+        $user = User::with('role')->findOrFail($id);
+
+        //  sécurité
+        if (!$currentUser->canManageUser($user)) {// vérifie si l'utilisateur actuel a le droit de gérer l'utilisateur ciblé
+
+            return response()->json([
+                'error' => 'Suppression interdite'
+            ], 403);
+        }
+
+        if (
+            $currentUser->role->level >= LEVEL_APPROVAL &&
+            $currentUser->role->level < LEVEL_BYPASS
+        ) {// vérifie si l'utilisateur actuel a un rôle égal au niveau requis pour supprimer un utilisateur
+
             //  crée une demande au lieu de supprimer direct
 
             $data = [
+
                 'id' => $user->id,
+
                 'name' => $user->name,
+
                 'email' => $user->email,
             ];
-         Approval::create([// crée une nouvelle demande d'approbation pour la suppression d'un utilisateur
-               'requested_by' => $currentUser->id,
+
+            Approval::create([// crée une nouvelle demande d'approbation pour la suppression d'un utilisateur
+
+                'requested_by' => $currentUser->id,
+
                 'action' => 'delete_user',
+
                 'data' => json_encode($data),
-               'status' => 'pending'
+
+                'status' => 'pending'
             ]);
 
             return response()->json([// retourne un message indiquant que la demande d'approbation a été soumise
-               'message' => 'Request submitted for approval'
+
+                'message' => 'Request submitted for approval'
             ]);
-       }
+        }
 
         $user->delete();
 
         return response()->json([// retourne un message indiquant que l'utilisateur a été supprimé
-        'message' => 'Deleted'
+
+            'message' => 'Deleted'
         ]);
     }
 
     public function approve($id)// function approve pour approuver une demande d'approbation spécifique
     {
+
         $approval = Approval::with('requester')->findOrFail($id);// récupère la demande d'approbation ciblée avec son demandeur associé
+
         $currentUser = Auth::user();
 
         // Vérifie si déjà traité
         if ($approval->status !== 'pending') {
+
             return response()->json([
                 'error' => 'Demande déjà traitée'
             ], 400);
         }
 
         // Vérifie hiérarchie demandeur
-        if ($currentUser->role->level <= $approval->requester->role->level) {// vérifie si le rôle de l'utilisateur actuel est inférieur ou égal à celui du demandeur de la demande d'approbation, ce qui signifie que l'utilisateur actuel n'a pas le droit d'approuver la demande d'approbation
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+        if ($currentUser->role->level <= $approval->requester->role->level) {
 
-        $data = json_decode($approval->data, true);// décode les données de la demande d'approbation qui sont stockées au format JSON dans la base de données, et les convertit en un tableau associatif PHP pour pouvoir les utiliser dans le processus d'approbation
-
-        // Vérifie le rôle cible
-        $targetRole = Role::findOrFail($data['role_id']);// recupère le role cible de la demande d'approbation à partir des données décodées
-
-        if ($targetRole->level >= $currentUser->role->level) {// vérifie si le rôle cible de la demande d'approbation est égal ou supérieur au rôle de l'utilisateur actuel, ce qui signifie que l'utilisateur actuel n'a pas le droit d'approuver la demande d'approbation
             return response()->json([
-                'error' => 'Vous ne pouvez pas approuver cette création'
+                'error' => 'Unauthorized'
             ], 403);
         }
 
+        $data = json_decode($approval->data, true);// décode les données JSON
+
+        // Vérifie le rôle cible
+        if (isset($data['role_id'])) {
+
+            $targetRole = Role::findOrFail($data['role_id']);
+
+            if ($targetRole->level >= $currentUser->role->level) {
+
+                return response()->json([
+                    'error' => 'Vous ne pouvez pas approuver cette création'
+                ], 403);
+            }
+        }
+
         // Action
-        if ($approval->action === 'create_user') {// vérifie si l'action de la demande d'approbation est "create_user", ce qui signifie que la demande d'approbation concerne la création d'un nouvel utilisateur
-            User::create([// crée le nouvel utilisateur avec les données fournies dans la demande d'approbation
+        if ($approval->action === 'create_user') {// création utilisateur
+
+            User::create([
+
                 'name' => $data['name'],
+
                 'email' => $data['email'],
+
+                'sexe' => $data['sexe'] ?? null,
+
+                'phone' => $data['phone'] ?? null,
+
                 'password' => bcrypt($data['password']),
+
                 'role_id' => $data['role_id'],
+
                 'station_id' => $data['station_id'],
+
+                'statut_id' => $data['statut_id'] ?? null,
+
+                'generation_id' => $data['generation_id'],
             ]);
-        } else if($approval->action === 'delete_user'){
 
-            $user = User::findOrFail($data['id']);// récupère l'utilisateur ciblé pour la suppression à partir des données fournies dans la demande d'approbation
+        } else if ($approval->action === 'delete_user') {
 
-            if ($user->role->level >= $currentUser->role->level) {// vérifie si le rôle de l'utilisateur ciblé pour la suppression est égal ou supérieur au rôle de l'utilisateur actuel, ce qui signifie que l'utilisateur actuel n'a pas le droit de supprimer cet utilisateur
+            $user = User::findOrFail($data['id']);
+
+            if ($user->role->level >= $currentUser->role->level) {
+
                 return response()->json([
                     'error' => 'Vous ne pouvez pas supprimer cet utilisateur'
                 ], 403);
             }
 
-            $user->delete();// supprime l'utilisateur ciblé
-        } else if($approval->action === 'update_user'){
+            $user->delete();
 
-            $user = User::findOrFail($data['id']);// récupère l'utilisateur ciblé pour la mise à jour à partir des données fournies dans la demande d'approbation
+        } else if ($approval->action === 'update_user') {
 
-            if ($user->role->level >= $currentUser->role->level) {// vérifie si le rôle de l'utilisateur ciblé pour la mise à jour est égal ou supérieur au rôle de l'utilisateur actuel, ce qui signifie que l'utilisateur actuel n'a pas le droit de mettre à jour cet utilisateur
+            $user = User::findOrFail($data['id']);
+
+            if ($user->role->level >= $currentUser->role->level) {
+
                 return response()->json([
                     'error' => 'Vous ne pouvez pas modifier cet utilisateur'
                 ], 403);
             }
 
-            $user->update([// met à jour les informations de l'utilisateur ciblé avec les données fournies dans la demande d'approbation
+            $user->update([
+
                 'name' => $data['name'],
+
                 'email' => $data['email'],
+
+                'sexe' => $data['sexe'] ?? null,
+
+                'phone' => $data['phone'] ?? null,
+
                 'role_id' => $data['role_id'],
-              ]);
-         }
+
+                'station_id' => $data['station_id'],
+
+                'statut_id' => $data['statut_id'] ?? null,
+
+                'generation_id' => $data['generation_id'],
+            ]);
+        }
 
         // Update approval
         $approval->update([
+
             'status' => 'approved',
+
             'approved_by' => $currentUser->id
         ]);
 
-        return response()->json(['message' => 'Approved']);
+        return response()->json([
+            'message' => 'Approved'
+        ]);
     }
-
-
 
     public function reject($id)// function reject pour refuser une demande d'approbation spécifique
     {
-        $approval = Approval::with('requester')->findOrFail($id);// récupère la demande d'approbation ciblée avec son demandeur associé
+
+        $approval = Approval::with('requester')->findOrFail($id);
+
         $currentUser = Auth::user();
 
         // Vérifie si déjà traité
-        if ($approval->status !== 'pending') {// vérifie si la demande d'approbation a déjà été traitée (c'est-à-dire que son statut n'est pas "pending"), ce qui signifie que la demande d'approbation ne peut pas être refusée car elle a déjà été approuvée ou rejetée
+        if ($approval->status !== 'pending') {
+
             return response()->json([
                 'error' => 'Demande déjà traitée'
             ], 400);
         }
 
         // Vérifie hiérarchie demandeur
-        if ($currentUser->role->level <= $approval->requester->role->level) {// vérifie si le rôle de l'utilisateur actuel est inférieur ou égal à celui du demandeur de la demande d'approbation, ce qui signifie que l'utilisateur actuel n'a pas le droit de refuser la demande d'approbation
-            return response()->json(['error' => 'Unauthorized'], 403);
+        if ($currentUser->role->level <= $approval->requester->role->level) {
+
+            return response()->json([
+                'error' => 'Unauthorized'
+            ], 403);
         }
 
         $data = json_decode($approval->data, true);
 
         // Vérifie le rôle cible
-        $targetRole = Role::findOrFail($data['role_id']);// récupère le rôle cible de la demande d'approbation
+        if (isset($data['role_id'])) {
 
-        if ($targetRole->level >= $currentUser->role->level) {// vérifie si le rôle cible de la demande d'approbation est égal ou supérieur au rôle de l'utilisateur actuel, ce qui signifie que l'utilisateur actuel n'a pas le droit de refuser la demande d'approbation
-            return response()->json([
-                'error' => 'Vous ne pouvez pas refuser cette création'
-            ], 403);
+            $targetRole = Role::findOrFail($data['role_id']);
+
+            if ($targetRole->level >= $currentUser->role->level) {
+
+                return response()->json([
+                    'error' => 'Vous ne pouvez pas refuser cette création'
+                ], 403);
+            }
         }
 
-        // Action
-             // Update approval
-        $approval->update([// met à jour le statut de la demande d'approbation à "rejected" et enregistre l'ID de l'utilisateur qui a refusé la demande d'approbation
+        // Update approval
+        $approval->update([// met à jour le statut de la demande d'approbation
+
             'status' => 'rejected',
+
             'approved_by' => $currentUser->id
         ]);
 
-        return response()->json(['message' => 'Rejected']);
+        return response()->json([
+            'message' => 'Rejected'
+        ]);
     }
 
     public function updateProfile(Request $request)// function updateProfile pour permettre à un utilisateur de mettre à jour son propre profil
     {
+
         $user = Auth::user();
-    
+
         if (!$user) {// vérifie si l'utilisateur est authentifié
-            return response()->json(['error' => 'Unauthenticated'], 401);
+
+            return response()->json([
+                'error' => 'Unauthenticated'
+            ], 401);
         }
-    
-        $data = $request->only(['name', 'email']);
-    
-        $user->update($data);// met à jour les informations de l'utilisateur avec les données fournies dans la requête (seulement le nom et l'email dans ce cas)
-    
+
+        $request->validate([
+
+            'name' => 'required|string|max:255',
+
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users')->ignore($user->id),
+            ],
+
+            'sexe' => 'nullable|in:Masculin,Feminin',
+
+            'phone' => 'nullable|string',
+        ]);
+
+        $data = $request->only([
+            'name',
+            'email',
+            'sexe',
+            'phone'
+        ]);
+
+        $user->update($data);// met à jour les informations de l'utilisateur
+
         return response()->json($user);
     }
 
+    public function updatePassword(Request $request)// function updatePassword pour permettre à un utilisateur de mettre à jour son mot de passe
+    {
 
-  
+        $user = Auth::user();
 
-public function updatePassword(Request $request)// function updatePassword pour permettre à un utilisateur de mettre à jour son mot de passe
-{
-    $user = Auth::user();
+        if (!$user) {
 
-    if (!$user) {
-        return response()->json(['error' => 'Unauthenticated'], 401);// vérifie si l'utilisateur est authentifié
+            return response()->json([
+                'error' => 'Unauthenticated'
+            ], 401);
+        }
+
+        if (!Hash::check($request->current_password, $user->password)) {
+
+            return response()->json([
+                'error' => 'Mot de passe actuel incorrect'
+            ], 400);
+        }
+
+        $request->validate([
+
+            'current_password' => 'required',
+
+            'new_password' => 'required|min:6|confirmed'
+        ]);
+
+        $user->update([// met à jour le mot de passe
+
+            'password' => bcrypt($request->new_password)
+        ]);
+
+        return response()->json([
+            'message' => 'Mot de passe mis à jour'
+        ]);
     }
 
-    if (!Hash::check($request->current_password, $user->password)) {// vérifie si le mot de passe actuel fourni correspond au mot de passe de l'utilisateur
-        return response()->json(['error' => 'Mot de passe actuel incorrect'], 400);
+    public function show($id)// function show pour récupérer les détails d'un utilisateur spécifique
+    {
+
+        $currentUser = Auth::user();
+
+        $user = User::with(
+            'role',
+            'station',
+            'generation',
+            'statut'
+        )->findOrFail($id);
+
+        //  blocage accès
+        if ($user->role->level > $currentUser->role->level) {
+
+            return response()->json([
+                'error' => 'Accès interdit'
+            ], 403);
+        }
+
+        return response()->json($user);// retourne les détails de l'utilisateur ciblé
     }
-
-    $user->update([// met à jour le mot de passe de l'utilisateur avec le nouveau mot de passe fourni dans la requête
-        'password' => bcrypt($request->new_password)// bcrypt est utilisé pour hacher le nouveau mot de passe avant de le stocker dans la base de données
-    ]);
-
-    return response()->json(['message' => 'Mot de passe mis à jour']);
-}
-
-public function show($id)// function show pour récupérer les détails d'un utilisateur spécifique
-{
-    $currentUser = Auth::user();
-    $user = User::with('role')->findOrFail($id);// récupère l'utilisateur ciblé avec son rôle associé
-
-    //  blocage accès
-    if ($user->role->level > $currentUser->role->level) {// vérifie si le rôle de l'utilisateur ciblé est supérieur à celui de l'utilisateur actuel, ce qui signifie que l'utilisateur actuel n'a pas le droit de voir les détails de l'utilisateur ciblé
-        return response()->json([// retourne une réponse d'erreur indiquant que l'accès est interdit
-            'error' => 'Accès interdit'
-        ], 403);
-    }
-
-    return response()->json($user);// retourne les détails de l'utilisateur ciblé si l'utilisateur actuel a le droit d'y accéder
-}
-
 }

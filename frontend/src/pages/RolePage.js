@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { getRoles,createRole,deleteRole,updateRole}from "../api/roleApi";
+import { useMessage } from "../context/MessageContext";
+
 
 export default function RolesPage() {
   const [roles, setRoles] = useState([]);
@@ -8,6 +10,7 @@ export default function RolesPage() {
   const [editingId, setEditingId] = useState(null);
   const [editingLabel, setEditingLabel] = useState("");
   const [editingLevel, setEditingLevel] = useState("");
+  const { showMessage } = useMessage();
 
   const fetchData = async () => {
     const data = await getRoles();
@@ -20,17 +23,29 @@ export default function RolesPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    try{
     await createRole(label, level);
     setLabel("");
     setLevel("");
 
+    showMessage("Création du role reussi !")
     fetchData();
+} catch (err) {
+    showMessage(err.message || "Erreur lors de la création", "error");
+  }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm("Supprimer ce role ?")) return;
+
+    try{
     await deleteRole(id);
+
+    showMessage("Suppression du role reussi !")
     fetchData();
+} catch (err) {
+    showMessage(err.message || "Erreur lors de la suppression", "error");
+  }
   };
 
   const handleEdit = (r) => {
@@ -40,12 +55,17 @@ export default function RolesPage() {
   };
 
   const handleUpdate = async (id) => {
+    try{
     await updateRole(id, editingLabel, editingLevel);
     setEditingId(null);
     setEditingLabel("");
     setEditingLevel("");
 
+    showMessage("Modification du role reussi !")
     fetchData();
+} catch (err) {
+    showMessage(err.message || "Erreur lors de la modification", "error");
+  }
   };
 
   return (

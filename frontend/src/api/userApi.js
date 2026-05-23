@@ -55,7 +55,7 @@ export const deleteUser = async (id) => {// fonction pour supprimer un utilisate
 };
 
 export const updateProfile = async (data) => {// fonction pour mettre à jour les informations du profil de l'utilisateur connecté en envoyant une requête PUT au backend avec les données mises à jour dans le corps de la requête, et retourner la réponse JSON contenant les données du profil mis à jour
-    const res = await fetch("http://127.0.0.1:8000/api/profile", {
+    const res = await fetch(`${API_URL}/profile`, {
       method: "PUT",
       headers: {// inclut les en-têtes nécessaires pour indiquer que le corps de la requête est au format JSON et pour inclure le token d'authentification pour autoriser la mise à jour des informations du profil de l'utilisateur connecté
         "Content-Type": "application/json",
@@ -68,7 +68,7 @@ export const updateProfile = async (data) => {// fonction pour mettre à jour le
   };
 
   export const updatePassword = async (data) => {// fonction pour mettre à jour le mot de passe de l'utilisateur connecté en envoyant une requête PUT au backend avec les données mises à jour dans le corps de la requête, et retourner la réponse JSON contenant les données du mot de passe mis à jour
-    const res = await fetch("http://127.0.0.1:8000/api/profile/password", {
+    const res = await fetch(`${API_URL}/profile/password`, {
       method: "PUT",
       headers: {// inclut les en-têtes nécessaires pour indiquer que le corps de la requête est au format JSON et pour inclure le token d'authentification pour autoriser la mise à jour du mot de passe de l'utilisateur connecté
         "Content-Type": "application/json",
@@ -79,25 +79,3 @@ export const updateProfile = async (data) => {// fonction pour mettre à jour le
   
     return res.json();
   };
-
-/*
-
-  fetch('http://127.0.0.1:8000/api/test', {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-      Accept: 'application/json'
-    }
-  })
-  .then(res => res.json())
-  .then(console.log)*/
-
-  //console.log("aaaTOKEN =", getToken());
-/*
-  fetch(`${API_URL}/users`, {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-      Accept: 'application/json'
-    }
-  })
-  .then(res => res.json())
-  .then(data => console.log("DATA =", data));*/

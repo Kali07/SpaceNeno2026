@@ -51,12 +51,13 @@ export async function deleteRole(id) {
 export async function updateRole(id, label, level) {
     const res = await fetch(`${API_URL}/roles/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
+      headers: getHeaders(),
       body: JSON.stringify({ label, level }),
     });
   
-    return res.json();
+    const data = await res.json();
+  
+    if (!res.ok) throw new Error(data.error);
+  
+    return data;
   }

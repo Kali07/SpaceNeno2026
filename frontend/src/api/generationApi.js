@@ -49,14 +49,15 @@ export async function deleteGeneration(id) {
 }
 
 export async function updateGeneration(id, label) {
-    const res = await fetch(`${API_URL}/api/generations/${id}`, {
+    const res = await fetch(`${API_URL}/generations/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({ label }),
+      headers: getHeaders(),
+      body: JSON.stringify({ label}),
     });
   
-    return res.json();
+    const data = await res.json();
+  
+    if (!res.ok) throw new Error(data.error);
+  
+    return data;
   }

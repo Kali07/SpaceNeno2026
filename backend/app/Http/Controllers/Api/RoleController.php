@@ -41,7 +41,7 @@ class RoleController extends Controller
 
         $role = Role::findOrFail($id);
         $role->update([
-            'label' => $request->name,
+            'label' => $request->label,
             'level' => $request->level
         ]);
 

@@ -1,266 +1,716 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Map, MapPin, Users } from 'lucide-react';
-import { getVilles, createVille, deleteVille, updateVille } from '../api/villeApi';
-import { useEffect, useState } from 'react';
-import { getPays } from "../api/paysApi";
+import {
+  Card,
+  CardContent
+} from '@/components/ui/card';
+
+import {
+  Button
+} from '@/components/ui/button';
+
+import {
+  Input
+} from '@/components/ui/input';
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+
+import {
+  Badge
+} from '@/components/ui/badge';
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger
+} from '@/components/ui/dialog';
+
+import {
+  Map,
+  MapPin,
+  Users,
+  Plus,
+  Pencil,
+  Trash2,
+  Building2,
+  Globe2,
+  Search
+} from 'lucide-react';
+
+import {
+  getVilles,
+  createVille,
+  deleteVille,
+  updateVille
+} from '../api/villeApi';
+
+import {
+  getPays
+} from "../api/paysApi";
+
+import {
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
+
+import {
+  useMessage
+} from "../context/MessageContext";
 
 export default function VillesPage() {
+
+  // STATES
+  const [villes, setVilles] = useState([]);
+
   const [paysList, setPaysList] = useState([]);
+
+  const [showForm, setShowForm] = useState(false);
+
+  const [search, setSearch] = useState("");
+
+  // CREATE
+  const [name, setName] = useState("");
+
   const [paysId, setPaysId] = useState("");
+
+  // EDIT
+  const [editingId, setEditingId] = useState(null);
+
+  const [editingName, setEditingName] = useState("");
 
   const [editingPaysId, setEditingPaysId] = useState("");
 
-  const [villes, setVilles] = useState([]);
-  const [showForm, setShowForm] = useState(false);
+  const { showMessage } = useMessage();
 
-  const [name, setName] = useState("");
-
-  const [editingId, setEditingId] = useState(null);
-  const [editingName, setEditingName] = useState("");
-
+  // FETCH
   const fetchData = async () => {
-    const v = await getVilles();
-    const p = await getPays();
 
-    setVilles(v);
-    setPaysList(p);
+    try {
+
+      const v = await getVilles();
+
+      const p = await getPays();
+
+      setVilles(v);
+
+      setPaysList(p);
+
+    } catch (err) {
+
+      showMessage(
+        "Erreur chargement données",
+        "error"
+      );
+    }
   };
 
   useEffect(() => {
+
     fetchData();
+
   }, []);
+
+  // FILTER
+  const filteredVilles = useMemo(() => {
+
+    return villes.filter((ville) =>
+
+      ville.name
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    );
+
+  }, [search, villes]);
 
   // CREATE
   const handleCreate = async () => {
-    await createVille({
-      name,
-      pays_id: paysId,
-    });
 
-    setName("");
-    setPaysId("");
-    setShowForm(false);
+    try {
 
-    fetchData();
+      await createVille({
+
+        name,
+
+        pays_id: Number(paysId)
+      });
+
+      setName("");
+
+      setPaysId("");
+
+      setShowForm(false);
+
+      showMessage(
+        "Ville créée avec succès"
+      );
+
+      fetchData();
+
+    } catch (err) {
+
+      showMessage(
+        err.message ||
+        "Erreur création",
+        "error"
+      );
+    }
   };
 
   // DELETE
   const handleDelete = async (id) => {
-    if (!window.confirm("Supprimer cette ville ?")) return;
 
-    await deleteVille(id);
-    fetchData();
+    if (
+      !window.confirm(
+        "Supprimer cette ville ?"
+      )
+    ) return;
+
+    try {
+
+      await deleteVille(id);
+
+      showMessage(
+        "Ville supprimée"
+      );
+
+      fetchData();
+
+    } catch (err) {
+
+      showMessage(
+        err.message ||
+        "Erreur suppression",
+        "error"
+      );
+    }
   };
 
-  // START EDIT
+  // EDIT
   const handleEdit = (ville) => {
+
     setEditingId(ville.id);
+
     setEditingName(ville.name);
-    setEditingPaysId(ville.pays_id);
+
+    setEditingPaysId(
+      String(ville.pays_id)
+    );
   };
 
   // UPDATE
   const handleUpdate = async (id) => {
-    await updateVille(id, {
-      name: editingName,
-      pays_id: editingPaysId,
-    });
 
-    setEditingId(null);
-    setEditingName("");
-    setEditingPaysId("");
+    try {
 
-    fetchData();
+      await updateVille(id, {
+
+        name: editingName,
+
+        pays_id: Number(editingPaysId)
+      });
+
+      setEditingId(null);
+
+      setEditingName("");
+
+      setEditingPaysId("");
+
+      showMessage(
+        "Ville modifiée avec succès"
+      );
+
+      fetchData();
+
+    } catch (err) {
+
+      showMessage(
+        err.message ||
+        "Erreur modification",
+        "error"
+      );
+    }
   };
 
   return (
-    <div className="space-y-6">
 
-      {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-[#333]">
-            Villes
-          </h1>
+    <div className="space-y-8">
 
-          <p className="text-sm text-[#666]">
-            {villes.length} villes
-          </p>
+      {/* HERO */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0066CC] to-[#0084FF] p-8 shadow-xl">
+
+        <div className="absolute top-0 right-0 opacity-10">
+
+          <Building2 className="w-72 h-72 text-white" />
+
         </div>
 
-        <button
-          className="bg-[#0066CC] text-white px-4 py-2 rounded-lg w-full sm:w-auto"
-          onClick={() => setShowForm(!showForm)}
-        >
-          + Ajouter
-        </button>
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+
+          <div>
+
+            <div className="flex items-center gap-3">
+
+              <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center">
+
+                <Map className="text-white h-7 w-7" />
+
+              </div>
+
+              <div>
+
+                <h1 className="text-4xl font-bold text-white">
+
+                  Villes
+
+                </h1>
+
+                <p className="text-blue-100 mt-1">
+
+                  Gestion des villes et des communautés
+
+                </p>
+
+              </div>
+
+            </div>
+
+            <div className="flex gap-3 mt-6">
+
+              <Badge className="bg-white/15 text-white border-0 px-4 py-1 rounded-xl">
+
+                {villes.length} villes
+
+              </Badge>
+
+              <Badge className="bg-white/15 text-white border-0 px-4 py-1 rounded-xl">
+
+                {paysList.length} pays
+
+              </Badge>
+
+            </div>
+
+          </div>
+
+          <Dialog
+            open={showForm}
+            onOpenChange={setShowForm}
+          >
+
+            <DialogTrigger asChild>
+
+              <Button className="bg-white text-[#0066CC] hover:bg-blue-50 rounded-2xl h-12 px-6 font-semibold shadow">
+
+                <Plus className="h-5 w-5 mr-2" />
+
+                Ajouter une ville
+
+              </Button>
+
+            </DialogTrigger>
+
+            <DialogContent className="rounded-3xl border-0">
+
+              <DialogHeader>
+
+                <DialogTitle className="text-2xl">
+
+                  Nouvelle ville
+
+                </DialogTitle>
+
+                <DialogDescription>
+
+                  Ajouter une nouvelle ville à la plateforme
+
+                </DialogDescription>
+
+              </DialogHeader>
+
+              <div className="space-y-5 mt-5">
+
+                {/* NOM */}
+                <div>
+
+                  <label className="text-sm font-medium text-gray-700">
+
+                    Nom de la ville
+
+                  </label>
+
+                  <Input
+                    value={name}
+                    onChange={(e) =>
+                      setName(e.target.value)
+                    }
+                    placeholder="Ex: Kinshasa"
+                    className="mt-2 h-12 rounded-xl"
+                  />
+
+                </div>
+
+                {/* PAYS */}
+                <div>
+
+                  <label className="text-sm font-medium text-gray-700">
+
+                    Pays
+
+                  </label>
+
+                  <Select
+                    value={paysId}
+                    onValueChange={setPaysId}
+                  >
+
+                    <SelectTrigger className="mt-2 h-12 rounded-xl">
+
+                      <SelectValue placeholder="Choisir un pays" />
+
+                    </SelectTrigger>
+
+                    <SelectContent>
+
+                      {paysList.map((p) => (
+
+                        <SelectItem
+                          key={p.id}
+                          value={String(p.id)}
+                        >
+
+                          {p.name}
+
+                        </SelectItem>
+
+                      ))}
+
+                    </SelectContent>
+
+                  </Select>
+
+                </div>
+
+                {/* ACTIONS */}
+                <div className="flex justify-end gap-3 pt-4">
+
+                  <Button
+                    variant="outline"
+                    className="rounded-xl"
+                    onClick={() =>
+                      setShowForm(false)
+                    }
+                  >
+
+                    Annuler
+
+                  </Button>
+
+                  <Button
+                    onClick={handleCreate}
+                    className="rounded-xl bg-[#0066CC] hover:bg-[#0055AA]"
+                  >
+
+                    Créer la ville
+
+                  </Button>
+
+                </div>
+
+              </div>
+
+            </DialogContent>
+
+          </Dialog>
+
+        </div>
+
       </div>
 
-      {/* FORM */}
-      {showForm && (
-        <div className="bg-white p-4 rounded-xl shadow flex flex-col sm:flex-row gap-3">
+      {/* SEARCH */}
+      <div className="bg-white rounded-2xl border shadow-sm p-4">
 
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Nom de la ville"
-            className="border px-3 py-2 rounded-lg w-full sm:w-1/3"
+        <div className="relative">
+
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+
+          <Input
+            placeholder="Rechercher une ville..."
+            value={search}
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
+            className="pl-11 h-12 rounded-xl border-0 bg-gray-50"
           />
 
-          <select
-            value={paysId}
-            onChange={(e) => setPaysId(e.target.value)}
-            className="border px-3 py-2 rounded-lg w-full sm:w-auto"
-          >
-            <option value="">
-              Choisir un pays
-            </option>
-
-            {paysList.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-
-          <button
-            onClick={handleCreate}
-            className="bg-green-600 text-white px-3 py-2 rounded w-full sm:w-auto"
-          >
-            Valider
-          </button>
-
-          <button
-            onClick={() => setShowForm(false)}
-            className="text-gray-500 w-full sm:w-auto"
-          >
-            Annuler
-          </button>
-
         </div>
-      )}
+
+      </div>
 
       {/* GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-        {villes.map((ville) => (
+        {filteredVilles.map((ville) => (
+
           <Card
             key={ville.id}
-            className="shadow-sm hover:shadow-md overflow-hidden"
+            className="group border-0 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden"
           >
-            <CardContent className="p-4 sm:p-6 flex flex-col sm:flex-row gap-4">
 
-              {/* ICON */}
-              <div className="w-12 h-12 min-w-[48px] bg-[#00AA55]/10 flex items-center justify-center rounded-xl">
-                <Map className="text-[#00AA55]" />
+            <CardContent className="p-6">
+
+              {/* TOP */}
+              <div className="flex items-start justify-between">
+
+                <div className="w-14 h-14 rounded-2xl bg-[#0066CC]/10 flex items-center justify-center">
+
+                  <MapPin className="text-[#0066CC] h-6 w-6" />
+
+                </div>
+
+                <Badge className="bg-[#00AA55]/10 text-[#00AA55] border-0">
+
+                  Active
+
+                </Badge>
+
               </div>
 
               {/* CONTENT */}
-              <div className="flex-1 mt-2 overflow-hidden">
+              <div className="mt-5">
 
-                {/* EDIT MODE */}
                 {editingId === ville.id ? (
 
-                  <div className="flex flex-col sm:flex-row gap-2 mt-2">
+                  <div className="space-y-3">
 
-                    <input
+                    <Input
                       value={editingName}
-                      onChange={(e) => setEditingName(e.target.value)}
-                      className="border px-2 py-1 rounded w-full"
+                      onChange={(e) =>
+                        setEditingName(
+                          e.target.value
+                        )
+                      }
+                      className="rounded-xl h-11"
                     />
 
-                    <select
+                    <Select
                       value={editingPaysId}
-                      onChange={(e) => setEditingPaysId(e.target.value)}
-                      className="border px-2 py-1 rounded w-full"
+                      onValueChange={
+                        setEditingPaysId
+                      }
                     >
-                      {paysList.map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {p.name}
-                        </option>
-                      ))}
-                    </select>
+
+                      <SelectTrigger className="rounded-xl h-11">
+
+                        <SelectValue />
+
+                      </SelectTrigger>
+
+                      <SelectContent>
+
+                        {paysList.map((p) => (
+
+                          <SelectItem
+                            key={p.id}
+                            value={String(p.id)}
+                          >
+
+                            {p.name}
+
+                          </SelectItem>
+
+                        ))}
+
+                      </SelectContent>
+
+                    </Select>
 
                   </div>
 
                 ) : (
 
-                  <div>
+                  <>
 
-                    <h3 className="font-semibold text-lg break-words">
+                    <h3 className="text-xl font-bold text-[#111]">
+
                       {ville.name}
+
                     </h3>
 
-                    <p className="text-sm text-gray-500 mt-1 break-words">
-                      {ville.pays?.name || "Aucun pays"}
-                    </p>
+                    <div className="flex items-center gap-2 mt-2 text-gray-500">
 
-                  </div>
+                      <Globe2 className="h-4 w-4" />
+
+                      <span className="text-sm">
+
+                        {ville.pays?.name ||
+                          "Aucun pays"}
+
+                      </span>
+
+                    </div>
+
+                  </>
 
                 )}
 
-                {/* STATS */}
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-3 text-sm">
+              </div>
 
-                  <div className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4 text-blue-500" />
+              {/* STATS */}
+              <div className="grid grid-cols-2 gap-4 mt-6">
 
-                    {ville.stationCount || 0} Stations
+                <div className="bg-gray-50 rounded-2xl p-4">
+
+                  <div className="flex items-center gap-2 text-[#0066CC]">
+
+                    <MapPin className="h-4 w-4" />
+
+                    <span className="text-sm font-medium">
+
+                      Stations
+
+                    </span>
+
                   </div>
 
-                  <div className="flex items-center gap-1">
-                    <Users className="h-4 w-4 text-blue-500" />
+                  <p className="text-2xl font-bold mt-2 text-[#111]">
 
-                    {ville.memberCount || 0} Membres
-                  </div>
+                    {ville.stationCount || 0}
+
+                  </p>
 
                 </div>
 
-                {/* ACTIONS */}
-                <div className="mt-4 flex flex-wrap gap-3 text-sm">
+                <div className="bg-gray-50 rounded-2xl p-4">
 
-                  {editingId === ville.id ? (
-                    <>
-                      <button
-                        onClick={() => handleUpdate(ville.id)}
-                        className="text-green-600"
-                      >
-                        OK
-                      </button>
+                  <div className="flex items-center gap-2 text-[#00AA55]">
 
-                      <button
-                        onClick={() => setEditingId(null)}
-                        className="text-gray-500"
-                      >
-                        Annuler
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => handleEdit(ville)}
-                        className="text-blue-600"
-                      >
-                        Modifier
-                      </button>
+                    <Users className="h-4 w-4" />
 
-                      <button
-                        onClick={() => handleDelete(ville.id)}
-                        className="text-red-500"
-                      >
-                        Supprimer
-                      </button>
-                    </>
-                  )}
+                    <span className="text-sm font-medium">
+
+                      Membres
+
+                    </span>
+
+                  </div>
+
+                  <p className="text-2xl font-bold mt-2 text-[#111]">
+
+                    {ville.memberCount || 0}
+
+                  </p>
 
                 </div>
 
               </div>
+
+              {/* ACTIONS */}
+              <div className="flex gap-3 mt-6">
+
+                {editingId === ville.id ? (
+
+                  <>
+
+                    <Button
+                      onClick={() =>
+                        handleUpdate(ville.id)
+                      }
+                      className="flex-1 rounded-xl bg-green-600 hover:bg-green-700"
+                    >
+
+                      Sauvegarder
+
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      className="rounded-xl"
+                      onClick={() =>
+                        setEditingId(null)
+                      }
+                    >
+
+                      Annuler
+
+                    </Button>
+
+                  </>
+
+                ) : (
+
+                  <>
+
+                    <Button
+                      variant="outline"
+                      className="flex-1 rounded-xl"
+                      onClick={() =>
+                        handleEdit(ville)
+                      }
+                    >
+
+                      <Pencil className="h-4 w-4 mr-2" />
+
+                      Modifier
+
+                    </Button>
+
+                    <Button
+                      variant="destructive"
+                      className="rounded-xl"
+                      onClick={() =>
+                        handleDelete(ville.id)
+                      }
+                    >
+
+                      <Trash2 className="h-4 w-4" />
+
+                    </Button>
+
+                  </>
+
+                )}
+
+              </div>
+
             </CardContent>
+
           </Card>
+
         ))}
 
       </div>
+
+      {/* EMPTY */}
+      {filteredVilles.length === 0 && (
+
+        <div className="bg-white rounded-3xl border shadow-sm p-16 text-center">
+
+          <Map className="mx-auto h-14 w-14 text-gray-300" />
+
+          <h3 className="mt-4 text-xl font-semibold text-[#111]">
+
+            Aucune ville trouvée
+
+          </h3>
+
+          <p className="text-gray-500 mt-2">
+
+            Essayez une autre recherche ou créez une nouvelle ville.
+
+          </p>
+
+        </div>
+
+      )}
+
     </div>
   );
 }

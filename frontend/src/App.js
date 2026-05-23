@@ -17,6 +17,9 @@ import ContinentsPage from "@/pages/ContinentPage";
 import PaysPage from "@/pages/PaysPage";
 import RolePage from"@/pages/RolePage";
 import GenerationPage from "@/pages/GenerationPage";
+import { MessageProvider } from "@/context/MessageContext";
+import Message from "./components/ui/message.jsx";
+import StationDetailPage from "./pages/StationDetailPage.js";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -37,10 +40,15 @@ function PublicRoute({ children }) {
 }
 
 function App() {
+
   return (
+    <MessageProvider>
     <AuthProvider>
       <TooltipProvider>
         <BrowserRouter>
+
+        <Message />
+
           <Routes>
             <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
             <Route path="/" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
@@ -53,17 +61,19 @@ function App() {
               <Route path="teachings" element={<TeachingsPage />} />
               <Route path="administration" element={<AdministrationPage />} />
               <Route path="profile" element={<ProfilePage />} />
-              <Route path="approval" element={<ApprovalPage />} />
+              <Route path="approvals" element={<ApprovalPage />} />
               <Route path="continents" element={<ContinentsPage />} />
               <Route path="pays" element={<PaysPage />} />
               <Route path="role" element={<RolePage />} />
               <Route path="generation" element={<GenerationPage />} />
+              <Route path="stations/:id" element={<StationDetailPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
+    </MessageProvider>
   );
 }
 

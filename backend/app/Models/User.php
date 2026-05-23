@@ -25,9 +25,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'sexe',
+        'phone',
         'role_id',
         'station_id',
-        
+        'generation_id',
+    
     ];
 
     /**
@@ -87,8 +90,12 @@ class User extends Authenticatable
     {
         return $this->role && $targetUser->role  ? $this->role->level > $targetUser->role->level : false;// retourne true si l'utilisateur actuel a un rôle supérieur à celui de l'utilisateur ciblé, sinon retourne false
     }
+    public function stationsResponsables()
+    {   
+        return $this->hasMany(Station::class, 'responsable_id');
+    }
 
-    public function scopeAccess($query)
+    public function scopeAccess($query)//Hièrarchie d'accès selon le role, ville, pays,etc
 {
     $user = Auth::user();
     $role = $user->role->label;

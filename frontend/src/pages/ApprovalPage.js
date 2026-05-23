@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { getApprovals, approveRequest, rejectRequest } from "../api/approvalApi";
+import { useMessage } from "../context/MessageContext";
+
+
 
 export default function ApprovalsPage() {
   const [approvals, setApprovals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { showMessage } = useMessage();
 
-  // 🔄 récupérer les approvals
+  //  récupérer les approvals
   const fetchApprovals = async () => {
     try {
       setLoading(true);
@@ -25,25 +29,27 @@ export default function ApprovalsPage() {
     fetchApprovals();
   }, []);
 
-  // ✅ approuver
+  // approuver
   const handleApprove = async (id) => {
     try {
       const data = await approveRequest(id);
       fetchApprovals(); // refresh après action
       console.log("RESPONSE:", data);
 
-      /*if (data.message === "Request submitted for approval") {
-        alert("Demande envoyée pour validation par l'administrateur.");*/
+     /* if (data.message === "Request submitted for approval") {
+        showMessage("Demande envoyée pour validation par l'administrateur.");*/
         if (data.message === "Approved") {
           alert("Demande approuvée avec succès !");
         return;
       }
+    
     } catch (err) {
-      alert(err.message);
+      //alert(err.message);
+      alert("Vous n'avez pas ce privilège !");
     }
   };
 
-  // ❌ rejeter
+  //  rejeter
 
   const handleReject = async(id)=>{
     try{
@@ -59,7 +65,8 @@ export default function ApprovalsPage() {
 
     } catch(err){
 
-      alert(err.message);
+      //alert(err.message);
+      alert("Vous n'avez pas ce privilège !");
     }
   };
 
@@ -96,6 +103,9 @@ export default function ApprovalsPage() {
               <p><strong>Demandeur :</strong> {approval.requester?.name}</p>
               <p><strong>Nom :</strong> {data.name}</p>
               <p><strong>Email :</strong> {data.email}</p>
+              <p><strong>Role :</strong> {data.role_id}</p>
+              <p><strong>Station :</strong> {data.station_id}</p>
+              <p><strong>Génération :</strong> {data.generation_id}</p>
 
               <button
                 onClick={() => handleApprove(approval.id)}

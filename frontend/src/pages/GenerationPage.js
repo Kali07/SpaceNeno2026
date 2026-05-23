@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { getGenerations, createGeneration, deleteGeneration,updateGeneration} from "../api/generationApi";
+import { useMessage } from "../context/MessageContext";
+
+
 
 export default function GneerationsPage() {
   const [generations, setGenerations] = useState([]);
   const [label, setLabel] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editingLabel, setEditingLabel] = useState("");
+  const { showMessage } = useMessage();
 
   const fetchData = async () => {
     const data = await getGenerations();
@@ -18,15 +22,27 @@ export default function GneerationsPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    try{
     await createGeneration(label);
     setLabel("");
+
+    showMessage("Création de la génération reussi !")
+
     fetchData();
+} catch (err) {
+    showMessage(err.message || "Erreur lors de la création", "error");
+  }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm("Supprimer cette Génération ?")) return;
+    try{
     await deleteGeneration(id);
+    showMessage("suppression de la génération reussi !")
     fetchData();
+} catch (err) {
+    showMessage(err.message || "Erreur lors de la suppression ! ", "error");
+  }
   };
 
   const handleEdit = (g) => {
@@ -35,10 +51,16 @@ export default function GneerationsPage() {
   };
 
   const handleUpdate = async (id) => {
+    try{
     await updateGeneration(id, editingLabel);
     setEditingId(null);
     setEditingLabel("");
+
+    showMessage("Modification de la génération reussi !")
     fetchData();
+} catch (err) {
+    showMessage(err.message || "Erreur lors de la modification", "error");
+  }
   };
 
   return (

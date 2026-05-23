@@ -65,6 +65,7 @@ Route::get('/stations', [StationController::class, 'index']);
 Route::post('/stations', [StationController::class, 'store']);
 Route::put('/stations/{id}', [StationController::class, 'update']);
 Route::delete('/stations/{id}', [StationController::class, 'destroy']);
+Route::get('/gestionnaires', [StationController::class, 'getGestionnaires']);
 
 //ROLES
 

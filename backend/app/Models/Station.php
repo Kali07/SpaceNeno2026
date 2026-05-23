@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class Station extends Model
 {
 
-protected $fillable = ['name', 'ville_id'];
+protected $fillable = ['name', 'ville_id', 'address', 'responsable_id'];
 
     public function ville()
     {
@@ -19,6 +19,11 @@ protected $fillable = ['name', 'ville_id'];
     public function users()
     {
         return $this->hasMany(User::class);
+    }
+
+    public function responsable()
+    {
+        return $this->belongsTo(User::class, 'responsable_id');
     }
 
 

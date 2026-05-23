@@ -41,3 +41,14 @@ export async function updateStation(id, data) {
   
     return res.json();
   }
+
+  export async function getGestionnaires() {
+    const res = await fetch(`${API_URL}/gestionnaires`, {
+      
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+  
+    return res.json();
+  }
