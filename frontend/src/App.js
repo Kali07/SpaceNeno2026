@@ -1,8 +1,11 @@
 import "@/App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
+
 import DashboardLayout from "@/layouts/DashboardLayout";
+
 import LoginPage from "@/pages/LoginPage";
 import DashboardPage from "@/pages/DashboardPage";
 import MembersPage from "@/pages/MembersPage";
@@ -15,64 +18,116 @@ import ProfilePage from "@/pages/ProfilePage";
 import ApprovalPage from "@/pages/ApprovalPage";
 import ContinentsPage from "@/pages/ContinentPage";
 import PaysPage from "@/pages/PaysPage";
-import RolePage from"@/pages/RolePage";
+import RolePage from "@/pages/RolePage";
 import GenerationPage from "@/pages/GenerationPage";
+import StationDetailPage from "@/pages/StationDetailPage";
+
+import ProtectedRoute from "@/components/ui/ProtectedRoute";
+
 import { MessageProvider } from "@/context/MessageContext";
-import Message from "./components/ui/message.jsx";
-import StationDetailPage from "./pages/StationDetailPage.js";
+import Message from "@/components/ui/message.jsx";
 
-function ProtectedRoute({ children }) {
-  const { user, loading } = useAuth();
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F5F5F5]">
-        <div className="w-8 h-8 border-3 border-[#0066CC] border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-  return user ? children : <Navigate to="/login" replace />;
-}
 
+// 🔹 PUBLIC ROUTE (login)
 function PublicRoute({ children }) {
   const { user, loading } = useAuth();
+
   if (loading) return null;
+
   return user ? <Navigate to="/dashboard" replace /> : children;
 }
 
-function App() {
 
+function App() {
   return (
     <MessageProvider>
-    <AuthProvider>
-      <TooltipProvider>
-        <BrowserRouter>
+      <AuthProvider>
+        <TooltipProvider>
+          <BrowserRouter>
 
-        <Message />
+            {/* 🔥 GLOBAL MESSAGE */}
+            <Message />
 
-          <Routes>
-            <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
-            <Route path="/" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
-              <Route index element={<Navigate to="/dashboard" replace />} />
-              <Route path="dashboard" element={<DashboardPage />} />
-              <Route path="members" element={<MembersPage />} />
-              <Route path="members/:id" element={<MemberDetailPage />} />
-              <Route path="stations" element={<StationsPage />} />
-              <Route path="villes" element={<VillesPage />} />
-              <Route path="teachings" element={<TeachingsPage />} />
-              <Route path="administration" element={<AdministrationPage />} />
-              <Route path="profile" element={<ProfilePage />} />
-              <Route path="approvals" element={<ApprovalPage />} />
-              <Route path="continents" element={<ContinentsPage />} />
-              <Route path="pays" element={<PaysPage />} />
-              <Route path="role" element={<RolePage />} />
-              <Route path="generation" element={<GenerationPage />} />
-              <Route path="stations/:id" element={<StationDetailPage />} />
-            </Route>
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
+            <Routes>
+
+              {/* 🔹 LOGIN */}
+              <Route
+                path="/login"
+                element={
+                  <PublicRoute>
+                    <LoginPage />
+                  </PublicRoute>
+                }
+              />
+
+              {/* 🔹 PROTECTED LAYOUT */}
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<Navigate to="/dashboard" replace />} />
+
+                {/* 🔹 BASIC ROUTES */}
+                <Route path="dashboard" element={<DashboardPage />} />
+                <Route path="members" element={<MembersPage />} />
+                <Route path="members/:id" element={<MemberDetailPage />} />
+                <Route path="stations" element={<StationsPage />} />
+                <Route path="stations/:id" element={<StationDetailPage />} />
+                <Route path="villes" element={<VillesPage />} />
+                <Route path="teachings" element={<TeachingsPage />} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="continents" element={<ContinentsPage />} />
+                <Route path="pays" element={<PaysPage />} />
+                <Route path="role" element={<RolePage />} />
+                <Route path="generation" element={<GenerationPage />} />
+
+                {/* 🔥 ADMIN ONLY ROUTES */}
+                <Route
+                  path="administration"
+                  element={
+                    <ProtectedRoute
+                      roles={[
+                        "admin_technique",
+                        "admin_fonctionnel",
+                        "admin_national",
+                        "admin_provincial",
+                      ]}
+                    >
+                      <AdministrationPage />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="approvals"
+                  element={
+                    <ProtectedRoute
+                      roles={[
+                        "admin_technique",
+                        "admin_fonctionnel",
+                        "admin_national",
+                        "admin_provincial",
+                      ]}
+                    >
+                      <ApprovalPage />
+                    </ProtectedRoute>
+                  }
+                />
+
+              </Route>
+
+              {/* 🔹 FALLBACK */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+
+            </Routes>
+
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
     </MessageProvider>
   );
 }

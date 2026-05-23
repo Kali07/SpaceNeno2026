@@ -1,304 +1,182 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-
-import { Badge } from '@/components/ui/badge';
-
-import {
-  Avatar,
-  AvatarImage,
-  AvatarFallback
-} from '@/components/ui/avatar';
-
-import {
-  dashboardStats,
-  mockMembers,
-  mockTeachings
-} from '@/data/mockData';
+import { useEffect, useState } from "react";
 
 import {
   Users,
-  MapPin,
-  Map,
-  BookOpen,
-  TrendingUp,
-  UserCheck,
-  UserX,
-  ArrowUpRight,
+  Shield,
   Activity,
-  Clock3,
-  Building2,
-  Sparkles
-} from 'lucide-react';
+  BellRing,
+} from "lucide-react";
 
-const statCards = [
+import {
+  Card,
+  CardContent,
+} from "@/components/ui/card";
 
-  {
-    title: 'Total Members',
-    value: dashboardStats.totalMembers,
-    icon: Users,
-    color: '#0066CC',
-    growth: '+12%'
-  },
+import {
+  Badge,
+} from "@/components/ui/badge";
 
-  {
-    title: 'Active Members',
-    value: dashboardStats.activeMembers,
-    icon: UserCheck,
-    color: '#00AA55',
-    growth: '+8%'
-  },
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-  {
-    title: 'Inactive Members',
-    value: dashboardStats.inactiveMembers,
-    icon: UserX,
-    color: '#FFAA00',
-    growth: '-2%'
-  },
+import { getDashboard } from "../api/dashboardApi";
+import { getUsers } from "../api/userApi";
 
-  {
-    title: 'Stations',
-    value: dashboardStats.totalStations,
-    icon: MapPin,
-    color: '#7C3AED',
-    growth: '+5%'
-  },
+const roleColors = {
+  admin_technique:
+    "bg-blue-50 text-blue-600 border-blue-200",
 
-  {
-    title: 'Zones',
-    value: dashboardStats.totalZones,
-    icon: Map,
-    color: '#00AA55',
-    growth: '+4%'
-  },
+  admin_fonctionnel:
+    "bg-purple-50 text-purple-600 border-purple-200",
 
-  {
-    title: 'Teachings',
-    value: dashboardStats.totalTeachings,
-    icon: BookOpen,
-    color: '#FF8800',
-    growth: '+15%'
-  }
-];
+  admin_national:
+    "bg-green-50 text-green-600 border-green-200",
 
-const generationData = [
+  admin_provincial:
+    "bg-orange-50 text-orange-600 border-orange-200",
 
-  {
-    label: 'Generation 1',
-    key: 'G1',
-    count: dashboardStats.generationDistribution.G1,
-    color: '#0066CC'
-  },
-
-  {
-    label: 'Generation 2',
-    key: 'G2',
-    count: dashboardStats.generationDistribution.G2,
-    color: '#00AA55'
-  },
-
-  {
-    label: 'Generation 3',
-    key: 'G3',
-    count: dashboardStats.generationDistribution.G3,
-    color: '#FFAA00'
-  }
-];
+  gestionnaire:
+    "bg-cyan-50 text-cyan-600 border-cyan-200",
+};
 
 export default function DashboardPage() {
 
-  const recentMembers = mockMembers.slice(0, 5);
+  const [stats, setStats] = useState({});
+  const [users, setUsers] = useState([]);
 
-  const recentTeachings = mockTeachings.slice(0, 4);
+  // FETCH
+  useEffect(() => {
+    fetchDashboard();
+    fetchUsers();
+  }, []);
 
-  const totalGen = dashboardStats.totalMembers;
+  const fetchDashboard = async () => {
+    try {
+      const data = await getDashboard();
+      setStats(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const data = await getUsers();
+      setUsers(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // STATS
+  const statCards = [
+    {
+      title: "Utilisateurs",
+      value: stats.users || 0,
+      icon: Users,
+      color: "from-blue-500 to-cyan-500",
+    },
+
+    {
+      title: "Actifs",
+      value: stats.active_users || 0,
+      icon: Activity,
+      color: "from-green-500 to-emerald-500",
+    },
+
+    {
+      title: "Demandes",
+      value: stats.pending_requests || 0,
+      icon: BellRing,
+      color: "from-orange-500 to-amber-500",
+    },
+
+    {
+      title: "Administrateurs",
+      value: stats.admins || 0,
+      icon: Shield,
+      color: "from-purple-500 to-fuchsia-500",
+    },
+  ];
 
   return (
+    <div className="space-y-8 p-2">
 
-    <div
-      className="space-y-8"
-      data-testid="dashboard-page"
-    >
+      {/* HERO */}
+      <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-700 p-10 text-white shadow-2xl">
 
-      {/* 🔹 HERO */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0055AA] via-[#0066CC] to-[#1E88E5] text-white shadow-xl">
-
-        {/* BACKGROUND */}
-        <div className="absolute inset-0">
-
-          <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
-
-          <div className="absolute bottom-0 left-0 w-56 h-56 bg-white/5 rounded-full blur-2xl"></div>
-
+        <div className="absolute top-0 right-0 opacity-10">
+          <Activity size={220} />
         </div>
 
-        <div className="relative z-10 p-8 md:p-10">
+        <div className="relative z-10">
 
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+          <h1 className="text-4xl font-bold tracking-tight">
+            Dashboard
+          </h1>
 
-            {/* LEFT */}
-            <div>
-
-              <div className="flex items-center gap-3 mb-4">
-
-                <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center">
-
-                  <Sparkles className="h-7 w-7 text-white" />
-
-                </div>
-
-                <div>
-
-                  <h1 className="text-3xl md:text-4xl font-bold">
-                    Dashboard
-                  </h1>
-
-                  <p className="text-white/80 mt-1">
-                    Bienvenue. Voici un aperçu global de votre communauté.
-                  </p>
-
-                </div>
-
-              </div>
-
-              <div className="flex flex-wrap gap-4 mt-6">
-
-                <div className="bg-white/10 backdrop-blur rounded-2xl px-5 py-4 min-w-[140px]">
-
-                  <p className="text-white/70 text-sm">
-                    Membres actifs
-                  </p>
-
-                  <h2 className="text-3xl font-bold mt-1">
-                    {dashboardStats.activeMembers}
-                  </h2>
-
-                </div>
-
-                <div className="bg-white/10 backdrop-blur rounded-2xl px-5 py-4 min-w-[140px]">
-
-                  <p className="text-white/70 text-sm">
-                    Stations
-                  </p>
-
-                  <h2 className="text-3xl font-bold mt-1">
-                    {dashboardStats.totalStations}
-                  </h2>
-
-                </div>
-
-              </div>
-
-            </div>
-
-            {/* RIGHT */}
-            <div className="bg-white/10 backdrop-blur rounded-3xl p-6 min-w-[300px]">
-
-              <div className="flex items-center justify-between">
-
-                <div>
-
-                  <p className="text-white/70 text-sm">
-                    Croissance mensuelle
-                  </p>
-
-                  <h2 className="text-5xl font-bold mt-2">
-                    +18%
-                  </h2>
-
-                </div>
-
-                <div className="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center">
-
-                  <TrendingUp className="h-7 w-7 text-white" />
-
-                </div>
-
-              </div>
-
-              <div className="mt-6 h-2 bg-white/20 rounded-full overflow-hidden">
-
-                <div className="w-[78%] h-full bg-white rounded-full"></div>
-
-              </div>
-
-              <p className="text-sm text-white/70 mt-3">
-                Activité globale de la communauté
-              </p>
-
-            </div>
-
-          </div>
+          <p className="mt-3 text-blue-100 text-lg">
+            Vue globale et performances de la plateforme
+          </p>
 
         </div>
 
       </div>
 
-      {/* 🔹 STATS */}
-      <div
-        className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
-        data-testid="stat-cards"
-      >
+      {/* STATS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
 
-        {statCards.map((stat, i) => (
+        {statCards.map((stat, index) => (
 
           <Card
-            key={stat.title}
-            className="border-0 shadow-sm hover:shadow-xl transition-all duration-300 rounded-3xl overflow-hidden group"
+            key={index}
+            className="
+              border-0
+              shadow-xl
+              rounded-[28px]
+              bg-white/80
+              backdrop-blur
+              transition-all
+              duration-300
+              hover:-translate-y-1
+              hover:shadow-2xl
+            "
           >
 
-            <CardContent className="p-6">
+            <CardContent className="p-7">
 
-              <div className="flex items-start justify-between">
+              <div className="flex items-center justify-between">
 
-                {/* LEFT */}
                 <div>
 
-                  <p className="text-xs uppercase tracking-[0.15em] font-semibold text-gray-400">
-
+                  <p className="text-sm text-gray-500">
                     {stat.title}
-
                   </p>
 
-                  <h2 className="text-4xl font-bold text-[#222] mt-3">
-
+                  <h2 className="text-4xl font-bold mt-2">
                     {stat.value}
-
                   </h2>
-
-                  <div className="flex items-center gap-1 mt-4 text-sm font-medium text-green-600">
-
-                    <ArrowUpRight className="h-4 w-4" />
-
-                    {stat.growth}
-
-                    <span className="text-gray-400 font-normal">
-                      ce mois
-                    </span>
-
-                  </div>
 
                 </div>
 
-                {/* ICON */}
                 <div
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center"
-                  style={{
-                    backgroundColor: `${stat.color}15`
-                  }}
+                  className={`
+                    w-16 h-16 rounded-2xl
+                    bg-gradient-to-r ${stat.color}
+                    flex items-center justify-center
+                    shadow-lg
+                  `}
                 >
-
                   <stat.icon
-                    className="h-7 w-7"
-                    style={{
-                      color: stat.color
-                    }}
+                    className="text-white"
+                    size={28}
                   />
-
                 </div>
 
               </div>
@@ -306,85 +184,98 @@ export default function DashboardPage() {
             </CardContent>
 
           </Card>
+
         ))}
 
       </div>
 
-      {/* 🔹 MAIN GRID */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      {/* INSIGHTS */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
-        {/* 🔹 DISTRIBUTION */}
-        <Card className="border-0 rounded-3xl shadow-sm overflow-hidden">
+        {/* STATISTIQUES RAPIDES */}
+        <Card
+          className="
+            rounded-[28px]
+            shadow-xl
+            border-0
+            transition-all
+            duration-300
+            hover:shadow-2xl
+          "
+        >
 
-          <CardHeader className="pb-2">
+          <CardContent className="p-7">
 
-            <CardTitle className="flex items-center gap-2 text-[#222]">
+            <h2 className="text-2xl font-bold mb-6">
+              Statistiques rapides
+            </h2>
 
-              <TrendingUp className="h-5 w-5 text-[#0066CC]" />
+            <div className="space-y-5">
 
-              Distribution des générations
-
-            </CardTitle>
-
-          </CardHeader>
-
-          <CardContent className="space-y-6 pt-4">
-
-            {generationData.map((gen) => (
-
-              <div key={gen.key}>
-
-                <div className="flex items-center justify-between mb-2">
-
-                  <span className="text-sm font-medium text-[#333]">
-
-                    {gen.label}
-
-                  </span>
-
-                  <span className="text-xs text-gray-500">
-
-                    {gen.count} / {totalGen}
-
-                  </span>
-
-                </div>
-
-                <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-
-                  <div
-                    className="h-full rounded-full transition-all duration-700"
-                    style={{
-                      width: `${(gen.count / totalGen) * 100}%`,
-                      backgroundColor: gen.color
-                    }}
-                  />
-
-                </div>
-
-              </div>
-            ))}
-
-            {/* TOTAL */}
-            <div className="mt-8 bg-[#F8FAFC] rounded-2xl p-5">
-
-              <div className="flex items-center justify-between">
+              {/* ACTIFS */}
+              <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-5">
 
                 <div>
 
                   <p className="text-sm text-gray-500">
-                    Total membres
+                    Utilisateurs actifs
                   </p>
 
-                  <h2 className="text-3xl font-bold text-[#222] mt-1">
-                    {dashboardStats.totalMembers}
-                  </h2>
+                  <h3 className="text-3xl font-bold mt-1">
+                    {stats.active_users || 0}
+                  </h3>
 
                 </div>
 
-                <div className="w-14 h-14 rounded-2xl bg-[#0066CC]/10 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center">
 
-                  <Users className="h-6 w-6 text-[#0066CC]" />
+                  <Activity className="text-green-600" />
+
+                </div>
+
+              </div>
+
+              {/* NOUVEAUX */}
+              <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-5">
+
+                <div>
+
+                  <p className="text-sm text-gray-500">
+                    Nouveaux aujourd’hui
+                  </p>
+
+                  <h3 className="text-3xl font-bold mt-1">
+                    {stats.new_users || 0}
+                  </h3>
+
+                </div>
+
+                <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center">
+
+                  <Users className="text-blue-600" />
+
+                </div>
+
+              </div>
+
+              {/* DEMANDES */}
+              <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-5">
+
+                <div>
+
+                  <p className="text-sm text-gray-500">
+                    Demandes en attente
+                  </p>
+
+                  <h3 className="text-3xl font-bold mt-1">
+                    {stats.pending_requests || 0}
+                  </h3>
+
+                </div>
+
+                <div className="w-14 h-14 rounded-2xl bg-orange-100 flex items-center justify-center">
+
+                  <BellRing className="text-orange-600" />
 
                 </div>
 
@@ -396,168 +287,99 @@ export default function DashboardPage() {
 
         </Card>
 
-        {/* 🔹 RECENT MEMBERS */}
-        <Card className="border-0 rounded-3xl shadow-sm overflow-hidden">
+        {/* REPARTITION DES ROLES */}
+        <Card
+          className="
+            rounded-[28px]
+            shadow-xl
+            border-0
+            transition-all
+            duration-300
+            hover:shadow-2xl
+          "
+        >
 
-          <CardHeader className="pb-2">
+          <CardContent className="p-7">
 
-            <CardTitle className="flex items-center gap-2 text-[#222]">
+            <h2 className="text-2xl font-bold mb-6">
+              Répartition des rôles
+            </h2>
 
-              <Users className="h-5 w-5 text-[#0066CC]" />
+            <div className="space-y-6">
 
-              Membres récents
+              {/* ADMIN TECH */}
+              <div>
 
-            </CardTitle>
+                <div className="flex justify-between mb-2">
 
-          </CardHeader>
+                  <span className="font-medium">
+                    Admin Technique
+                  </span>
 
-          <CardContent className="space-y-4 pt-4">
+                  <span className="font-bold">
+                    {stats.admins_technique || 0}
+                  </span>
 
-            {recentMembers.map((member) => (
+                </div>
 
-              <div
-                key={member.id}
-                className="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-50 transition-colors"
-              >
+                <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
 
-                {/* AVATAR */}
-                <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
-
-                  <AvatarImage
-                    src={member.avatar}
-                    alt={member.firstName}
+                  <div
+                    className="h-full bg-blue-500 rounded-full"
+                    style={{ width: "70%" }}
                   />
 
-                  <AvatarFallback className="bg-[#0066CC]/10 text-[#0066CC] font-semibold">
-
-                    {member.firstName[0]}
-                    {member.lastName[0]}
-
-                  </AvatarFallback>
-
-                </Avatar>
-
-                {/* INFO */}
-                <div className="flex-1 min-w-0">
-
-                  <p className="font-semibold text-[#222] truncate">
-
-                    {member.firstName} {member.lastName}
-
-                  </p>
-
-                  <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-
-                    <Building2 className="h-4 w-4" />
-
-                    {member.station}
-
-                  </div>
-
                 </div>
-
-                {/* STATUS */}
-                <Badge
-                  className={`rounded-xl px-3 py-1 text-[11px] font-semibold ${
-                    member.status === 'active'
-                      ? 'bg-green-100 text-green-700 border-green-200'
-                      : 'bg-orange-100 text-orange-700 border-orange-200'
-                  }`}
-                  variant="outline"
-                >
-
-                  {member.status}
-
-                </Badge>
 
               </div>
-            ))}
 
-          </CardContent>
+              {/* ADMIN NATIONAL */}
+              <div>
 
-        </Card>
+                <div className="flex justify-between mb-2">
 
-        {/* 🔹 TEACHINGS */}
-        <Card className="border-0 rounded-3xl shadow-sm overflow-hidden">
+                  <span className="font-medium">
+                    Admin National
+                  </span>
 
-          <CardHeader className="pb-2">
-
-            <CardTitle className="flex items-center gap-2 text-[#222]">
-
-              <BookOpen className="h-5 w-5 text-[#0066CC]" />
-
-              Enseignements récents
-
-            </CardTitle>
-
-          </CardHeader>
-
-          <CardContent className="space-y-4 pt-4">
-
-            {recentTeachings.map((teaching) => (
-
-              <div
-                key={teaching.id}
-                className="rounded-2xl border border-gray-100 p-4 hover:shadow-md transition-all"
-              >
-
-                <div className="flex items-start justify-between gap-4">
-
-                  <div>
-
-                    <h3 className="font-semibold text-[#222]">
-
-                      {teaching.title}
-
-                    </h3>
-
-                    <p className="text-sm text-gray-500 mt-2">
-
-                      {teaching.speaker}
-
-                    </p>
-
-                  </div>
-
-                  <div className="w-11 h-11 rounded-xl bg-[#0066CC]/10 flex items-center justify-center">
-
-                    <BookOpen className="h-5 w-5 text-[#0066CC]" />
-
-                  </div>
+                  <span className="font-bold">
+                    {stats.admins_national || 0}
+                  </span>
 
                 </div>
 
-                <div className="flex items-center gap-2 mt-4 text-xs text-gray-400">
+                <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
 
-                  <Clock3 className="h-4 w-4" />
-
-                  {teaching.duration}
+                  <div
+                    className="h-full bg-purple-500 rounded-full"
+                    style={{ width: "55%" }}
+                  />
 
                 </div>
 
               </div>
-            ))}
 
-            {/* FOOTER */}
-            <div className="bg-[#F8FAFC] rounded-2xl p-5 mt-4">
+              {/* GESTIONNAIRES */}
+              <div>
 
-              <div className="flex items-center justify-between">
+                <div className="flex justify-between mb-2">
 
-                <div>
+                  <span className="font-medium">
+                    Gestionnaires
+                  </span>
 
-                  <p className="text-sm text-gray-500">
-                    Total enseignements
-                  </p>
-
-                  <h2 className="text-3xl font-bold text-[#222] mt-1">
-                    {dashboardStats.totalTeachings}
-                  </h2>
+                  <span className="font-bold">
+                    {stats.gestionnaires || 0}
+                  </span>
 
                 </div>
 
-                <div className="w-14 h-14 rounded-2xl bg-[#0066CC]/10 flex items-center justify-center">
+                <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
 
-                  <Activity className="h-6 w-6 text-[#0066CC]" />
+                  <div
+                    className="h-full bg-cyan-500 rounded-full"
+                    style={{ width: "40%" }}
+                  />
 
                 </div>
 
@@ -570,6 +392,138 @@ export default function DashboardPage() {
         </Card>
 
       </div>
+
+      {/* USERS TABLE */}
+      <Card
+        className="
+          rounded-[32px]
+          border-0
+          shadow-2xl
+          overflow-hidden
+        "
+      >
+
+        <div className="p-7 border-b bg-slate-50">
+
+          <h2 className="text-2xl font-bold">
+            Utilisateurs récents
+          </h2>
+
+          <p className="text-gray-500 mt-1">
+            Liste des derniers utilisateurs enregistrés
+          </p>
+
+        </div>
+
+        <Table>
+
+          <TableHeader>
+
+            <TableRow>
+
+              <TableHead>
+                Utilisateur
+              </TableHead>
+
+              <TableHead>
+                Rôle
+              </TableHead>
+
+              <TableHead>
+                Station
+              </TableHead>
+
+              <TableHead>
+                Date création
+              </TableHead>
+
+            </TableRow>
+
+          </TableHeader>
+
+          <TableBody>
+
+            {users.map((user) => (
+
+              <TableRow
+                key={user.id}
+                className="hover:bg-slate-50 transition-colors"
+              >
+
+                {/* USER */}
+                <TableCell>
+
+                  <div className="flex items-center gap-4">
+
+                    <div
+                      className="
+                        w-11 h-11
+                        rounded-full
+                        bg-blue-100
+                        flex items-center justify-center
+                        font-bold
+                        text-blue-600
+                      "
+                    >
+                      {user.name?.charAt(0)}
+                    </div>
+
+                    <div>
+
+                      <p className="font-semibold">
+                        {user.name}
+                      </p>
+
+                      <p className="text-sm text-gray-500">
+                        {user.email}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                </TableCell>
+
+                {/* ROLE */}
+                <TableCell>
+
+                  <Badge
+                    className={roleColors[user.role?.label]}
+                  >
+                    {user.role?.label}
+                  </Badge>
+
+                </TableCell>
+
+                {/* STATION */}
+                <TableCell>
+
+                  <Badge variant="outline">
+                    {user.station?.name || "-"}
+                  </Badge>
+
+                </TableCell>
+
+                {/* DATE */}
+                <TableCell className="text-gray-500">
+
+                  {user.created_at
+                    ? new Date(
+                        user.created_at
+                      ).toLocaleDateString()
+                    : "-"}
+
+                </TableCell>
+
+              </TableRow>
+
+            ))}
+
+          </TableBody>
+
+        </Table>
+
+      </Card>
 
     </div>
   );

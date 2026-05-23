@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\PaysController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\VilleController;
 use App\Http\Controllers\Api\StationController;
+use App\Http\Controllers\Api\DashboardController;
 
 
 
@@ -38,50 +39,55 @@ Route::middleware('auth:sanctum')->group(function () {// groupe de routes proté
 
     // CONTINENTS
 
-Route::get('/continents', [ContinentController::class, 'index']);
-Route::post('/continents', [ContinentController::class, 'store']);
-Route::put('/continents/{id}', [ContinentController::class, 'update']);
-Route::delete('/continents/{id}', [ContinentController::class, 'destroy']);
+    Route::get('/continents', [ContinentController::class, 'index']);
+    Route::post('/continents', [ContinentController::class, 'store']);
+    Route::put('/continents/{id}', [ContinentController::class, 'update']);
+    Route::delete('/continents/{id}', [ContinentController::class, 'destroy']);
 
 
-// PAYS
+    // PAYS
 
-Route::get('/pays', [PaysController::class, 'index']);
-Route::post('/pays', [PaysController::class, 'store']);
-Route::put('/pays/{id}', [PaysController::class, 'update']);
-Route::delete('/pays/{id}', [PaysController::class, 'destroy']);
+    Route::get('/pays', [PaysController::class, 'index']);
+    Route::post('/pays', [PaysController::class, 'store']);
+    Route::put('/pays/{id}', [PaysController::class, 'update']);
+    Route::delete('/pays/{id}', [PaysController::class, 'destroy']);
 
-// VILLES
-
-
-Route::get('/villes', [VilleController::class, 'index']);
-Route::post('/villes', [VilleController::class, 'store']);
-Route::put('/villes/{id}', [VilleController::class, 'update']);
-Route::delete('/villes/{id}', [VilleController::class, 'destroy']);
-
-// STATIONS
-
-Route::get('/stations', [StationController::class, 'index']);
-Route::post('/stations', [StationController::class, 'store']);
-Route::put('/stations/{id}', [StationController::class, 'update']);
-Route::delete('/stations/{id}', [StationController::class, 'destroy']);
-Route::get('/gestionnaires', [StationController::class, 'getGestionnaires']);
-
-//ROLES
-
-Route::get('/roles', [RoleController::class, 'index']);
-Route::post('/roles', [RoleController::class, 'store']);
-Route::put('/roles/{id}', [RoleController::class, 'update']);
-Route::delete('/roles/{id}', [RoleController::class, 'destroy']);
-
-//GENERATIONS
-
-Route::get('/generations', [GenerationController::class, 'index']);
-Route::post('/generations', [GenerationController::class, 'store']);
-Route::put('/generations/{id}', [GenerationController::class, 'update']);
-Route::delete('/generations/{id}', [GenerationController::class, 'destroy']);
+    // VILLES
 
 
-    });
+    Route::get('/villes', [VilleController::class, 'index']);
+    Route::post('/villes', [VilleController::class, 'store']);
+    Route::put('/villes/{id}', [VilleController::class, 'update']);
+    Route::delete('/villes/{id}', [VilleController::class, 'destroy']);
+
+    // STATIONS
+
+    Route::get('/stations', [StationController::class, 'index']);
+    Route::post('/stations', [StationController::class, 'store']);
+    Route::put('/stations/{id}', [StationController::class, 'update']);
+    Route::delete('/stations/{id}', [StationController::class, 'destroy']);
+    Route::get('/gestionnaires', [StationController::class, 'getGestionnaires']);
+
+    //ROLES
+
+    Route::get('/roles', [RoleController::class, 'index']);
+    Route::post('/roles', [RoleController::class, 'store']);
+    Route::put('/roles/{id}', [RoleController::class, 'update']);
+    Route::delete('/roles/{id}', [RoleController::class, 'destroy']);
+
+    //GENERATIONS
+
+    Route::get('/generations', [GenerationController::class, 'index']);
+    Route::post('/generations', [GenerationController::class, 'store']);
+    Route::put('/generations/{id}', [GenerationController::class, 'update']);
+    Route::delete('/generations/{id}', [GenerationController::class, 'destroy']);
+
+    //Dashboard
+
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+
+
+
+});
 
 ?>

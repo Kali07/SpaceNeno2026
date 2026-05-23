@@ -1,75 +1,21 @@
 import { useState, useMemo, useEffect } from 'react';
-
 import { useNavigate } from 'react-router-dom';
-
-import {
-  createUser,
-  getUsers
-} from "@/api/userApi";
-
+import {createUser,getUsers} from "@/api/userApi";
 import { getStations } from '@/api/stationApi';
-
 import { getRoles } from '@/api/roleApi';
-
 import { getGenerations } from '@/api/generationApi';
-
 import { useAuth } from '@/context/AuthContext';
-
 import { useMessage } from "../context/MessageContext";
-
 import { Button } from '@/components/ui/button';
-
 import { Input } from '@/components/ui/input';
-
 import { Label } from '@/components/ui/label';
-
 import { Badge } from '@/components/ui/badge';
+import {Avatar,AvatarImage,AvatarFallback} from '@/components/ui/avatar';
+import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow} from '@/components/ui/table';
+import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue} from '@/components/ui/select';
+import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription,DialogFooter,DialogTrigger} from '@/components/ui/dialog';
+import { Search, Plus, UserPlus, Eye, Users, UserCheck, UserX, Sparkles, Mail, Building2 } from 'lucide-react';
 
-import {
-  Avatar,
-  AvatarImage,
-  AvatarFallback
-} from '@/components/ui/avatar';
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/ui/table';
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogTrigger
-} from '@/components/ui/dialog';
-
-import {
-  Search,
-  Plus,
-  UserPlus,
-  Eye,
-  Users,
-  UserCheck,
-  UserX,
-  Sparkles,
-  Mail,
-  Building2
-} from 'lucide-react';
 
 export default function MembersPage() {
 
@@ -81,6 +27,8 @@ export default function MembersPage() {
 
   // 🔹 STATES
   const [users, setUsers] = useState([]);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
 
   const [stations, setStations] = useState([]);
 

@@ -99,7 +99,10 @@ export default function ApprovalsPage() {
                 borderRadius: 8,
               }}
             >
-              <p><strong>Action :</strong> {approval.action}</p>
+              <h3 className="text-lg font-bold text-[#0066CC] flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#0066CC]"></span>
+                     {approval.action}
+               </h3>
               <p><strong>Demandeur :</strong> {approval.requester?.name}</p>
               <p><strong>Nom :</strong> {data.name}</p>
               <p><strong>Email :</strong> {data.email}</p>
