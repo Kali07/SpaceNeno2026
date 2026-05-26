@@ -1,27 +1,8 @@
 import { Card, CardContent } from '@/components/ui/card';
 
-import {
-  MapPin,
-  Users,
-  Map,
-  Eye,
-  Plus,
-  Pencil,
-  Trash2,
-  Building2,
-  Search,
-  X,
-  Check,
-  UserCog
-} from 'lucide-react';
+import {MapPin,Users,Map,Eye,Plus,Pencil,Trash2,Building2,Search,X,Check,  UserCog } from 'lucide-react';
 
-import {
-  getStations,
-  createStation,
-  deleteStation,
-  updateStation,
-  getGestionnaires
-} from '../api/stationApi';
+import {getStations, createStation, deleteStation, updateStation, getGestionnaires} from '../api/stationApi';
 
 import { getVilles } from '../api/villeApi';
 
@@ -32,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { useEffect, useMemo, useState } from 'react';
 
 import { useMessage } from "../context/MessageContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function StationsPage() {
 
@@ -45,6 +27,8 @@ export default function StationsPage() {
   const [showForm, setShowForm] = useState(false);
 
   const [search, setSearch] = useState("");
+
+  const { user } = useAuth();
 
   // 🔹 CREATE STATES
   const [name, setName] = useState("");
@@ -346,6 +330,8 @@ export default function StationsPage() {
         </div>
 
         {/* BUTTON */}
+
+        { user?.role && user.role.level >= 3 && (
         <Button
           onClick={() =>
             setShowForm(!showForm)
@@ -362,6 +348,8 @@ export default function StationsPage() {
           {showForm ? "Fermer" : "Ajouter une station"}
 
         </Button>
+
+        )}
 
       </div>
 

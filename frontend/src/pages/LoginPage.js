@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { LOGIN_BG } from '@/data/mockData';
+import { LOGIN_BG, LOGO, LOGO_NAME } from '@/data/mockData';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {// composant de page de connexion qui gère l'état des champs de saisie, les messages d'erreur, l'indicateur de chargement, et utilise le contexte d'authentification pour effectuer la connexion et la navigation vers le tableau de bord en cas de succès
@@ -48,8 +48,15 @@ export default function LoginPage() {// composant de page de connexion qui gère
         <div className="absolute inset-0 bg-[#0066CC]/80" />
         <div className="relative z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-              <span className="text-white font-bold text-lg font-heading">N</span>
+            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center"
+              style={{
+                backgroundImage: `url(${LOGO})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            
+            >
+              <span className="text-white font-bold text-lg font-heading"></span>
             </div>
             <span className="text-xl font-bold text-white font-heading tracking-tight">NENO SPACE EUJC</span>
           </div>
@@ -78,10 +85,18 @@ export default function LoginPage() {// composant de page de connexion qui gère
             <span className="text-lg font-bold tracking-tight font-heading text-[#333333]">NENO SPACE</span>
           </div>
 
-          <div className="space-y-2">
-            <h2 className="text-2xl font-bold tracking-tight font-heading text-[#333333]">Bienvenu dans votre Espace </h2>
-            <p className="text-sm text-[#666666]">Entrez vos identifians pour accéder à l'espace</p>
-          </div>
+          <div className="space-y-4 text-center">
+  
+                {/* Logo */}
+             <img src={LOGO_NAME} alt="Neno Space" className="w-32 mx-auto object-contain" />
+
+               {/* Texte */}
+                <div className="space-y-2">
+                  <h2 className="text-2xl font-bold tracking-tight font-heading text-[#333333]"> Bienvenue dans votre Espace</h2>
+
+                  <p className="text-sm text-[#666666]"> Entrez vos identifiants pour accéder à l'espace </p>
+                </div>
+            </div>
 
           <form onSubmit={handleSubmit} className="space-y-5" data-testid="login-form">
             {error && (

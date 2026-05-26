@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 
-import { useParams, useNavigate} from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
-import {Button} from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 
-import {Input} from '@/components/ui/input';
+import { Input } from '@/components/ui/input';
 
-import { Label} from '@/components/ui/label';
+import { Label } from '@/components/ui/label';
 
-import {Badge} from '@/components/ui/badge';
+import { Badge } from '@/components/ui/badge';
 
-import {Card,CardContent} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 
 import {
   Avatar,
@@ -26,10 +26,26 @@ import {
   SelectValue
 } from '@/components/ui/select';
 
-import { ArrowLeft, Save, Upload, Mail, Phone, MapPin, Calendar, Shield, User, Crown, Users, Sparkles, Trash2, Pencil, CheckCircle2} from 'lucide-react';
+import {
+  ArrowLeft,
+  Save,
+  Upload,
+  Mail,
+  Phone,
+  MapPin,
+  Mars,
+  Venus,
+  Shield,
+  User,
+  Users,
+  Sparkles,
+  Trash2,
+  Pencil,
+  CheckCircle2
+} from 'lucide-react';
 
 import {
-  getUsers,
+  getUserById,
   updateUser,
   deleteUser
 } from "../api/userApi";
@@ -49,10 +65,12 @@ import {
 import {
   useMessage
 } from "../context/MessageContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function MemberDetailPage() {
 
   const { id } = useParams();
+  const { user } = useAuth();
 
   const navigate = useNavigate();
 
@@ -61,6 +79,8 @@ export default function MemberDetailPage() {
   const [member, setMember] = useState(null);
 
   const [editing, setEditing] = useState(false);
+
+  const [loading, setLoading] = useState(true);
 
   const [form, setForm] = useState({});
 
@@ -79,15 +99,20 @@ export default function MemberDetailPage() {
       try {
 
         const [
-          users,
+          userData,
           stationsData,
           rolesData,
           generationsData
         ] = await Promise.all([
-          getUsers(),
+
+          getUserById(id),
+
           getStations(),
+
           getRoles(),
+
           getGenerations()
+
         ]);
 
         setStations(stationsData);
@@ -96,98 +121,67 @@ export default function MemberDetailPage() {
 
         setGenerations(generationsData);
 
-        const found = users.find(
-          u => u.id == id
-        );
+        const parts =
+          userData.name?.split(" ") || [];
 
-        if (found) {
+        const formatted = {
 
-          const parts =
-            found.name.split(" ");
+          id: userData.id,
 
-          const formatted = {
+          firstName:
+            parts[0] || "",
 
-            id: found.id,
+          lastName:
+            parts.slice(1).join(" ") || "",
 
-            firstName:
-              parts[0] || "",
+          email:
+            userData.email || "",
 
-            lastName:
-              parts.slice(1).join(" ") || "",
+          phone:
+            userData.phone || "",
 
-            email:
-              found.email,
+          sexe:
+            userData.sexe || "N/A",
 
-            phone:
-              found.phone || "",
+          role:
+            String(userData.role?.id || ""),
 
-            sexe:
-              found.sexe || "N/A",
+          generation:
+            String(userData.generation?.id || ""),
 
-            role:
-              String(found.role?.id || ""),
+          station:
+            String(userData.station?.id || ""),
 
-            generation:
-              String(found.generation?.id || ""),
+          status:
+            userData.status || "active",
 
-            station:
-              String(found.station?.id || ""),
+          avatar:
+            userData.avatar || null
+        };
 
-            status:
-              "active",
+        setMember(formatted);
 
-            avatar:
-              found.avatar || null
-          };
+        setForm(formatted);
 
-          setMember(formatted);
-
-          setForm(formatted);
-
-          setInitialForm(formatted);
-        }
+        setInitialForm(formatted);
 
       } catch (error) {
 
         console.error(error);
 
+        setMember(null);
+
+      } finally {
+
+        setLoading(false);
+
       }
+
     };
 
     fetchUser();
 
   }, [id]);
-
-  if (!member) {
-
-    return (
-
-      <div className="flex items-center justify-center h-[70vh]">
-
-        <div className="text-center">
-
-          <h2 className="text-2xl font-bold text-gray-700">
-            Membre introuvable
-          </h2>
-
-          <Button
-            className="mt-4"
-            onClick={() =>
-              navigate('/members')
-            }
-          >
-
-            <ArrowLeft className="h-4 w-4 mr-2" />
-
-            Retour
-
-          </Button>
-
-        </div>
-
-      </div>
-    );
-  }
 
   const update = (key, value) => {
 
@@ -224,6 +218,8 @@ export default function MemberDetailPage() {
 
     } catch (error) {
 
+      console.error(error);
+
       showMessage(
         "Erreur suppression",
         "error"
@@ -246,20 +242,28 @@ export default function MemberDetailPage() {
 
         phone: form.phone,
 
-        role_id: form.role,
+        role_id: Number(form.role),
+        sexe: form.sexe,
 
-        generation_id: form.generation,
+        generation_id: Number(form.generation),
 
-        station_id: form.station
+        station_id: Number(form.station)
+
       });
 
       showMessage(
         "Profil mis à jour"
       );
 
+      setMember(form);
+
+      setInitialForm(form);
+
       setEditing(false);
 
     } catch (error) {
+
+      console.error(error);
 
       showMessage(
         "Erreur modification",
@@ -282,6 +286,51 @@ export default function MemberDetailPage() {
     stations.find(
       s => String(s.id) === form.station
     );
+
+  if (loading) {
+
+    return (
+
+      <div className="flex items-center justify-center h-[70vh]">
+
+        <p className="text-xl font-semibold text-gray-500">
+          Chargement...
+        </p>
+
+      </div>
+    );
+  }
+
+  if (!member) {
+
+    return (
+
+      <div className="flex items-center justify-center h-[70vh]">
+
+        <div className="text-center">
+
+          <h2 className="text-2xl font-bold text-gray-700">
+            Membre introuvable
+          </h2>
+
+          <Button
+            className="mt-4"
+            onClick={() =>
+              navigate('/members')
+            }
+          >
+
+            <ArrowLeft className="h-4 w-4 mr-2" />
+
+            Retour
+
+          </Button>
+
+        </div>
+
+      </div>
+    );
+  }
 
   return (
 
@@ -312,8 +361,8 @@ export default function MemberDetailPage() {
 
                 <AvatarFallback className="bg-white text-[#0066CC] text-4xl font-bold">
 
-                  {member.firstName[0]}
-                  {member.lastName[0]}
+                  {member.firstName?.[0]}
+                  {member.lastName?.[0]}
 
                 </AvatarFallback>
 
@@ -359,9 +408,9 @@ export default function MemberDetailPage() {
 
               <h1 className="text-4xl font-bold text-white">
 
-                {member.firstName}
+                {form.firstName}
                 {" "}
-                {member.lastName}
+                {form.lastName}
 
               </h1>
 
@@ -480,7 +529,6 @@ export default function MemberDetailPage() {
         {/* LEFT */}
         <div className="space-y-6">
 
-          {/* CONTACT */}
           <Card className="rounded-3xl border-0 shadow-xl">
 
             <CardContent className="p-6">
@@ -508,7 +556,7 @@ export default function MemberDetailPage() {
                     </p>
 
                     <p className="font-semibold text-[#111]">
-                      {member.email}
+                      {form.email}
                     </p>
 
                   </div>
@@ -530,7 +578,7 @@ export default function MemberDetailPage() {
                     </p>
 
                     <p className="font-semibold text-[#111]">
-                      {member.phone || "N/A"}
+                      {form.phone || "N/A"}
                     </p>
 
                   </div>
@@ -563,7 +611,12 @@ export default function MemberDetailPage() {
 
                   <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center">
 
-                    <Calendar className="h-5 w-5 text-purple-600" />
+                  { form.sexe === "Masculin" ? (
+                    <Mars className="h-5 w-5 text-blue-600" />
+                                ) : (
+                    <Venus className="h-5 w-5 text-pink-600" />
+                                 )
+                  }
 
                   </div>
 
@@ -574,7 +627,7 @@ export default function MemberDetailPage() {
                     </p>
 
                     <p className="font-semibold text-[#111]">
-                      {member.sexe}
+                      {form.sexe}
                     </p>
 
                   </div>
@@ -614,7 +667,9 @@ export default function MemberDetailPage() {
                   </h2>
 
                   <p className="text-gray-500">
+
                     Modifier les informations du membre
+
                   </p>
 
                 </div>
@@ -625,12 +680,10 @@ export default function MemberDetailPage() {
 
                 <div className="space-y-2">
 
-                  <Label>
-                    Prénom
-                  </Label>
+                  <Label>Prénom</Label>
 
                   <Input
-                    value={form.firstName}
+                    value={form.firstName || ""}
                     onChange={(e) =>
                       update(
                         'firstName',
@@ -645,12 +698,10 @@ export default function MemberDetailPage() {
 
                 <div className="space-y-2">
 
-                  <Label>
-                    Nom
-                  </Label>
+                  <Label>Nom</Label>
 
                   <Input
-                    value={form.lastName}
+                    value={form.lastName || ""}
                     onChange={(e) =>
                       update(
                         'lastName',
@@ -665,12 +716,10 @@ export default function MemberDetailPage() {
 
                 <div className="space-y-2">
 
-                  <Label>
-                    Email
-                  </Label>
+                  <Label>Email</Label>
 
                   <Input
-                    value={form.email}
+                    value={form.email || ""}
                     onChange={(e) =>
                       update(
                         'email',
@@ -685,12 +734,10 @@ export default function MemberDetailPage() {
 
                 <div className="space-y-2">
 
-                  <Label>
-                    Téléphone
-                  </Label>
+                  <Label>Téléphone</Label>
 
                   <Input
-                    value={form.phone}
+                    value={form.phone || ""}
                     onChange={(e) =>
                       update(
                         'phone',
@@ -731,7 +778,9 @@ export default function MemberDetailPage() {
                   </h2>
 
                   <p className="text-gray-500">
+
                     Gestion des accès et affiliations
+
                   </p>
 
                 </div>
@@ -743,19 +792,14 @@ export default function MemberDetailPage() {
                 {/* STATION */}
                 <div className="space-y-2">
 
-                  <Label>
-                    Station
-                  </Label>
+                  <Label>Station</Label>
 
                   {editing ? (
 
                     <Select
                       value={form.station}
                       onValueChange={(v) =>
-                        update(
-                          "station",
-                          v
-                        )
+                        update("station", v)
                       }
                     >
 
@@ -794,80 +838,70 @@ export default function MemberDetailPage() {
 
                   )}
 
-                </div>
+              </div>
 
                 {/* ROLE */}
-                <div className="space-y-2">
+                    <div className="space-y-2">
 
-                  <Label>
-                    Rôle
-                  </Label>
+                          <Label>Rôle</Label>
 
-                  {editing ? (
+                    {editing ? (
 
-                    <Select
-                      value={form.role}
-                      onValueChange={(v) =>
-                        update(
-                          "role",
-                          v
-                        )
-                      }
-                    >
+                          <Select
+                            value={form.role}
+                            onValueChange={(v) =>
+                            update("role", v)
+                                  }
+                                  >
 
-                      <SelectTrigger className="h-12 rounded-2xl">
+                <SelectTrigger className="h-12 rounded-2xl">
 
-                        <SelectValue />
+                     <SelectValue />
 
-                      </SelectTrigger>
+                </SelectTrigger>
 
-                      <SelectContent>
+                  <SelectContent>
 
-                        {roles.map((r) => (
+                         {roles
+                            .filter((r) => r.level < user?.role?.level).map((r) => (
 
-                          <SelectItem
-                            key={r.id}
-                            value={String(r.id)}
-                          >
+                      <SelectItem
+                          key={r.id}
+                          value={String(r.id)}
+                        >
 
                             {r.label}
 
-                          </SelectItem>
+                         </SelectItem>
 
-                        ))}
+                                 ))}
 
-                      </SelectContent>
+                        </SelectContent>
 
-                    </Select>
+                          </Select>
 
-                  ) : (
+                          ) : (
 
-                    <Input
-                      value={currentRole?.label || ""}
-                      disabled
-                      className="h-12 rounded-2xl"
-                    />
+                          <Input
+                         value={currentRole?.label || ""}
+                                disabled
+                            className="h-12 rounded-2xl"/>
 
-                  )}
+                                   )}
 
-                </div>
+                          </div>
 
                 {/* GENERATION */}
                 <div className="space-y-2">
 
-                  <Label>
-                    Génération
-                  </Label>
+                  <Label>Génération</Label>
 
                   {editing ? (
 
                     <Select
                       value={form.generation}
                       onValueChange={(v) =>
-                        update(
-                          "generation",
-                          v
-                        )
+                        update("generation", v)
                       }
                     >
 
@@ -906,17 +940,15 @@ export default function MemberDetailPage() {
 
                   )}
 
-                </div>
+              </div>
 
                 {/* SEXE */}
                 <div className="space-y-2">
 
-                  <Label>
-                    Sexe
-                  </Label>
+                  <Label>Sexe</Label>
 
                   <Input
-                    value={form.sexe}
+                    value={form.sexe || ""}
                     disabled
                     className="h-12 rounded-2xl"
                   />

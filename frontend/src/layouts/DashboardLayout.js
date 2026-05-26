@@ -4,49 +4,74 @@ import { useAuth } from '@/context/AuthContext';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { LOGIN_BG, LOGO, LOGO_NAME } from '@/data/mockData';
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger} from '@/components/ui/dropdown-menu';
 
-import {
-  LayoutDashboard,
-  Users,
-  MapPin,
-  Map,
-  BookOpen,
-  Settings,
-  User,
-  LogOut,
-  Menu,
-  X,
-  Bell,
-  ChevronRight,
-} from 'lucide-react';
+import {LayoutDashboard,Users,MapPin,Map,BookOpen,Settings,User,LogOut,Menu,X,Bell,ChevronRight, Shield} from 'lucide-react';
 
 const navItems = (user) => {
+
+  // 🔹 Admin technique uniquement
+  const isAdminTech =
+    user?.role_id === 6;
+
+  // 🔹 Tous les autres admins
   const isAdmin =
     user?.role?.label !== 'gestionnaire' &&
-    user?.role?.label !== 'membre';
+    user?.role?.label !== 'membre' &&
+    !isAdminTech;
 
   return [
-    { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { to: '/members', label: 'Membres', icon: Users },
-    { to: '/stations', label: 'Stations', icon: MapPin },
-  
+
+    {
+      to: '/dashboard',
+      label: 'Dashboard',
+      icon: LayoutDashboard
+    },
+
+    {
+      to: '/members',
+      label: 'Membres',
+      icon: Users
+    },
+
+    {
+      to: '/stations',
+      label: 'Stations',
+      icon: MapPin
+    },
+
+    // 🔹 ADMINISTRATION SIMPLE
     ...(isAdmin
       ? [
-          { to: '/administration', label: 'Administration', icon: Settings },
+          {
+            to: '/administration',
+            label: 'Administration',
+            icon: Settings,
+          },
         ]
       : []),
 
-    { to: '/profile', label: 'Profile', icon: User },
+    // 🔹 ADMINISTRATION TECH
+    ...(isAdminTech
+      ? [
+          {
+            to: '/administrationTech',
+            label: 'Administration Tech',
+            icon: Shield,
+          },
+        ]
+      : []),
+
+    {
+      to: '/profile',
+      label: 'Profile',
+      icon: User
+    },
+
   ];
+
 };
 
 function SidebarContent({ onClose }) {
@@ -58,9 +83,15 @@ function SidebarContent({ onClose }) {
     <div className="flex flex-col h-full">
       <div className="px-6 py-5 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#0066CC] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg  flex items-center justify-center"
+             style={{
+                          backgroundImage: `url(${LOGO})`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                        }}
+          >
             <span className="text-white font-bold text-sm font-heading">
-              N
+              
             </span>
           </div>
 
@@ -258,15 +289,7 @@ export default function DashboardLayout() {
                     Profile
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem
-                    onClick={() => navigate('/administration')}
-                    data-testid="menu-admin"
-                  >
-                    <Settings className="mr-2 h-4 w-4" />
-                    Administration
-                  </DropdownMenuItem>
-
-                  <DropdownMenuSeparator />
+                <DropdownMenuSeparator />
 
                   <DropdownMenuItem
                     onClick={handleLogout}

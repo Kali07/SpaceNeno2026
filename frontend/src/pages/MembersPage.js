@@ -14,7 +14,7 @@ import {Avatar,AvatarImage,AvatarFallback} from '@/components/ui/avatar';
 import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow} from '@/components/ui/table';
 import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue} from '@/components/ui/select';
 import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription,DialogFooter,DialogTrigger} from '@/components/ui/dialog';
-import { Search, Plus, UserPlus, Eye, Users, UserCheck, UserX, Sparkles, Mail, Building2 } from 'lucide-react';
+import { Search, Plus, UserPlus, Eye, Users, UserCheck, UserX, Sparkles, Mail, Building2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 
 export default function MembersPage() {
@@ -73,28 +73,33 @@ export default function MembersPage() {
 
   }, []);
 
-  const fetchUsers = async () => {
-
+  const fetchUsers = async (currentPage = 1) => {
     try {
-
-      const data = await getUsers();
-
+  
+      const response = await getUsers(currentPage);
+  
       const s = await getStations();
-
+  
       const r = await getRoles();
-
+  
       const g = await getGenerations();
-
-      setUsers(data);
-
+  
+      setUsers(response.data || []);
+  
+      setPage(response.current_page || 1);
+  
+      setLastPage(response.last_page || 1);
+  
       setStations(s);
-
+  
       setRoles(r);
-
+  
       setGenerations(g);
-
+  
     } catch (err) {
-
+  
+      console.error(err);
+  
       showMessage(
         "Erreur lors du chargement",
         "error"
@@ -395,17 +400,21 @@ export default function MembersPage() {
           onOpenChange={setDialogOpen}
         >
 
+            { user?.role && user.role.level >= 2 && (
+
           <DialogTrigger asChild>
 
-            <Button className="h-12 rounded-2xl bg-[#0066CC] hover:bg-[#0055AA]">
+                <Button className="h-12 rounded-2xl bg-[#0066CC] hover:bg-[#0055AA]">
 
-              <Plus className="h-4 w-4 mr-2" />
+                  <Plus className="h-4 w-4 mr-2" />
 
-              Ajouter un membre
+                    Ajouter un membre
 
-            </Button>
+                </Button>
 
-          </DialogTrigger>
+           </DialogTrigger>
+
+                )}
 
           {/* 🔹 DIALOG */}
           <DialogContent className="sm:max-w-[650px] rounded-3xl">
@@ -561,40 +570,39 @@ export default function MembersPage() {
                   <Label>Rôle</Label>
 
                   <Select
-                    value={newMember.role}
-                    onValueChange={(v) =>
-                      setNewMember({
+                     value={newMember.role}
+                       onValueChange={(v) =>
+                        setNewMember({
                         ...newMember,
-                        role: v
-                      })
-                    }
-                  >
+                          role: v
+                            })
+                            }>
 
                     <SelectTrigger className="mt-2 rounded-xl">
 
                       <SelectValue placeholder="Choisir un rôle" />
 
-                    </SelectTrigger>
+                     </SelectTrigger>
 
-                    <SelectContent>
+                     <SelectContent>
 
-                      {roles.map((r) => (
+                            {roles
+                              .filter( (r) => r.level < user?.role?.level).map((r) => (
 
-                        <SelectItem
-                          key={r.id}
-                          value={String(r.id)}
-                        >
+                     <SelectItem
+                       key={r.id}
+                        value={String(r.id)}
+                      >
 
-                          {r.label}
+                        {r.label}
 
-                        </SelectItem>
+                     </SelectItem>
 
-                      ))}
+                              ))}
 
-                    </SelectContent>
+                       </SelectContent>
 
                   </Select>
-
                 </div>
 
               </div>
@@ -1040,6 +1048,24 @@ export default function MembersPage() {
             membre(s)
 
           </p>
+
+          {/* 🔹 PAGINATION */}
+          <div className="flex items-center justify-between px-6 py-4 border-t bg-white">
+
+         <Button variant="outline" disabled={page === 1} onClick={() => { const newPage = page - 1; setPage(newPage); fetchUsers(newPage); }} className="rounded-xl">
+                <ChevronLeft className="h-4 w-4" />
+          </Button>
+
+          <div className="text-sm text-gray-600">
+             Page {" "}
+            <span className="font-semibold">{page}</span>{" "}sur{" "} <span className="font-semibold">  {lastPage} </span>
+          </div>
+
+          <Button variant="outline" disabled={page === lastPage} onClick={() => { const newPage = page + 1; setPage(newPage); fetchUsers(newPage); }} className="rounded-xl">
+               <ChevronRight className="h-4 w-4 text-gray-500" />
+          </Button>
+
+        </div>
 
         </div>
 

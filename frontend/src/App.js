@@ -14,6 +14,7 @@ import StationsPage from "@/pages/StationsPage";
 import VillesPage from "@/pages/VillesPage";
 import TeachingsPage from "@/pages/TeachingsPage";
 import AdministrationPage from "@/pages/AdministrationPage";
+import AdministrationTechPage from "@/pages/AdministrationTechPage";
 import ProfilePage from "@/pages/ProfilePage";
 import ApprovalPage from "@/pages/ApprovalPage";
 import ContinentsPage from "@/pages/ContinentPage";
@@ -98,6 +99,18 @@ function App() {
                       ]}
                     >
                       <AdministrationPage />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="administrationTech"
+                  element={
+                    <ProtectedRoute
+                      roles={[
+                        "admin_technique",
+                           ]}>
+                      <AdministrationTechPage />
                     </ProtectedRoute>
                   }
                 />

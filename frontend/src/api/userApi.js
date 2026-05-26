@@ -4,15 +4,48 @@ const API_URL = "http://127.0.0.1:8000/api";
 const getToken = () => localStorage.getItem("token");
 
 // 🔹 GET USERS
-export const getUsers = async () => {// fonction pour récupérer la liste des utilisateurs en envoyant une requête GET au backend avec le token d'authentification dans les en-têtes, et retourner la réponse JSON contenant les données des utilisateurs
-  const res = await fetch(`${API_URL}/users`, {// envoie une requête GET à l'endpoint /users du backend pour récupérer la liste des utilisateurs
+export const getUsers = async (page = 1) => {// fonction pour récupérer la liste paginée des utilisateurs en envoyant une requête GET au backend avec le token d'authentification dans les en-têtes, et retourner la réponse JSON contenant les données paginées des utilisateurs
+  
+  const res = await fetch(`${API_URL}/users?page=${page}`, {// envoie une requête GET à l'endpoint /users du backend avec le numéro de page pour récupérer la liste paginée des utilisateurs
+    
     headers: {
       Authorization: `Bearer ${getToken()}`,// inclut le token d'authentification dans les en-têtes de la requête pour permettre au backend de vérifier l'identité de l'utilisateur et d'autoriser l'accès aux données des utilisateurs
     },
+
   });
 
-  return res.json();// retourne la réponse JSON contenant les données des utilisateurs récupérées du backend, qui peut être utilisée pour afficher la liste des utilisateurs dans l'interface d'administration ou pour d'autres opérations liées aux utilisateurs
+  // vérifie si la requête a échoué et lance une erreur si nécessaire
+  if (!res.ok) {
+    throw new Error("Erreur lors du chargement des utilisateurs");
+  }
+
+  return res.json();// retourne la réponse JSON contenant les données paginées des utilisateurs récupérées du backend :
+                    // data = liste des utilisateurs
+                    // current_page = page actuelle
+                    // last_page = nombre total de pages
+                    // total = nombre total d'utilisateurs
 };
+
+
+export const getUserById = async (id) => {
+
+  const res = await fetch(`${API_URL}/users/${id}`, {
+
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+
+  });
+
+  if (!res.ok) {
+
+    throw new Error("Utilisateur introuvable");
+
+  }
+
+  return res.json();
+};
+
 
 // 🔹 CREATE USER
 export const createUser = async (data) => {// fonction pour créer un nouvel utilisateur en envoyant une requête POST au backend avec les données de l'utilisateur dans le corps de la requête, et retourner la réponse JSON contenant les données du nouvel utilisateur créé

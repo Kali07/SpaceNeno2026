@@ -28,7 +28,7 @@ class UserController extends Controller
             'station',
             'generation',
             'statut'
-        )->access()->get();// retourne tous les utilisateurs avec leur rôle associé
+        )->access()->paginate(10);// retourne tous les utilisateurs avec leur rôle associé
     }
 
     //CREATE

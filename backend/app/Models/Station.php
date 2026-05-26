@@ -59,5 +59,3 @@ protected $fillable = ['name', 'ville_id', 'address', 'responsable_id'];
         return $query->where('id', $user->station_id);
     }
 }
-
-

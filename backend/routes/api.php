@@ -23,7 +23,8 @@ Route::middleware('auth:sanctum')->group(function () {// groupe de routes proté
 
     // USERS
     Route::apiResource('users', UserController::class);// routes pour les opérations CRUD sur les utilisateurs en utilisant un contrôleur de ressources API, qui génère automatiquement les routes pour les méthodes index, store, show, update et destroy du UserController pour gérer les utilisateurs
-
+    Route::get('/users/{id}', [UserController::class, 'show']);
+    
     // PROFILE
     Route::middleware('auth:sanctum')->group(function () {// groupe de routes protégées par le middleware d'authentification Sanctum, qui nécessite que l'utilisateur soit authentifié pour accéder à ces routes
         Route::put('/profile', [UserController::class, 'updateProfile']);// route pour mettre à jour les informations du profil de l'utilisateur connecté en envoyant une requête PUT au backend, et en appelant la méthode updateProfile du UserController pour mettre à jour les informations du profil de l'utilisateur connecté

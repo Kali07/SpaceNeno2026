@@ -6,50 +6,65 @@ use App\Models\User;
 use App\Models\Station;
 use App\Models\Ville;
 use App\Models\Pays;
+use App\Models\Generation;
+
+
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 
-class GenerationController extends Controller
+class DashboardController extends Controller
 {
 
-public function index()
-{
-    $user = Auth::user();// récupère l'utilisateur actuellement connecté
+    public function index()
+    {
 
-    // scope selon ton système (tu l’as déjà fait)
-    $users = User::access()->count();
-    $stations = Station::access()->count();
-    $villes = Ville::access()->count();
-    $pays = Pays::access()->count();
+        // UTILISATEURS
+        $users = User::access()->count();
 
-    // rôles
-    $gestionnaires = User::whereHas('role', fn($q) =>
-        $q->where('label', 'gestionnaire')
-    )->access()->count();
+        // ADMINS
+        $admins = User::whereHas('role', function ($q) {
 
-    $adminsProvincial = User::whereHas('role', fn($q) =>
-        $q->where('label', 'admin_provincial')
-    )->access()->count();
+            $q->whereIn('label', [
+                'admin_provincial',
+                'admin_national',
+                'admin_technique'
+            ]);
 
-    $adminsNational = User::whereHas('role', fn($q) =>
-        $q->where('label', 'admin_national')
-    )->access()->count();
+        })->access()->count();
 
-    $adminsTechnique = User::whereHas('role', fn($q) =>
-        $q->where('label', 'admin_technique')
-    )->count(); // lui voit tout
 
-    return response()->json([
-        'users' => $users,
-        'stations' => $stations,
-        'villes' => $villes,
-        'pays' => $pays,
-        'gestionnaires' => $gestionnaires,
-        'admins_provincial' => $adminsProvincial,
-        'admins_national' => $adminsNational,
-        'admins_technique' => $adminsTechnique,
-    ]);
-}
+
+        // UTILISATEURS ACTIFS
+        // ⚠️ seulement si la colonne status existe
+        /*$activeUsers = User::where(
+            'status',
+            'active'
+        )->access()->count();*/
+
+        // GENERATIONS
+        $generations = Generation::access()->count();
+
+        // STATIONS
+        $stations = Station::access()->count();
+
+        return response()->json([
+
+            'users' => $users,
+
+            'admins' => $admins,
+
+          
+          /*  'active_users' =>
+                $activeUsers,*/
+
+            'generations' =>
+                $generations,
+
+            'stations' =>
+                $stations,
+
+        ]);
+
+    }
 
 }
 

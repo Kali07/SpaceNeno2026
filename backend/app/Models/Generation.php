@@ -11,5 +11,10 @@ class Generation extends Model
         return $this->hasMany(User::class);
     }
 
+    public function scopeAccess($query)
+    {
+        return $query;
+    }
+
     protected $fillable = ['label'];
 }
