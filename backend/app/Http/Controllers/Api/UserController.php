@@ -90,7 +90,7 @@ class UserController extends Controller
 
                 return response()->json([// retourne un message indiquant que la demande d'approbation a été soumise
 
-                    'message' => 'Request submitted for approval'
+                    'message' => 'Demande soumise pour approbation'
                 ]);
             }
 
@@ -124,7 +124,7 @@ class UserController extends Controller
 
         return response()->json([
 
-            'error' => 'Unauthorized'
+            'error' => 'Probleme de permission pour créer cet utilisateur'
 
         ], 403);// retourne une réponse d'erreur si l'utilisateur actuel n'a pas le niveau requis pour créer un utilisateur
     }
@@ -195,7 +195,7 @@ class UserController extends Controller
 
             return response()->json([// retourne un message indiquant que la demande d'approbation a été soumise
 
-                'message' => 'Request submitted for approval'
+                'message' => 'Demande soumise pour approbation'
             ]);
         }
 
@@ -297,7 +297,7 @@ class UserController extends Controller
         if ($currentUser->role->level <= $approval->requester->role->level) {
 
             return response()->json([
-                'error' => 'Unauthorized'
+                'error' => 'Demande non autorisée'
             ], 403);
         }
 
@@ -416,7 +416,7 @@ class UserController extends Controller
         if ($currentUser->role->level <= $approval->requester->role->level) {
 
             return response()->json([
-                'error' => 'Unauthorized'
+                'error' => 'Demande non autorisée'
             ], 403);
         }
 
@@ -456,7 +456,7 @@ class UserController extends Controller
         if (!$user) {// vérifie si l'utilisateur est authentifié
 
             return response()->json([
-                'error' => 'Unauthenticated'
+                'error' => 'utilisateur non authentifié'
             ], 401);
         }
 
@@ -495,7 +495,7 @@ class UserController extends Controller
         if (!$user) {
 
             return response()->json([
-                'error' => 'Unauthenticated'
+                'error' => 'utilisateur non authentifié'
             ], 401);
         }
 

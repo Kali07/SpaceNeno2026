@@ -6,8 +6,17 @@ const getHeaders = () => ({
 });
 
 export async function getVilles() {
-  const res = await fetch(`${API_URL}/villes`, { headers: getHeaders() });
-  return res.json();
+  const res = await fetch(`${API_URL}/villes`, {
+    headers: getHeaders(),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Erreur lors du chargement des villes");
+  }
+
+  return data;
 }
 
 export async function createVille(data) {
@@ -17,7 +26,13 @@ export async function createVille(data) {
     body: JSON.stringify(data),
   });
 
-  return res.json();
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.error || "Erreur lors de la création");
+  }
+
+  return result;
 }
 
 export async function deleteVille(id) {
@@ -26,18 +41,27 @@ export async function deleteVille(id) {
     headers: getHeaders(),
   });
 
-  return res.json();
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.error || "Erreur lors de la suppression");
+  }
+
+  return result;
 }
 
 export async function updateVille(id, data) {
-    const res = await fetch(`${API_URL}/villes/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(data),
-    });
-  
-    return res.json();
+  const res = await fetch(`${API_URL}/villes/${id}`, {
+    method: "PUT",
+    headers: getHeaders(),
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.error || "Erreur lors de la modification");
   }
+
+  return result;
+}

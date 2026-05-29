@@ -43,7 +43,12 @@ export function AuthProvider({ children }) {// composant de contexte d'authentif
   
       setUser(data.user); // met à jour l'état de l'utilisateur connecté avec les données reçues du backend après une connexion réussie
   
-      return { success: true };
+      return { 
+        success: true,
+        user: data.user,
+        token: data.token,
+        change_password: data.change_password,
+     };
   
     } catch (err) {// en cas d'erreur lors de la requête de connexion, retourne une erreur avec un message générique indiquant une erreur serveur
       return { success: false, error: "Erreur serveur" };

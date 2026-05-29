@@ -6,8 +6,17 @@ const getHeaders = () => ({
 });
 
 export async function getStations() {
-  const res = await fetch(`${API_URL}/stations`, { headers: getHeaders() });
-  return res.json();
+  const res = await fetch(`${API_URL}/stations`, {
+    headers: getHeaders(),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Erreur lors du chargement des stations");
+  }
+
+  return data;
 }
 
 export async function createStation(data) {
@@ -17,7 +26,13 @@ export async function createStation(data) {
     body: JSON.stringify(data),
   });
 
-  return res.json();
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.error || "Erreur lors de la création");
+  }
+
+  return result;
 }
 
 export async function deleteStation(id) {
@@ -26,29 +41,43 @@ export async function deleteStation(id) {
     headers: getHeaders(),
   });
 
-  return res.json();
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.error || "Erreur lors de la suppression");
+  }
+
+  return result;
 }
 
 export async function updateStation(id, data) {
-    const res = await fetch(`${API_URL}/stations/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(data),
-    });
-  
-    return res.json();
+  const res = await fetch(`${API_URL}/stations/${id}`, {
+    method: "PUT",
+    headers: getHeaders(),
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.error || "Erreur lors de la modification");
   }
 
-  export async function getGestionnaires() {
-    const res = await fetch(`${API_URL}/gestionnaires`, {
-      
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-  
-    return res.json();
+  return result;
+}
+
+export async function getGestionnaires() {
+  const res = await fetch(`${API_URL}/gestionnaires`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Erreur lors du chargement des gestionnaires");
   }
+
+  return data;
+}

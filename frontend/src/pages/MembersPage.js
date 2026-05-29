@@ -97,9 +97,7 @@ export default function MembersPage() {
       setGenerations(g);
   
     } catch (err) {
-  
-      console.error(err);
-  
+    
       showMessage(
         "Erreur lors du chargement",
         "error"
@@ -213,7 +211,7 @@ export default function MembersPage() {
 
     try {
 
-      await createUser({
+      const result =await createUser({
 
         name:
           newMember.firstName +
@@ -236,6 +234,7 @@ export default function MembersPage() {
       });
 
       showMessage(
+        result.message ||
         "Utilisateur créé avec succès"
       );
 
@@ -265,10 +264,7 @@ export default function MembersPage() {
     } catch (err) {
 
       showMessage(
-        err.response?.data?.error ||
-        "Erreur lors de la création",
-        "error"
-      );
+        err.message|| "error");
     }
   };
 

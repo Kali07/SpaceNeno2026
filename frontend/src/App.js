@@ -22,6 +22,7 @@ import PaysPage from "@/pages/PaysPage";
 import RolePage from "@/pages/RolePage";
 import GenerationPage from "@/pages/GenerationPage";
 import StationDetailPage from "@/pages/StationDetailPage";
+import UpdatePasswordPage from "@/pages/UpdatePasswordPage";
 
 import ProtectedRoute from "@/components/ui/ProtectedRoute";
 
@@ -52,12 +53,7 @@ function App() {
             <Routes>
 
               {/* 🔹 LOGIN */}
-              <Route
-                path="/login"
-                element={
-                  <PublicRoute>
-                    <LoginPage />
-                  </PublicRoute>
+              <Route path="/login" element={<PublicRoute> <LoginPage /> </PublicRoute>
                 }
               />
 
@@ -85,6 +81,7 @@ function App() {
                 <Route path="pays" element={<PaysPage />} />
                 <Route path="role" element={<RolePage />} />
                 <Route path="generation" element={<GenerationPage />} />
+                <Route path="updating" element={<UpdatePasswordPage />} />
 
                 {/* 🔥 ADMIN ONLY ROUTES */}
                 <Route

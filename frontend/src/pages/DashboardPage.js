@@ -1,33 +1,12 @@
 import { useEffect, useState } from "react";
-
-import {
-  Users,
-  Shield,
-  Activity,
-  BellRing,
-  Building2,
-  Globe,
-  TrendingUp,
-  Layers3,
-  Sparkles,
-  Clock3,
-} from "lucide-react";
-
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
-
-import {
-  Badge,
-} from "@/components/ui/badge";
-
+import {Users,Shield,Activity,BellRing,Building2,Globe,TrendingUp,Layers3,Sparkles,Clock3} from "lucide-react";
+import {Card,CardContent} from "@/components/ui/card";
+import {Badge,} from "@/components/ui/badge";
 import { getDashboard } from "../api/dashboardApi";
 
 export default function DashboardPage() {
 
   const [stats, setStats] = useState({});
-
   const [loading, setLoading] = useState(true);
 
   // FETCH DASHBOARD
@@ -43,13 +22,13 @@ export default function DashboardPage() {
 
       const data = await getDashboard();
 
-      console.log("Dashboard :", data);
+     
 
       setStats(data);
 
     } catch (err) {
 
-      console.error("Erreur dashboard :", err);
+     
 
     } finally {
 

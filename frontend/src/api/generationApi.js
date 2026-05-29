@@ -16,7 +16,11 @@ export async function getGenerations() {
 
   const data = await res.json();
 
-  if (!res.ok) throw new Error(data.error);
+  if (!res.ok) {
+    throw new Error(
+      data.error || data.message || "Erreur lors du chargement des générations"
+    );
+  }
 
   return data;
 }
@@ -30,7 +34,11 @@ export async function createGeneration(label) {
 
   const data = await res.json();
 
-  if (!res.ok) throw new Error(data.error);
+  if (!res.ok) {
+    throw new Error(
+      data.error || data.message || "Erreur lors de la création"
+    );
+  }
 
   return data;
 }
@@ -43,21 +51,29 @@ export async function deleteGeneration(id) {
 
   const data = await res.json();
 
-  if (!res.ok) throw new Error(data.error);
+  if (!res.ok) {
+    throw new Error(
+      data.error || data.message || "Erreur lors de la suppression"
+    );
+  }
 
   return data;
 }
 
 export async function updateGeneration(id, label) {
-    const res = await fetch(`${API_URL}/generations/${id}`, {
-      method: "PUT",
-      headers: getHeaders(),
-      body: JSON.stringify({ label}),
-    });
-  
-    const data = await res.json();
-  
-    if (!res.ok) throw new Error(data.error);
-  
-    return data;
+  const res = await fetch(`${API_URL}/generations/${id}`, {
+    method: "PUT",
+    headers: getHeaders(),
+    body: JSON.stringify({ label }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      data.error || data.message || "Erreur lors de la modification"
+    );
   }
+
+  return data;
+}

@@ -45,9 +45,9 @@ export default function StationDetailPage() {
 
       } catch (error) {
 
-        console.error(
+        showMessage(
           "Erreur chargement station :",
-          error
+          "error"
         );
 
       } finally {

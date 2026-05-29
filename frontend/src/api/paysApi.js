@@ -6,8 +6,19 @@ const getHeaders = () => ({
 });
 
 export async function getPays() {
-  const res = await fetch(`${API_URL}/pays`, { headers: getHeaders() });
-  return res.json();
+  const res = await fetch(`${API_URL}/pays`, {
+    headers: getHeaders(),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      data.error || data.message || "Erreur lors du chargement des pays"
+    );
+  }
+
+  return data;
 }
 
 export async function createPays(data) {
@@ -17,7 +28,15 @@ export async function createPays(data) {
     body: JSON.stringify(data),
   });
 
-  return res.json();
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      result.error || result.message || "Erreur lors de la création"
+    );
+  }
+
+  return result;
 }
 
 export async function deletePays(id) {
@@ -26,18 +45,31 @@ export async function deletePays(id) {
     headers: getHeaders(),
   });
 
-  return res.json();
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      result.error || result.message || "Erreur lors de la suppression"
+    );
+  }
+
+  return result;
 }
 
 export async function updatePays(id, data) {
-    const res = await fetch(`${API_URL}/pays/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(data),
-    });
-  
-    return res.json();
+  const res = await fetch(`${API_URL}/pays/${id}`, {
+    method: "PUT",
+    headers: getHeaders(),
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      result.error || result.message || "Erreur lors de la modification"
+    );
   }
+
+  return result;
+}

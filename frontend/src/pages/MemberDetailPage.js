@@ -1,70 +1,18 @@
 import { useState, useEffect } from 'react';
-
 import { useParams, useNavigate } from 'react-router-dom';
-
 import { Button } from '@/components/ui/button';
-
 import { Input } from '@/components/ui/input';
-
 import { Label } from '@/components/ui/label';
-
 import { Badge } from '@/components/ui/badge';
-
 import { Card, CardContent } from '@/components/ui/card';
-
-import {
-  Avatar,
-  AvatarImage,
-  AvatarFallback
-} from '@/components/ui/avatar';
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-
-import {
-  ArrowLeft,
-  Save,
-  Upload,
-  Mail,
-  Phone,
-  MapPin,
-  Mars,
-  Venus,
-  Shield,
-  User,
-  Users,
-  Sparkles,
-  Trash2,
-  Pencil,
-  CheckCircle2
-} from 'lucide-react';
-
-import {
-  getUserById,
-  updateUser,
-  deleteUser
-} from "../api/userApi";
-
-import {
-  getStations
-} from "../api/stationApi";
-
-import {
-  getRoles
-} from "../api/roleApi";
-
-import {
-  getGenerations
-} from "../api/generationApi";
-
-import {
-  useMessage
-} from "../context/MessageContext";
+import { Avatar, AvatarImage, AvatarFallback} from '@/components/ui/avatar';
+import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue} from '@/components/ui/select';
+import { ArrowLeft, Save, Upload, Mail, Phone, MapPin, Mars, Venus, Shield, User, Users, Sparkles, Trash2, Pencil, CheckCircle2} from 'lucide-react';
+import {getUserById,updateUser,deleteUser} from "../api/userApi";
+import {getStations} from "../api/stationApi";
+import {getRoles} from "../api/roleApi";
+import {getGenerations} from "../api/generationApi";
+import {useMessage} from "../context/MessageContext";
 import { useAuth } from "../context/AuthContext";
 
 export default function MemberDetailPage() {
@@ -91,6 +39,11 @@ export default function MemberDetailPage() {
   const [roles, setRoles] = useState([]);
 
   const [generations, setGenerations] = useState([]);
+
+  const canManageMember =
+  user?.role &&
+  member?.role &&
+  user.role.level > member.role.level;// condition pour vérifier si l'utilisateur connecté peut gérer le membre affiché
 
   useEffect(() => {
 
@@ -167,7 +120,11 @@ export default function MemberDetailPage() {
 
       } catch (error) {
 
-        console.error(error);
+      
+        showMessage(
+          "Erreur lors du chargement du membre",
+          "error"
+        );
 
         setMember(null);
 
@@ -206,11 +163,20 @@ export default function MemberDetailPage() {
       )
     ) return;
 
+    if (!user?.role ||!member?.role || user.role.level <= member.role.level) {// vérification des permissions avant de permettre la suppression
+     
+      showMessage(
+        "Suppression interdite",
+        "error"
+      );
+      return;
+    }
+
     try {
 
-      await deleteUser(member.id);
+     const result = await deleteUser(member.id);
 
-      showMessage(
+      showMessage(result.message ||
         "Membre supprimé avec succès"
       );
 
@@ -218,23 +184,31 @@ export default function MemberDetailPage() {
 
     } catch (error) {
 
-      console.error(error);
-
-      showMessage(
+    
+      showMessage(result.message ||
         "Erreur suppression",
         "error"
       );
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = async () => {// function de sauvegarde des modifications du membre
+
+
+    if (!user?.role ||!member?.role || user.role.level <= member.role.level) {// vérification des permissions avant de permettre la modification
+      showMessage(
+        "Modification interdite",
+        "error"
+      );
+      return;
+    }
 
     try {
 
       const fullName =
         `${form.firstName} ${form.lastName}`;
 
-      await updateUser(form.id, {
+      const result = await updateUser(form.id, {
 
         name: fullName,
 
@@ -251,7 +225,7 @@ export default function MemberDetailPage() {
 
       });
 
-      showMessage(
+      showMessage(result.message ||
         "Profil mis à jour"
       );
 
@@ -263,9 +237,8 @@ export default function MemberDetailPage() {
 
     } catch (error) {
 
-      console.error(error);
-
-      showMessage(
+  
+      showMessage(result.message ||
         "Erreur modification",
         "error"
       );
@@ -487,7 +460,7 @@ export default function MemberDetailPage() {
             ) : (
 
               <>
-
+                {canManageMember && (
                 <Button
                   onClick={() =>
                     setEditing(true)
@@ -500,7 +473,9 @@ export default function MemberDetailPage() {
                   Modifier
 
                 </Button>
+                )}
 
+                 {canManageMember && (
                 <Button
                   variant="destructive"
                   className="rounded-2xl"
@@ -512,8 +487,8 @@ export default function MemberDetailPage() {
                   Supprimer
 
                 </Button>
-
-              </>
+                 )}
+              </> 
 
             )}
 

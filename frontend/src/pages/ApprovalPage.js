@@ -87,8 +87,7 @@ export default function ApprovalsPage() {
 
     } catch (err) {
 
-      console.error(err);
-
+    
       setError(
         "Erreur lors du chargement des demandes"
       );
@@ -150,8 +149,7 @@ export default function ApprovalsPage() {
 
     } catch (err) {
 
-      console.error(err);
-
+    
       showMessage(
         "Vous n'avez pas ce privilège !",
         "error"
@@ -181,8 +179,7 @@ export default function ApprovalsPage() {
 
     } catch (err) {
 
-      console.error(err);
-
+     
       showMessage(
         "Vous n'avez pas ce privilège !",
         "error"

@@ -4,111 +4,161 @@ const API_URL = "http://127.0.0.1:8000/api";
 const getToken = () => localStorage.getItem("token");
 
 // 🔹 GET USERS
-export const getUsers = async (page = 1) => {// fonction pour récupérer la liste paginée des utilisateurs en envoyant une requête GET au backend avec le token d'authentification dans les en-têtes, et retourner la réponse JSON contenant les données paginées des utilisateurs
-  
-  const res = await fetch(`${API_URL}/users?page=${page}`, {// envoie une requête GET à l'endpoint /users du backend avec le numéro de page pour récupérer la liste paginée des utilisateurs
-    
-    headers: {
-      Authorization: `Bearer ${getToken()}`,// inclut le token d'authentification dans les en-têtes de la requête pour permettre au backend de vérifier l'identité de l'utilisateur et d'autoriser l'accès aux données des utilisateurs
-    },
-
-  });
-
-  // vérifie si la requête a échoué et lance une erreur si nécessaire
-  if (!res.ok) {
-    throw new Error("Erreur lors du chargement des utilisateurs");
-  }
-
-  return res.json();// retourne la réponse JSON contenant les données paginées des utilisateurs récupérées du backend :
-                    // data = liste des utilisateurs
-                    // current_page = page actuelle
-                    // last_page = nombre total de pages
-                    // total = nombre total d'utilisateurs
-};
-
-
-export const getUserById = async (id) => {
-
-  const res = await fetch(`${API_URL}/users/${id}`, {
-
+export const getUsers = async (page = 1) => {
+  const res = await fetch(`${API_URL}/users?page=${page}`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
-
   });
 
+  const data = await res.json();
+
   if (!res.ok) {
-
-    throw new Error("Utilisateur introuvable");
-
+    throw new Error(
+      data.error ||
+      data.message ||
+      "Erreur lors du chargement des utilisateurs"
+    );
   }
 
-  return res.json();
+  return data;
 };
 
+// 🔹 GET USER BY ID
+export const getUserById = async (id) => {
+  const res = await fetch(`${API_URL}/users/${id}`, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      data.error ||
+      data.message ||
+      "Utilisateur introuvable"
+    );
+  }
+
+  return data;
+};
 
 // 🔹 CREATE USER
-export const createUser = async (data) => {// fonction pour créer un nouvel utilisateur en envoyant une requête POST au backend avec les données de l'utilisateur dans le corps de la requête, et retourner la réponse JSON contenant les données du nouvel utilisateur créé
-  const res = await fetch(`${API_URL}/users`, {// envoie une requête POST à l'endpoint /users du backend pour créer un nouvel utilisateur avec les données fournies dans le corps de la requête
+export const createUser = async (data) => {
+  const res = await fetch(`${API_URL}/users`, {
     method: "POST",
-    headers: {// inclut les en-têtes nécessaires pour indiquer que le corps de la requête est au format JSON et pour inclure le token d'authentification pour autoriser la création d'un nouvel utilisateur
+    headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify(data),
   });
 
-  return res.json();
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      result.error ||
+      result.message ||
+      "Erreur lors de la création"
+    );
+  }
+
+  return result;
 };
 
 // 🔹 UPDATE USER
-export const updateUser = async (id, data) => {// fonction pour mettre à jour les informations d'un utilisateur existant en envoyant une requête PUT au backend avec l'ID de l'utilisateur dans l'URL et les données mises à jour dans le corps de la requête, et retourner la réponse JSON contenant les données de l'utilisateur mis à jour
+export const updateUser = async (id, data) => {
   const res = await fetch(`${API_URL}/users/${id}`, {
     method: "PUT",
-    headers: {// inclut les en-têtes nécessaires pour indiquer que le corps de la requête est au format JSON et pour inclure le token d'authentification pour autoriser la mise à jour des informations de l'utilisateur
+    headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify(data),
   });
 
-  return res.json();
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      result.error ||
+      result.message ||
+      "Erreur lors de la modification"
+    );
+  }
+
+  return result;
 };
 
 // 🔹 DELETE USER
-export const deleteUser = async (id) => {// fonction pour supprimer un utilisateur existant en envoyant une requête DELETE au backend avec l'ID de l'utilisateur dans l'URL, et retourner la réponse JSON contenant les données de l'utilisateur supprimé
+export const deleteUser = async (id) => {
   const res = await fetch(`${API_URL}/users/${id}`, {
     method: "DELETE",
-    headers: {// inclut le token d'authentification dans les en-têtes de la requête pour autoriser la suppression de l'utilisateur
-      Authorization: `Bearer ${getToken()}`,// inclut le token d'authentification dans les en-têtes de la requête pour autoriser la suppression de l'utilisateur
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
     },
   });
 
-  return res.json();
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      result.error ||
+      result.message ||
+      "Erreur lors de la suppression"
+    );
+  }
+
+  return result;
 };
 
-export const updateProfile = async (data) => {// fonction pour mettre à jour les informations du profil de l'utilisateur connecté en envoyant une requête PUT au backend avec les données mises à jour dans le corps de la requête, et retourner la réponse JSON contenant les données du profil mis à jour
-    const res = await fetch(`${API_URL}/profile`, {
-      method: "PUT",
-      headers: {// inclut les en-têtes nécessaires pour indiquer que le corps de la requête est au format JSON et pour inclure le token d'authentification pour autoriser la mise à jour des informations du profil de l'utilisateur connecté
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(data),// inclut les données mises à jour du profil de l'utilisateur connecté dans le corps de la requête au format JSON pour que le backend puisse les traiter et mettre à jour les informations du profil de l'utilisateur connecté en conséquence
-    });
-  
-    return res.json();
-  };
+// 🔹 UPDATE PROFILE
+export const updateProfile = async (data) => {
+  const res = await fetch(`${API_URL}/profile`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify(data),
+  });
 
-  export const updatePassword = async (data) => {// fonction pour mettre à jour le mot de passe de l'utilisateur connecté en envoyant une requête PUT au backend avec les données mises à jour dans le corps de la requête, et retourner la réponse JSON contenant les données du mot de passe mis à jour
-    const res = await fetch(`${API_URL}/profile/password`, {
-      method: "PUT",
-      headers: {// inclut les en-têtes nécessaires pour indiquer que le corps de la requête est au format JSON et pour inclure le token d'authentification pour autoriser la mise à jour du mot de passe de l'utilisateur connecté
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(data),
-    });
-  
-    return res.json();
-  };
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      result.error ||
+      result.message ||
+      "Erreur lors de la mise à jour du profil"
+    );
+  }
+
+  return result;
+};
+
+// 🔹 UPDATE PASSWORD
+export const updatePassword = async (data) => {
+  const res = await fetch(`${API_URL}/profile/password`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      result.error ||
+      result.message ||
+      "Erreur lors de la modification du mot de passe"
+    );
+  }
+
+  return result;
+};

@@ -17,7 +17,13 @@ export const getApprovals = async () => {
 
   const data = await res.json();
 
-  if (!res.ok) throw new Error(data.error);
+  if (!res.ok) {
+    throw new Error(
+      data.error ||
+      data.message ||
+      "Erreur lors du chargement des demandes"
+    );
+  }
 
   return data;
 };
@@ -31,11 +37,18 @@ export const approveRequest = async (id) => {
 
   const data = await res.json();
 
-  if (!res.ok) throw new Error(data.error);
+  if (!res.ok) {
+    throw new Error(
+      data.error ||
+      data.message ||
+      "Erreur lors de l'approbation"
+    );
+  }
 
   return data;
 };
 
+// 🔹 refuser
 export const rejectRequest = async (id) => {
   const res = await fetch(`${API_URL}/approvals/${id}/reject`, {
     method: "POST",
@@ -44,10 +57,13 @@ export const rejectRequest = async (id) => {
 
   const data = await res.json();
 
-  if (!res.ok) throw new Error(data.error);
+  if (!res.ok) {
+    throw new Error(
+      data.error ||
+      data.message ||
+      "Erreur lors du refus"
+    );
+  }
 
   return data;
 };
-
-
-

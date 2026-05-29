@@ -1,57 +1,14 @@
 import { useState } from 'react';
-
 import { useAuth } from '@/context/AuthContext';
-
-import {
-  updateProfile,
-  updatePassword
-} from "@/api/userApi";
-
-import {
-  Button
-} from '@/components/ui/button';
-
-import {
-  Input
-} from '@/components/ui/input';
-
-import {
-  Label
-} from '@/components/ui/label';
-
-import {
-  Card,
-  CardContent
-} from '@/components/ui/card';
-
-import {
-  Avatar,
-  AvatarFallback
-} from '@/components/ui/avatar';
-
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger
-} from '@/components/ui/tabs';
-
-import {
-  Camera,
-  User,
-  Lock,
-  Bell,
-  Mail,
-  Phone,
-  Save,
-  ShieldCheck,
-  KeyRound,
-  CheckCircle2,
-  Sparkles,
-  MapPin,
-  Shield,
-  Layers
-} from 'lucide-react';
+import {updateProfile,updatePassword} from "@/api/userApi";
+import { Button} from '@/components/ui/button';
+import { Input} from '@/components/ui/input';
+import {Label} from '@/components/ui/label';
+import {Card,CardContent} from '@/components/ui/card';
+import {Avatar,AvatarFallback} from '@/components/ui/avatar';
+import {Tabs,TabsContent,TabsList,TabsTrigger} from '@/components/ui/tabs';
+import {Camera,User,Lock,Bell,Mail,Phone,Save,ShieldCheck,KeyRound,CheckCircle2,Sparkles,MapPin,Shield,Layers} from 'lucide-react';
+import { useMessage } from "../context/MessageContext";
 
 export default function ProfilePage() {
 
@@ -82,14 +39,13 @@ export default function ProfilePage() {
       .join('')
       .slice(0, 2) || 'AD';
 
-  const [currentPassword, setCurrentPassword] =
-    useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
 
-  const [newPassword, setNewPassword] =
-    useState("");
+  const [newPassword, setNewPassword] = useState("");
 
-  const [confirmPassword, setConfirmPassword] =
-    useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const { showMessage } = useMessage();
 
   const update = (key, value) =>
 
@@ -122,7 +78,11 @@ export default function ProfilePage() {
 
     } catch (err) {
 
-      console.error(err);
+      showMessage(
+        "Erreur lors de la mise à jour du profil !",
+        "error"
+      );
+
     }
   };
 
@@ -139,6 +99,14 @@ export default function ProfilePage() {
     }
 
     try {
+
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#_-])[A-Za-z\d@$!%*?&.#_-]{8,}$/;
+
+      if (!passwordRegex.test(newPassword)) {
+        showMessage( "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial", "error" );
+       
+        return;
+      }
 
       await updatePassword({
 
@@ -158,7 +126,10 @@ export default function ProfilePage() {
 
     } catch (err) {
 
-      console.error(err);
+      showMessage(
+        "Erreur lors de la modification du mot de passe !",
+        "error"
+      );
     }
   };
 

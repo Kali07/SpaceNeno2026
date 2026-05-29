@@ -21,7 +21,8 @@ class AuthController extends Controller
 
         return response()->json([// retourne une réponse JSON contenant les détails de l'utilisateur et le token d'authentification
                  'user' => $user->load('role'),
-                 'token' => $token
+                 'token' => $token,
+                 'change_password' => $user->ChangePassword()
         ]);
     }
 

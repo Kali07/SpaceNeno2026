@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+
+const LEVEL_BYPASS = 6;
 
 class RoleController extends Controller
 {
@@ -17,11 +20,24 @@ class RoleController extends Controller
     // 🔹 CREATE
     public function store(Request $request)
     {
+        $user = Auth::user();
+
         $request->validate([
             'label' => 'required|string',
             'level'=> 'required|int'
             
         ]);
+
+        if ($request->label) {// vérifie si un rôle avec le même label existe déjà
+
+        $role = Role::findOrFail($request->label);
+
+                 return response()->json([
+                    'error' => 'Ce rôle existe déjà'
+             ], 400);
+        }
+
+        if ($user->role->level >= LEVEL_BYPASS) {// vérifie si l'utilisateur actuel a le niveau requis pour créer un rôle
 
         $role = Role::create([
             'label' => $request->label,
@@ -29,32 +45,61 @@ class RoleController extends Controller
         ]);
 
         return response()->json($role);
+        } else {
+            return response()->json([
+                
+                'error' => 'Probleme de permission pour créer ce rôle'
+
+            ], 403);// retourne une réponse d'erreur si l'utilisateur actuel n'a pas le niveau requis pour créer un rôle
+        }
     }
 
     // 🔹 UPDATE
     public function update(Request $request, $id)
     {
+        $user = Auth::user();
+
         $request->validate([
             'label' => 'required|string',
             'level' => 'required|int'
         ]);
 
         $role = Role::findOrFail($id);
+
+        if ($user->role->level >= LEVEL_BYPASS) {// vérifie si l'utilisateur actuel a le niveau requis pour modifier un rôle
         $role->update([
             'label' => $request->label,
             'level' => $request->level
         ]);
 
         return response()->json($role);
+        } else {
+            return response()->json([
+                
+                'error' => 'Probleme de permission pour modifier ce rôle'
+
+            ], 403);// retourne une réponse d'erreur si l'utilisateur actuel n'a pas le niveau requis pour modifier un rôle
+        }
     }
 
     // 🔹 DELETE
     public function destroy($id)
     {
-        $role = Role::findOrFail($id);
-        $role->delete();
+        $user = Auth::user();
 
-        return response()->json(['message' => 'Deleted']);
+        $role = Role::findOrFail($id);
+        
+        if ($user->role->level >= LEVEL_BYPASS) {// vérifie si l'utilisateur actuel a le niveau requis pour supprimer un rôle
+            $role->delete();
+
+            return response()->json(['message' => 'Rôle supprimé']);
+        } else {
+            return response()->json([
+                
+                'error' => 'Probleme de permission pour supprimer ce rôle'
+
+            ], 403);// retourne une réponse d'erreur si l'utilisateur actuel n'a pas le niveau requis pour supprimer un rôle
+        }
     }
 }
 

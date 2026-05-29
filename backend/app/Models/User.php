@@ -3,12 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -96,34 +96,39 @@ class User extends Authenticatable
     }
 
     public function scopeAccess($query)//Hièrarchie d'accès selon le role, ville, pays,etc
-{
-    $user = Auth::user();
-    $role = $user->role->label;
+    {
+        $user = Auth::user();
+        $role = $user->role->label;
 
-    if ($role === 'admin_technique') {
+        if ($role === 'admin_technique') {
         return $query;
-    }
+        }
 
-    if ($role === 'admin_fonctionnel') {
-        return $query->whereHas('station.ville.pays.continent', function ($q) use ($user) {
+        if ($role === 'admin_fonctionnel') {
+            return $query->whereHas('station.ville.pays.continent', function ($q) use ($user) {
             $q->where('id', $user->station->ville->pays->continent_id);
-        });
-    }
+            });
+        }
 
-    if ($role === 'admin_national') {
-        return $query->whereHas('station.ville.pays', function ($q) use ($user) {
+        if ($role === 'admin_national') {
+            return $query->whereHas('station.ville.pays', function ($q) use ($user) {
             $q->where('id', $user->station->ville->pays_id);
-        });
+            });
+        }
+
+        if ($role === 'admin_provincial') {
+            return $query->whereHas('station.ville', function ($q) use ($user) {
+                $q->where('id', $user->station->ville_id);
+         });
+        }
+
+             // membre + gestionnaire
+        return $query->where('station_id', $user->station_id);
     }
 
-    if ($role === 'admin_provincial') {
-        return $query->whereHas('station.ville', function ($q) use ($user) {
-            $q->where('id', $user->station->ville_id);
-        });
+    public function ChangePassword()
+    {
+        return Hash::check('123456', $this->password );
     }
-
-    // membre + gestionnaire
-    return $query->where('station_id', $user->station_id);
-}
 
 }

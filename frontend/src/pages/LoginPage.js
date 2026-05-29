@@ -24,11 +24,25 @@ export default function LoginPage() {// composant de page de connexion qui gère
   
     const result = await login(email, password);
   
-    if (result.success) {
-      navigate('/dashboard'); // navigue vers le tableau de bord en cas de succès de la connexion
-    } else {
-      setError(result.error);// affiche un message d'erreur en cas d'échec de la connexion, avec le message d'erreur fourni par le backend ou un message générique
-    }
+if (result.success) {// si la connexion est réussie, stocke dans le localStorage une indication de si l'utilisateur doit changer son mot de passe à la prochaine connexion, ce qui peut être utilisé pour rediriger l'utilisateur vers une page de mise à jour du mot de passe si nécessaire, et navigue vers la page de mise à jour du mot de passe ou le tableau de bord en fonction de cette indication
+
+  localStorage.setItem("change_password",result.change_password ? "true" : "false");// stocke dans le localStorage une indication de si l'utilisateur doit changer son mot de passe à la prochaine connexion, ce qui peut être utilisé pour rediriger l'utilisateur vers une page de mise à jour du mot de passe si nécessaire
+
+  if (result.change_password) {// si l'utilisateur doit changer son mot de passe, navigue vers la page de mise à jour du mot de passe
+
+    navigate("/updating");// navigue vers la page de mise à jour du mot de passe si l'utilisateur doit changer son mot de passe
+
+  } else {
+
+    navigate("/dashboard");// navigue vers le tableau de bord si l'utilisateur n'a pas besoin de changer son mot de passe
+
+  }
+
+} else {
+
+  setError(result.error);
+
+}
   
     setLoading(false);// réinitialise l'état de chargement à la fin du processus de connexion, que ce soit en cas de succès ou d'échec, pour permettre à l'utilisateur de réessayer la connexion si nécessaire
   };
