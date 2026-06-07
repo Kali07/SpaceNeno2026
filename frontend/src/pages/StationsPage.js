@@ -1,75 +1,61 @@
 import { Card, CardContent } from '@/components/ui/card';
-
-import {MapPin,Users,Map,Eye,Plus,Pencil,Trash2,Building2,Search,X,Check,  UserCog } from 'lucide-react';
-
+import {MapPin,Users,Map,Eye,Plus,Pencil,Trash2,Building2,Search,X,Check,  UserCog, ChevronRight, ChevronLeft } from 'lucide-react';
 import {getStations, createStation, deleteStation, updateStation, getGestionnaires} from '../api/stationApi';
-
 import { getVilles } from '../api/villeApi';
-
 import { useNavigate } from "react-router-dom";
-
 import { Button } from '@/components/ui/button';
-
 import { useEffect, useMemo, useState } from 'react';
-
 import { useMessage } from "../context/MessageContext";
 import { useAuth } from "../context/AuthContext";
+
 
 export default function StationsPage() {
 
   // 🔹 STATES
   const [stations, setStations] = useState([]);
-
   const [villes, setVilles] = useState([]);
-
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
   const [gestionnaires, setGestionnaires] = useState([]);
-
   const [showForm, setShowForm] = useState(false);
-
   const [search, setSearch] = useState("");
-
   const { user } = useAuth();
 
   // 🔹 CREATE STATES
   const [name, setName] = useState("");
-
   const [villeId, setVilleId] = useState("");
-
   const [address, setAddress] = useState("");
-
   const [responsableId, setResponsableId] = useState(null);
 
   // 🔹 EDIT STATES
   const [editingId, setEditingId] = useState(null);
-
   const [editingName, setEditingName] = useState("");
-
   const [editingVilleId, setEditingVilleId] = useState("");
-
   const [editingAddress, setEditingAddress] = useState("");
-
   const [editingResponsableId, setEditingResponsableId] = useState(null);
-
   const { showMessage } = useMessage();
-
   const navigate = useNavigate();
 
   // 🔹 FETCH DATA
-  const fetchData = async () => {
+  const fetchData = async (currentPage = 1) => {
 
     try {
 
-      const s = await getStations();
+      const s = await getStations(currentPage);
 
       const v = await getVilles();
 
       const g = await getGestionnaires();
 
-      setStations(s);
+      setStations(s.data);
 
       setVilles(v);
 
       setGestionnaires(g);
+
+      setPage(s.current_page || 1);
+  
+      setLastPage(s.last_page || 1);
 
     } catch (err) {
 
@@ -731,7 +717,29 @@ export default function StationsPage() {
           </Card>
         ))}
 
+           
+
+        </div>
+
+        {/* 🔹 PAGINATION */}
+          <div className="flex items-center justify-between px-6 py-4 border-t bg-white">
+
+         <Button variant="outline" disabled={page === 1} onClick={() => { const newPage = page - 1; setPage(newPage); fetchData(newPage); }} className="rounded-xl">
+                <ChevronLeft className="h-4 w-4" />
+          </Button>
+
+          <div className="text-sm text-gray-600">
+             Page {" "}
+            <span className="font-semibold">{page}</span>{" "}sur{" "} <span className="font-semibold">  {lastPage} </span>
+          </div>
+
+          <Button variant="outline" disabled={page === lastPage} onClick={() => { const newPage = page + 1; setPage(newPage); fetchData(newPage); }} className="rounded-xl">
+               <ChevronRight className="h-4 w-4 text-gray-500" />
+          </Button>
+
       </div>
+
+          
 
       {/* EMPTY */}
       {filteredStations.length === 0 && (

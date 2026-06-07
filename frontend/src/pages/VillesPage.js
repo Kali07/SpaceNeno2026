@@ -1,107 +1,53 @@
-import {
-  Card,
-  CardContent
-} from '@/components/ui/card';
+import {Card, CardContent} from '@/components/ui/card';
+import {Button} from '@/components/ui/button';
+import {Input} from '@/components/ui/input';
+import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue} from '@/components/ui/select';
+import {Badge} from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger} from '@/components/ui/dialog';
+import {Map,MapPin,Users,Plus,Pencil,Trash2,Building2,Globe2,Search, ChevronLeft, ChevronRight} from 'lucide-react';
+import {getVilles,createVille,deleteVille,updateVille} from '../api/villeApi';
+import {getPays} from "../api/paysApi";
+import {useEffect,useMemo,useState} from 'react';
+import {useMessage} from "../context/MessageContext";
 
-import {
-  Button
-} from '@/components/ui/button';
-
-import {
-  Input
-} from '@/components/ui/input';
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-
-import {
-  Badge
-} from '@/components/ui/badge';
-
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogTrigger
-} from '@/components/ui/dialog';
-
-import {
-  Map,
-  MapPin,
-  Users,
-  Plus,
-  Pencil,
-  Trash2,
-  Building2,
-  Globe2,
-  Search
-} from 'lucide-react';
-
-import {
-  getVilles,
-  createVille,
-  deleteVille,
-  updateVille
-} from '../api/villeApi';
-
-import {
-  getPays
-} from "../api/paysApi";
-
-import {
-  useEffect,
-  useMemo,
-  useState
-} from 'react';
-
-import {
-  useMessage
-} from "../context/MessageContext";
 
 export default function VillesPage() {
 
   // STATES
   const [villes, setVilles] = useState([]);
-
   const [paysList, setPaysList] = useState([]);
-
   const [showForm, setShowForm] = useState(false);
-
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
   const [search, setSearch] = useState("");
 
   // CREATE
   const [name, setName] = useState("");
-
   const [paysId, setPaysId] = useState("");
 
   // EDIT
   const [editingId, setEditingId] = useState(null);
-
   const [editingName, setEditingName] = useState("");
-
   const [editingPaysId, setEditingPaysId] = useState("");
-
   const { showMessage } = useMessage();
 
   // FETCH
-  const fetchData = async () => {
+  const fetchData = async (currentPage = 1) => {
 
     try {
 
-      const v = await getVilles();
+      const v = await getVilles(currentPage);
 
       const p = await getPays();
 
-      setVilles(v);
+      setVilles(v.data);
 
-      setPaysList(p);
+      setPaysList(p.data);
+
+      setPage(v.current_page || 1);
+  
+      setLastPage(v.last_page || 1);
+
 
     } catch (err) {
 
@@ -685,6 +631,24 @@ export default function VillesPage() {
           </Card>
 
         ))}
+
+      </div>
+
+          {/* 🔹 PAGINATION */}
+          <div className="flex items-center justify-between px-6 py-4 border-t bg-white">
+
+         <Button variant="outline" disabled={page === 1} onClick={() => { const newPage = page - 1; setPage(newPage); fetchData(newPage); }} className="rounded-xl">
+                <ChevronLeft className="h-4 w-4" />
+          </Button>
+
+          <div className="text-sm text-gray-600">
+             Page {" "}
+            <span className="font-semibold">{page}</span>{" "}sur{" "} <span className="font-semibold">  {lastPage} </span>
+          </div>
+
+          <Button variant="outline" disabled={page === lastPage} onClick={() => { const newPage = page + 1; setPage(newPage); fetchData(newPage); }} className="rounded-xl">
+               <ChevronRight className="h-4 w-4 text-gray-500" />
+          </Button>
 
       </div>
 

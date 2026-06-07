@@ -1,167 +1,248 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { LOGIN_BG, LOGO, LOGO_NAME } from '@/data/mockData';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { LOGIN_BG, LOGO_NAME, LOGO} from "@/data/mockData";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 
-export default function LoginPage() {// composant de page de connexion qui gère l'état des champs de saisie, les messages d'erreur, l'indicateur de chargement, et utilise le contexte d'authentification pour effectuer la connexion et la navigation vers le tableau de bord en cas de succès
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {// fonction de gestion de la soumission du formulaire de connexion qui empêche le comportement par défaut du formulaire, réinitialise les messages d'erreur, affiche un indicateur de chargement, appelle la fonction de connexion du contexte d'authentification avec les informations d'identification fournies, gère la navigation vers le tableau de bord en cas de succès ou affiche un message d'erreur en cas d'échec, et réinitialise l'état de chargement à la fin du processus
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    setError('');// réinitialise les messages d'erreur avant de tenter la connexion
-    setLoading(true);// affiche un indicateur de chargement pendant le processus de connexion
-  
+
+    setError("");
+    setLoading(true);
+
     const result = await login(email, password);
-  
-if (result.success) {// si la connexion est réussie, stocke dans le localStorage une indication de si l'utilisateur doit changer son mot de passe à la prochaine connexion, ce qui peut être utilisé pour rediriger l'utilisateur vers une page de mise à jour du mot de passe si nécessaire, et navigue vers la page de mise à jour du mot de passe ou le tableau de bord en fonction de cette indication
 
-  localStorage.setItem("change_password",result.change_password ? "true" : "false");// stocke dans le localStorage une indication de si l'utilisateur doit changer son mot de passe à la prochaine connexion, ce qui peut être utilisé pour rediriger l'utilisateur vers une page de mise à jour du mot de passe si nécessaire
+    if (result.success) {
+      localStorage.setItem(
+        "change_password",
+        result.change_password ? "true" : "false"
+      );
 
-  if (result.change_password) {// si l'utilisateur doit changer son mot de passe, navigue vers la page de mise à jour du mot de passe
+      navigate(
+        result.change_password ? "/updating" : "/dashboard"
+      );
+    } else {
+      setError(result.error);
+    }
 
-    navigate("/updating");// navigue vers la page de mise à jour du mot de passe si l'utilisateur doit changer son mot de passe
-
-  } else {
-
-    navigate("/dashboard");// navigue vers le tableau de bord si l'utilisateur n'a pas besoin de changer son mot de passe
-
-  }
-
-} else {
-
-  setError(result.error);
-
-}
-  
-    setLoading(false);// réinitialise l'état de chargement à la fin du processus de connexion, que ce soit en cas de succès ou d'échec, pour permettre à l'utilisateur de réessayer la connexion si nécessaire
+    setLoading(false);
   };
 
+  return (
+    <div
+      className="min-h-screen bg-white flex"
+      data-testid="login-page"
+    >
 
-  return (// rendu de la page de connexion avec une mise en page responsive, un formulaire de connexion avec des champs de saisie pour l'email et le mot de passe, un bouton de soumission avec un indicateur de chargement, et des messages d'erreur affichés en cas d'échec de la connexion, ainsi qu'une section de branding sur la gauche pour les écrans plus grands
-    <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-2" data-testid="login-page">
-      {/* Left - Branding */}
-      <div
-        className="hidden lg:flex flex-col justify-between p-12 relative overflow-hidden"
-        style={{
-          backgroundImage: `url(${LOGIN_BG})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        <div className="absolute inset-0 bg-[#0066CC]/80" />
-        <div className="relative z-10">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center"
-              style={{
-                backgroundImage: `url(${LOGO})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            
-            >
-              <span className="text-white font-bold text-lg font-heading"></span>
-            </div>
-            <span className="text-xl font-bold text-white font-heading tracking-tight">NENO SPACE EUJC</span>
-          </div>
-        </div>
-        <div className="relative z-10 space-y-4">
-          <h1 className="text-4xl sm:text-5xl font-bold text-white font-heading tracking-tight leading-tight">
-            Bâtir et Structurer <br />La communauté
-          </h1>
-          <p className="text-white/80 text-lg max-w-md leading-relaxed">
-            Une plateforme dédiée pour structurer, suivre et accompagner chaque membre au sein de L'église universelle de Jesus Christ.
-          </p>
-        </div>
-        <div className="relative z-10">
-          <p className="text-white/50 text-sm">NENO SPACE v1.0</p>
-        </div>
+{/* ===================================== */}
+{/* SECTION GAUCHE */}
+{/* ===================================== */}
+
+<div className="hidden lg:flex lg:w-[48%] relative overflow-hidden border-r border-slate-200">
+
+  {/* Fond très léger */}
+  <div
+    className="absolute inset-0"
+    style={{
+      backgroundImage: `url(${LOGIN_BG})`,
+      backgroundPosition: "center",
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+      opacity: 0.04,
+    }}
+  />
+
+  {/* Dégradé */}
+  <div className="absolute inset-0 bg-gradient-to-br from-white via-[#FCFCFD] to-[#F4F7FB]" />
+
+  <div className="relative z-10 flex flex-col justify-between h-full px-10 xl:px-12 py-10">
+
+    {/* Header */}
+    <div className="flex items-center justify-between">
+
+      <img
+        src={LOGO_NAME}
+        alt="Neno Space"
+        className="w-40 object-contain"
+      />
+
+      <div className="px-4 py-2 rounded-full bg-[#FFF8E6] border border-[#D4AF37]/30">
+        <span className="text-[#B8860B] text-sm font-semibold">
+          Jubilé d'Or • 1976 - 2026
+        </span>
       </div>
 
-      {/* Right - Login Form */}
-      <div className="flex items-center justify-center p-6 md:p-12 bg-white">
-        <div className="w-full max-w-[400px] space-y-8">
-          {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-2.5 justify-center mb-4">
-            <div className="w-9 h-9 rounded-lg bg-[#0066CC] flex items-center justify-center">
-              <span className="text-white font-bold text-base font-heading">N</span>
+    </div>
+
+    {/* Centre */}
+    <div className="flex flex-col items-center text-center">
+
+      {/* Logo Cinquantenaire */}
+      <img
+        src={LOGIN_BG}
+        alt="Cinquantenaire EUJC"
+        className="
+          w-[320px]
+          xl:w-[360px]
+          max-w-full
+          object-contain
+          drop-shadow-lg
+          mb-8
+        "
+      />
+
+      <p className="text-lg text-slate-600 leading-relaxed max-w-lg">
+        Plateforme officielle de gestion et de suivi des membres
+        de l'Église Universelle de Jésus-Christ.
+      </p>
+      
+      <div className="w-full max-w-md mt-8">
+
+        <div className="h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mb-5" />
+
+        <p className="italic text-[#102A43] text-base">
+          « Ensemble, bâtissons une communauté forte,
+          unie et engagée pour Christ. »
+        </p>
+
+      </div>
+
+    </div>
+
+    {/* Footer */}
+    <div className="flex items-center justify-between text-sm">
+
+      <span className="text-slate-500">
+        NENO SPACE • Version 1.0
+      </span>
+
+      <span className="font-medium text-[#B8860B]">
+        Eglise Universelle de Jésus-Christ
+         </span>
+
             </div>
-            <span className="text-lg font-bold tracking-tight font-heading text-[#333333]">NENO SPACE</span>
+
+        </div>
+
+      </div>
+
+      {/* ===================================== */}
+      {/* SECTION DROITE */}
+      {/* ===================================== */}
+
+      <div className="w-full lg:w-[42%] flex items-center justify-center bg-white border-l border-slate-200">
+        <div className="w-full max-w-md px-8">
+          {/* Mobile uniquement */}
+          <div className="lg:hidden text-center mb-10">
+            <img
+              src={LOGO_NAME}
+              alt="Neno Space"
+              className="w-44 mx-auto"
+            />
           </div>
 
-          <div className="space-y-4 text-center">
-  
-                {/* Logo */}
-             <img src={LOGO_NAME} alt="Neno Space" className="w-32 mx-auto object-contain" />
+          {/* Logo desktop */}
+          <div className="hidden lg:block mb-10">
+            <img
+              src={LOGO_NAME}
+              alt="Neno Space"
+              className="w-36"
+            />
+          </div>
 
-               {/* Texte */}
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-bold tracking-tight font-heading text-[#333333]"> Bienvenue dans votre Espace</h2>
+          {/* Titre */}
+          <div className="mb-10">
+            <h2 className="text-4xl font-bold text-[#102A43] mb-3">
+              Bienvenue
+            </h2>
 
-                  <p className="text-sm text-[#666666]"> Entrez vos identifiants pour accéder à l'espace </p>
-                </div>
-            </div>
+            <p className="text-slate-500 leading-relaxed">
+              Connectez-vous pour accéder à votre espace
+              personnel et poursuivre votre parcours.
+            </p>
+          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5" data-testid="login-form">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-6"
+          >
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg" data-testid="login-error">
+              <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
                 {error}
               </div>
             )}
 
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-[#333333] font-medium">Email</Label>
+            <div>
+              <Label
+                htmlFor="email"
+                className="mb-2 block font-medium text-[#102A43]"
+              >
+                Adresse Email
+              </Label>
+
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@nenospace.com"
+                placeholder="votre@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="h-11 bg-[#F5F5F5] border-gray-200 focus:border-[#0066CC] focus:ring-[#0066CC]"
-                data-testid="login-email-input"
+                className="h-12 rounded-xl border-slate-200 bg-slate-50"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-[#333333] font-medium">Mot de passe</Label>
+            <div>
+              <Label
+                htmlFor="password"
+                className="mb-2 block font-medium text-[#102A43]"
+              >
+                Mot de passe
+              </Label>
+
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Entrez le mot de passe"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Entrez votre mot de passe"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="h-11 bg-[#F5F5F5] border-gray-200 pr-10 focus:border-[#0066CC] focus:ring-[#0066CC]"
-                  data-testid="login-password-input"
+                  className="h-12 rounded-xl border-slate-200 bg-slate-50 pr-12"
                 />
+
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#666666] hover:text-[#333333]"
-                  data-testid="toggle-password-btn"
+                  onClick={() =>
+                    setShowPassword(!showPassword)
+                  }
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
                 </button>
               </div>
             </div>
 
-            <div className="flex items-center justify-end">
+            <div className="text-right">
               <button
                 type="button"
-                className="text-sm text-[#0066CC] hover:text-[#0055AA] font-medium transition-colors"
-                data-testid="forgot-password-link"
+                className="text-sm text-[#1D4ED8] hover:underline"
               >
                 Mot de passe oublié ?
               </button>
@@ -170,17 +251,31 @@ if (result.success) {// si la connexion est réussie, stocke dans le localStorag
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-11 bg-[#0066CC] hover:bg-[#0055AA] text-white font-semibold rounded-lg transition-all duration-200"
-              data-testid="login-submit-btn"
+              className="
+                w-full
+                h-12
+                rounded-xl
+                bg-[#0F4C81]
+                hover:bg-[#0D426E]
+                text-white
+                font-semibold
+              "
             >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-              {loading ? 'Connexion...' : 'Connexion'}
+              {loading && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+
+              {loading
+                ? "Connexion..."
+                : "Se connecter"}
             </Button>
           </form>
 
-          <p className="text-center text-xs text-[#666666]">
-            Demo credentials: admin@nenospace.com / admin123
-          </p>
+          <div className="mt-10 pt-6 border-t border-slate-100">
+            <p className="text-center text-xs text-slate-400">
+              NENO SPACE • Plateforme officielle de l'EUJC
+            </p>
+          </div>
         </div>
       </div>
     </div>

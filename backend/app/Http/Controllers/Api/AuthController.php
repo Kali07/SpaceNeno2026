@@ -20,7 +20,7 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;// genere un token d'authentification pour l'utilisateur
 
         return response()->json([// retourne une réponse JSON contenant les détails de l'utilisateur et le token d'authentification
-                 'user' => $user->load('role'),
+                 'user' => $user->load(['role','station','generation']),
                  'token' => $token,
                  'change_password' => $user->ChangePassword()
         ]);

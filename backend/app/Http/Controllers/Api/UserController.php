@@ -13,7 +13,7 @@ use Illuminate\Validation\Rule;
 
 const LEVEL_BYPASS = 6;
 const LEVEL_APPROVAL = 2;
-
+const ROLE_MEMBRE = 1;
 class UserController extends Controller
 {
 
@@ -32,101 +32,102 @@ class UserController extends Controller
     }
 
     //CREATE
-    public function store(Request $request)// function store pour créer un nouvel utilisateur
+    public function store(Request $request)
     {
-
-        $currentUser = Auth::user();// récupère l'utilisateur actuellement connecté
-
-        $request->validate([// validation des données d'entrée pour la création d'un utilisateur
-
-            'name' => 'required|string|max:255',
-
-            'email' => 'required|email|unique:users,email',
-
-            'password' => 'required|min:6',
-
-            'sexe' => 'nullable|in:Masculin,Feminin',
-
-            'phone' => 'nullable|string',
-
-            'role_id' => 'required|exists:roles,id',
-
-            'station_id' => 'required|exists:stations,id',
-
-            'statut_id' => 'nullable|exists:statuts,id',
-
-            'generation_id' => 'required|exists:generations,id'
+        $currentUser = Auth::user();
+    
+        $request->validate([
+            'name'          => 'required|string|max:255',
+            'email'         => 'required|email|unique:users,email',
+            'password'      => 'required|min:8',
+            'sexe'          => 'nullable|in:Masculin,Feminin',
+            'phone'         => 'nullable|string',
+            'role_id'       => 'required|exists:roles,id',
+            'station_id'    => 'required|exists:stations,id',
+            'statut_id'     => 'nullable|exists:statuts,id',
+            'generation_id' => 'required|exists:generations,id',
         ]);
+    
+        $targetRole = Role::findOrFail($request->role_id);// récupère le rôle cible pour la création de l'utilisateur
+    
+    
+        // Interdiction de créer un Admin Tech (sauf par un Admin Tech)
+        if ( $targetRole->level == LEVEL_BYPASS && $currentUser->role->level != LEVEL_BYPASS) {
 
-        //  Vérifier le rôle demandé
-        $targetRole = Role::findOrFail($request->role_id);// récupère le rôle demandé pour le nouvel utilisateur
-
-        if ($targetRole->level >= $currentUser->role->level) {// vérifie si le rôle demandé est égal ou supérieur au rôle de l'utilisateur actuel
-
+            return response()->json([
+                'error' => 'Seul un Admin Tech peut créer un Admin Tech'
+            ], 403);
+        }
+    
+        // Interdiction de créer un rôle supérieur ou égal au sien
+        // sauf Admin Tech -> Admin Tech
+        if ($targetRole->level >= $currentUser->role->level && !($currentUser->role->level == LEVEL_BYPASS && $targetRole->level == LEVEL_BYPASS)) {
+            
             return response()->json([
                 'error' => 'Création interdite pour ce niveau'
             ], 403);
         }
-
-        if ($currentUser->role->level >= LEVEL_APPROVAL) {// vérifie si l'utilisateur actuel a un rôle égal ou supérieur au niveau requis pour créer un utilisateur
-
-            // 🔸 Approval
-            if (
-                $currentUser->role->level >= LEVEL_APPROVAL &&
-                $currentUser->role->level < LEVEL_BYPASS
-            ) {// vérifie si l'utilisateur actuel a un rôle égal au niveau requis pour créer un utilisateur
-
-                //  crée une demande au lieu de créer direct
-                Approval::create([// crée une nouvelle demande d'approbation pour la création d'un utilisateur
-
-                    'requested_by' => $currentUser->id,
-
-                    'action' => 'create_user',
-
-                    'data' => json_encode($request->all()),
-
-                    'status' => 'pending'
-                ]);
-
-                return response()->json([// retourne un message indiquant que la demande d'approbation a été soumise
-
-                    'message' => 'Demande soumise pour approbation'
-                ]);
-            }
-
-            if ($currentUser->role->level === LEVEL_BYPASS) {// vérifie si l'utilisateur actuel a un rôle égal au niveau de contournement
-
-                // 🔸 Création directe
-                $user = User::create([// crée directement le nouvel utilisateur sans approbation
-
-                    'name' => $request->name,
-
-                    'email' => $request->email,
-
-                    'sexe' => $request->sexe,
-
-                    'phone' => $request->phone,
-
-                    'password' => bcrypt($request->password),
-
-                    'role_id' => $request->role_id,
-
-                    'station_id' => $request->station_id,
-
-                    'statut_id' => $request->statut_id,
-
-                    'generation_id' => $request->generation_id,
-                ]);
-
-                return response()->json($user);// retourne les données du nouvel utilisateur créé
-            }
+    
+      
+    // Création directe d'un membre (sans approbation) si rôle "Membre"
+        if ($request->role_id == ROLE_MEMBRE) {
+    
+            $user = User::create([
+                'name'          => $request->name,
+                'email'         => $request->email,
+                'sexe'          => $request->sexe,
+                'phone'         => $request->phone,
+                'password'      => bcrypt($request->password),
+                'role_id'       => $request->role_id,
+                'station_id'    => $request->station_id,
+                'statut_id'     => $request->statut_id,
+                'generation_id' => $request->generation_id,
+            ]);
+    
+            return response()->json($user, 201);
         }
-
+    
+        
+    // Création avec approbation pour les autres rôles
+        if (
+            $currentUser->role->level >= LEVEL_APPROVAL &&
+            $currentUser->role->level < LEVEL_BYPASS
+        ) {
+    
+            Approval::create([
+                'requested_by' => $currentUser->id,
+                'action'       => 'create_user',
+                'data'         => json_encode($request->all()),
+                'status'       => 'pending'
+            ]);
+    
+            return response()->json([
+                'message' => 'Demande soumise pour approbation'
+            ]);
+        }
+    
+      // Création directe pour un admin tech des rôles inférieurs
+    
+        if ($currentUser->role->level == LEVEL_BYPASS) {
+    
+            $user = User::create([
+                'name'          => $request->name,
+                'email'         => $request->email,
+                'sexe'          => $request->sexe,
+                'phone'         => $request->phone,
+                'password'      => bcrypt($request->password),
+                'role_id'       => $request->role_id,
+                'station_id'    => $request->station_id,
+                'statut_id'     => $request->statut_id,
+                'generation_id' => $request->generation_id,
+            ]);
+    
+            return response()->json($user, 201);
+        }
+    
         return response()->json([
-
-            'error' => 'Probleme de permission pour créer cet utilisateur'
-
-        ], 403);// retourne une réponse d'erreur si l'utilisateur actuel n'a pas le niveau requis pour créer un utilisateur
+            'error' => 'Problème de permission pour créer cet utilisateur'
+        ], 403);
     }
 
     // 🔹 UPDATE

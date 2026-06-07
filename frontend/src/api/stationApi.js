@@ -5,8 +5,8 @@ const getHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`,
 });
 
-export async function getStations() {
-  const res = await fetch(`${API_URL}/stations`, {
+export async function getStations(page = 1) {
+  const res = await fetch(`${API_URL}/stations?page=${page}`, {
     headers: getHeaders(),
   });
 

@@ -15,7 +15,7 @@ class VilleController extends Controller
     public function index()
     {
         return response()->json(
-            Ville::with('pays')->access()->get()
+            Ville::with('pays')->access()->paginate(5)
         );
     }
 

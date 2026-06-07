@@ -22,7 +22,7 @@ export default function ProfilePage() {
 
     phone: user?.phone || '',
 
-    bio: 'Administrateur de la plateforme NENO SPACE.',
+    bio: '', // La colonne bio n'existe pas dans la table users, c'est à compléter si besoin
 
     role: user?.role?.label || '',
 
@@ -133,6 +133,8 @@ export default function ProfilePage() {
     }
   };
 
+  console.log("profile : ", profile);
+  console.log("user : ", user);
   return (
 
     <div className="space-y-8">

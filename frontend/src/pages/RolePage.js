@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  getRoles,
-  createRole,
-  deleteRole,
-  updateRole,
-} from "../api/roleApi";
+import {getRoles,createRole,deleteRole,updateRole} from "../api/roleApi";
 import { useMessage } from "../context/MessageContext";
 
 export default function RolesPage() {

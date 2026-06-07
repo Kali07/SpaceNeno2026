@@ -128,7 +128,7 @@ class User extends Authenticatable
 
     public function ChangePassword()
     {
-        return Hash::check('123456', $this->password );
+        return Hash::check('12345678', $this->password );
     }
 
 }

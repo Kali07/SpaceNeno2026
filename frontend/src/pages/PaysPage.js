@@ -1,107 +1,52 @@
-import {
-  useEffect,
-  useMemo,
-  useState
-} from "react";
+import {useEffect,useMemo,useState} from "react";
+import { getPays, createPays, deletePays, updatePays} from "../api/paysApi";
+import {getContinents} from "../api/continentApi";
+import {useMessage} from "../context/MessageContext";
+import { Card, CardContent} from "@/components/ui/card";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Badge} from "@/components/ui/badge";
+import {Dialog,DialogContent,DialogDescription,DialogHeader,DialogTitle,DialogTrigger} from "@/components/ui/dialog";
+import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue} from "@/components/ui/select";
+import {Globe2,Map,Search,Pencil,Trash2,Plus,Save,X,Landmark, ChevronRight, ChevronLeft} from "lucide-react";
 
-import {
-  getPays,
-  createPays,
-  deletePays,
-  updatePays
-} from "../api/paysApi";
-
-import {
-  getContinents
-} from "../api/continentApi";
-
-import {
-  useMessage
-} from "../context/MessageContext";
-
-import {
-  Card,
-  CardContent
-} from "@/components/ui/card";
-
-import {
-  Button
-} from "@/components/ui/button";
-
-import {
-  Input
-} from "@/components/ui/input";
-
-import {
-  Badge
-} from "@/components/ui/badge";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from "@/components/ui/dialog";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
-
-import {
-  Globe2,
-  Map,
-  Search,
-  Pencil,
-  Trash2,
-  Plus,
-  Save,
-  X,
-  Landmark
-} from "lucide-react";
 
 export default function PaysPage() {
 
   // STATES
   const [pays, setPays] = useState([]);
-
   const [continents, setContinents] = useState([]);
-
   const [search, setSearch] = useState("");
-
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
 
   // CREATE
   const [name, setName] = useState("");
-
   const [continentId, setContinentId] = useState("");
 
   // EDIT
   const [editingId, setEditingId] = useState(null);
-
   const [editingName, setEditingName] = useState("");
-
   const [editingContinentId, setEditingContinentId] = useState("");
-
   const { showMessage } = useMessage();
 
   // FETCH
-  const fetchData = async () => {
+  const fetchData = async (currentPage = 1) => {
 
     try {
 
-      const p = await getPays();
+      const p = await getPays(currentPage);
 
       const c = await getContinents();
 
-      setPays(p);
+      setPays(p.data);
 
       setContinents(c);
+
+      setPage(p.current_page || 1);
+  
+      setLastPage(p.last_page || 1);
 
     } catch (err) {
 
@@ -692,7 +637,25 @@ export default function PaysPage() {
 
           </Card>
 
-        ))}
+        ))}  
+
+      </div>
+
+           {/* 🔹 PAGINATION */}
+           <div className="flex items-center justify-between px-6 py-4 border-t bg-white">
+
+         <Button variant="outline" disabled={page === 1} onClick={() => { const newPage = page - 1; setPage(newPage); fetchData(newPage); }} className="rounded-xl">
+                <ChevronLeft className="h-4 w-4" />
+          </Button>
+
+          <div className="text-sm text-gray-600">
+             Page {" "}
+            <span className="font-semibold">{page}</span>{" "}sur{" "} <span className="font-semibold">  {lastPage} </span>
+          </div>
+
+          <Button variant="outline" disabled={page === lastPage} onClick={() => { const newPage = page + 1; setPage(newPage); fetchData(newPage); }} className="rounded-xl">
+               <ChevronRight className="h-4 w-4 text-gray-500" />
+          </Button>
 
       </div>
 

@@ -23,17 +23,17 @@ class GenerationController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'label' => 'required|string',
+            'label' => 'required|string|unique:generations,label',
             
         ]);
 
-        if ($request->label) {// vérifie si une génération avec le même nom existe déjà
+        
+        $generation = Generation::where('label', $request->label)->first();// vérifie si une génération avec le même label existe déjà dans la bdd
 
-        $generation = Generation::findOrFail($request->label);
-
-                 return response()->json([
-                    'error' => 'Cette génération existe déjà'
-             ], 400);
+        if ($generation) {// vérifie si une génération avec le même label existe déjà
+            return response()->json([
+                'error' => 'Cette génération existe déjà'
+            ], 400);
         }
 
         if ($user->role->level >= LEVEL_CREATE) {// vérifie si l'utilisateur actuel a le niveau requis pour créer une génération

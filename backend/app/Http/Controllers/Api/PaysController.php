@@ -15,7 +15,7 @@ class PaysController extends Controller
     public function index()
     {
         return response()->json(
-            Pays::with('continent')->access()->get()
+            Pays::with('continent')->access()->paginate(5)
         );
     }
 

@@ -40,10 +40,14 @@ export default function MemberDetailPage() {
 
   const [generations, setGenerations] = useState([]);
 
+  const targetRole = roles.find(
+    r => String(r.id) === form.role
+  );
+  
   const canManageMember =
-  user?.role &&
-  member?.role &&
-  user.role.level > member.role.level;// condition pour vérifier si l'utilisateur connecté peut gérer le membre affiché
+    user?.role?.level &&
+    targetRole?.level &&
+    user.role.level > targetRole.level;// condition pour vérifier si l'utilisateur connecté peut gérer le membre affiché
 
   useEffect(() => {
 
@@ -304,7 +308,7 @@ export default function MemberDetailPage() {
       </div>
     );
   }
-
+  
   return (
 
     <div className="space-y-8">

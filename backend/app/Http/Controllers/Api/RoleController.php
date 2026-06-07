@@ -23,18 +23,18 @@ class RoleController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'label' => 'required|string',
-            'level'=> 'required|int'
+            'label' => 'required|string|unique:roles,label',
+            'level' => 'required|integer'
             
         ]);
 
-        if ($request->label) {// vérifie si un rôle avec le même label existe déjà
 
-        $role = Role::findOrFail($request->label);
+        $role = Role::where('label', $request->label)->first();// vérifie si un rôle avec le même label existe déjà dans la bdd
 
-                 return response()->json([
-                    'error' => 'Ce rôle existe déjà'
-             ], 400);
+        if ($role) {// vérifie si un rôle avec le même label existe déjà
+            return response()->json([
+                'error' => 'Ce rôle existe déjà'
+            ], 400);
         }
 
         if ($user->role->level >= LEVEL_BYPASS) {// vérifie si l'utilisateur actuel a le niveau requis pour créer un rôle

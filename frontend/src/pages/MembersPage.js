@@ -224,7 +224,7 @@ export default function MembersPage() {
 
         phone: newMember.phone,
 
-        password: "123456",
+        password: "12345678",
 
         role_id: Number(newMember.role),
 

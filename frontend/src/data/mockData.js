@@ -5,7 +5,7 @@ const AVATARS = [
   "https://images.unsplash.com/photo-1769636929388-99eff95d3bf1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHwyfHxwcm9mZXNzaW9uYWwlMjBoZWFkc2hvdCUyMHBvcnRyYWl0fGVufDB8fHx8MTc3NjAzOTc2OXww&ixlib=rb-4.1.0&q=85",
 ];
 
-export const LOGIN_BG = "/img/EUJCLOGO.jpg";
+export const LOGIN_BG = "/img/LOGO_50-2.png";
 export const LOGO = "/img/NenoSpace-22-logo.png";
 export const LOGO_NAME = "/img/NenoSpace-22.png";
 

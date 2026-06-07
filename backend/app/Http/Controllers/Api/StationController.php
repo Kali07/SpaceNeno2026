@@ -27,7 +27,7 @@ class StationController extends Controller
             )
             ->withCount('users')
             ->access()
-            ->get()
+            ->paginate(5)
 
         );// retourne toutes les stations accessibles selon la hiérarchie d'accès
     }
